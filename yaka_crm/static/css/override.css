@@ -1,0 +1,183 @@
+body {
+    padding-top: 50px;
+    padding-bottom: 40px;
+}
+
+.navbar-inner {
+    background-color: #154447;
+    background-image: none;
+}
+
+h2 {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.avatar a {
+    position: relative;
+    float: left;
+    height: 45px;
+    width: 45px;
+}
+
+ul.stream {
+    clear: both;
+    margin: 0;
+    list-style: none;
+}
+
+li.hentry {
+    border: 1px solid white;
+    border-bottom: 1px solid #E5E5E5;
+    display: block;
+    padding: 8px 0 0;
+    position: relative;
+    width: 100%;
+}
+
+li.hentry .entry_wrapper .entry_details span.action {
+    padding: 0 5px;
+}
+
+li.hentry .entry_wrapper {
+    font-size: 13px;
+    padding: 0 20px 0 10px;
+    overflow: hidden;
+}
+
+li.hentry .entry_wrapper .entry-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 50px;
+    display: block;
+}
+
+.meta_actions {
+    float: left;
+    margin: 6px 0 9px;
+    width: 100%;
+    font-size: 11px;
+}
+
+.side_actions {
+    position: absolute;
+    right: 0;
+    top: 1px;
+    z-index: 500;
+    zoom: 1;
+}
+
+.interactions {
+    clear: both;
+    font-size: 11px;
+    line-height: 16px;
+    margin: 0 0 9px;
+    border-radius: 4px;
+    text-shadow: none;
+    width: 85%;
+}
+
+.side_actions a.flagged, .side_actions a.unflagged, .side_actions a.more_side_actions {
+    border-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    height: 16px;
+    width: 16px;
+    opacity: 0.5;
+    text-indent: -9999em;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+ul.drop_down {
+    background-color: white;
+    border: 1px solid #AAA;
+    right: 0;
+    padding: 5px;
+    position: absolute;
+    width: 175px;
+    z-index: 9999;
+    zoom: 1;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+}
+
+ul.drop_down li {
+    margin: 0 0 6px;
+}
+
+/* old, to review */
+/* ---------------------------------------------------------------- */
+
+.sidebar-nav {
+    padding: 9px 0;
+}
+
+/* Override some defaults */
+html, body {
+    /* background-color: #2F7069; */
+}
+
+.container > footer p {
+    text-align: center; /* center align it with the container */
+}
+
+.container {
+    width: 960px;
+    /* downsize our container to make the content feel a bit tighter and more cohesive.
+NOTE: this removes two full columns from the grid, meaning you only go to 14 columns and not 16. */
+}
+
+/* The white background content wrapper */
+.container > .content {
+    background-color: #fff;
+    padding: 20px;
+    margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+}
+
+/* Page header tweaks */
+.page-header {
+    background-color: #f5f5f5;
+    padding: 20px 20px 10px;
+    margin: -20px -20px 20px;
+}
+
+/* Give a quick and non-cross-browser friendly divider */
+/*
+    .content .span4 {
+      margin-left: 0;
+      padding-left: 19px;
+      border-left: 1px solid #eee;
+    }
+*/
+.topbar .btn {
+    border: 0;
+}
+
+/* ********************************************************************************************** */
+/* CUSTOM */
+
+#session img {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: top;
+    margin-right: 6px;
+    border: none;
+    cursor: pointer;
+    border-image: initial;
+}
+
+.menu-left {
+    width: 170px;
+    border-right: 1px solid #eee;
+    margin-right: 0;
+    padding-right: 10px;
+}

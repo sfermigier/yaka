@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Yaka CRM - Social Business</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="/static/css/bootstrap.css" rel="stylesheet">
+  <!--link href="css/bootstrap-responsive.css" rel="stylesheet"-->
+  <link href="/static/css/override.css" rel="stylesheet">
+
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- Le fav and touch icons -->
+  <link rel="shortcut icon" href="/static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/static/images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/static/images/apple-touch-icon-114x114.png">
+
+  <!-- datatables -->
+  <style type="text/css" title="currentStyle">
+    @import "/static/css/demo_page.css";
+    @import "/static/css/header.css";
+    @import "/static/css/demo_table.css";
+  </style>
+  <script type="text/javascript" language="javascript" src="/static/js/jquery.js"></script>
+  <script type="text/javascript" language="javascript" src="/static/js/jquery.dataTables.js"></script>
+  <!--script type="text/javascript" language="javascript" src="/static/js/jquery.jeditable.js"></script-->
+  <!--script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+      $('#example').dataTable( {
+        "bProcessing": true,
+        "bServerSide": true,
+        "sAjaxSource": "/"
+      } );
+    } );
+  </script-->
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+
+      <a class="brand" href="/">Yaka CRM</a>
+
+      <ul class="nav">
+        {% for tab in g.tabs %}
+        <li><a href="/{{tab.id}}/">{{tab.label}}</a></li>
+        {% endfor %}
+      </ul>
+
+      <ul class="nav pull-right">
+        <li id="fat-menu" class="dropdown">
+
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{g.user.name}}<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/users/{{g.user.uid}}">My profile</a></li>
+            <li><a href="/users/{{g.user.uid}}/edit">Edit profile</a></li>
+            <li><a href="/help">Help</a></li>
+            <li class="divider"></li>
+            <li><a href="/logout">Log out</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <form class="navbar-search pull-right" action="/search">
+        <input type="text" name="q" class="search-query" placeholder="Search">
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+
+  <div class="row">
+
+    <div class="span12">
+
+      <ul class="nav nav-pills">
+        <li class="active"><a href="/">Home</a></li>
+        {% for tab in g.tabs %}
+        <li><a href="/{{tab.id}}/">{{tab.label}}</a></li>
+        {% endfor %}
+      </ul>
+
+      <ul class="breadcrumb">
+        <li><a href="/">Home</a> <span class="divider">/</span></li>
+        <li class="active">{{g.tab.label}}</li>
+      </ul>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-block alert-{{category}}">
+              <a class="close" data-dismiss="alert">&times;</a>
+              {{message}}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block main %}
+      {% endblock %}
+    </div>
+    <!--/span-->
+  </div>
+  <!--/row-->
+
+  <hr>
+
+  <footer>
+    <p>&copy; Yaka Project 2012</p>
+  </footer>
+
+</div>
+<!--/.fluid-container-->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/bootstrap-dropdown.js"></script>
+<script src="/static/js/bootstrap-alert.js"></script>
+<script src="/static/js/bootstrap-button.js"></script>
+
+<!--
+<script src="/static/js/bootstrap-transition.js"></script>
+<script src="/static/js/bootstrap-modal.js"></script>
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script src="/static/js/bootstrap-tab.js"></script>
+<script src="/static/js/bootstrap-tooltip.js"></script>
+<script src="/static/js/bootstrap-popover.js"></script>
+<script src="/static/js/bootstrap-collapse.js"></script>
+<script src="/static/js/bootstrap-carousel.js"></script>
+<script src="/static/js/bootstrap-typeahead.js"></script>
+-->
+<script>
+  $('.dropdown-toggle').dropdown();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<script>
+$(document).ready(function() {
+  $('#contacts').dataTable( {
+    "aoColumns": [
+      { "asSorting": [] },
+      { "asSorting": [ "asc", "desc" ] },
+      { "asSorting": [ "desc", "asc" ] },
+      { "asSorting": [ "desc", "asc" ] },
+      null
+    ]
+  });
+} );
+</script>
+
+<form>
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="contacts">
+  <thead>
+  <tr>
+    <th width="2%"></th>
+    <th width="20%">{{ columns[0] }}</th>
+    {% for col in columns[1:] %}
+    <th width="20%">{{ col }}</th>
+    {% endfor %}
+  </tr>
+  </thead>
+  <tbody>
+  {% for object in objects %}
+    <tr>
+      <td><input type="checkbox"></td>
+      <td><a href="/contacts/{{object.uid}}">{{ getattr(object, columns[0]) }}</a></td>
+      {% for col in columns[1:] %}
+      <td>{{ getattr(object, col) }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+  <tr>
+    <th></th>
+    <th>{{ columns[0] }}</th>
+    {% for col in columns[1:] %}
+      <th>{{ col }}</th>
+    {% endfor %}
+  </tr>
+  </tfoot>
+</table>
+</form>
+{%  endblock %}

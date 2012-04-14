@@ -1,0 +1,7 @@
+.idea
+.tox
+.DS_Store
+whoosh*
+*.pyc
+*.egg-info
+yaka.db

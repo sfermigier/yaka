@@ -1,0 +1,12 @@
+TODO
+====
+
+- Box: "Recent items"
+
+DONE
+====
+
++ Project scaffold
++ Create data classes
++ Create views
++ Use datatable.net for tables
