@@ -17,7 +17,7 @@ from . import db
 
 
 #
-# Base classes (TODO: move to framework)
+# Base Entity classes (TODO: move to framework)
 #
 def meta(column, searchable=False, editable=True):
   """Utility function to add additional metadata to SQLAlchemy columns."""
@@ -46,12 +46,13 @@ class Entity(AbstractConcreteBase, db.Model):
   def __init__(self, **kw):
     self.update(kw)
 
+  @property
   def column_names(self):
     return [ col.name for col in class_mapper(self.__class__).mapped_table.c ]
 
   def update(self, d):
     for k, v in d.items():
-      assert k in self.column_names(), "%s not allowed" % k
+      assert k in self.column_names, "%s not allowed" % k
       if type(v) == type(""):
         v = unicode(v)
       setattr(self, k, v)
@@ -60,7 +61,7 @@ class Entity(AbstractConcreteBase, db.Model):
     if hasattr(self, "__exportable__"):
       exported = self.__exportable__
     else:
-      exported = self.column_names()
+      exported = self.column_names
     d = {}
     for k in exported:
       v = getattr(self, k)
@@ -72,15 +73,8 @@ class Entity(AbstractConcreteBase, db.Model):
   def to_json(self):
     return json.dumps(self.to_dict())
 
-
-class Panel(object):
-  def __init__(self, label=None, *rows):
-    self.label = label
-    self.rows = rows
-
-class Row(object):
-  def __init__(self, *cols):
-    self.cols = cols
+  def single_view(self):
+    return self.single_viewer.view(self)
 
 
 def register_meta(cls):
@@ -98,6 +92,112 @@ def register_meta(cls):
 
 
 event.listen(Entity, 'class_instrument', register_meta)
+
+
+#
+# View classes
+#
+class Table(object):
+  def __init__(self, viewer, entities):
+    self.viewer = viewer
+    self.entities = entities
+
+  @property
+  def column_names(self):
+    return self.viewer.column_names
+
+  def __getitem__(self, item):
+    return Line(self.viewer, self.entities[item])
+
+
+class Line(object):
+  def __init__(self, viewer, entity):
+    self.viewer = viewer
+    self.entity = entity
+
+  @property
+  def uid(self):
+    return self.entity.uid
+
+  @property
+  def column_names(self):
+    return self.viewer.column_names
+
+  def __getitem__(self, item):
+    if type(item) == int:
+      if item >= len(self.column_names):
+        raise IndexError
+      name = self.column_names[item]
+      return Cell(self.viewer, name, getattr(self.entity, name))
+    else:
+      cells = []
+      for i in range(*item.indices(len(self.column_names))):
+        name = self.column_names[i]
+        cells += [Cell(self.viewer, name, getattr(self.entity, name))]
+        print cells
+      return cells
+
+
+class Cell(object):
+  def __init__(self, viewer, name, value):
+    self.viewer = viewer
+    self.name = name
+    self.value = value
+
+  def __str__(self):
+    return str(self.value)
+
+
+class ListViewer(object):
+
+  _column_names = None
+
+  def __init__(self, *columns):
+    self.columns = columns
+
+  @property
+  def column_names(self):
+    if not self._column_names:
+      column_names = []
+      for c in self.columns:
+        if type(c) == str:
+          column_names += [c]
+        else:
+          column_names += [c.name]
+      self._column_names = column_names
+    return self._column_names
+
+  def view(self, entities):
+    return Table(self, entities)
+
+
+class SingleView(object):
+  def __init__(self, viewer, entity):
+    self.viewer = viewer
+    self.entity = entity
+
+  def column_names(self):
+    pass
+
+
+class SingleViewer(object):
+  def __init__(self, *columns):
+    self.columns = columns
+
+  def view(self, entity):
+    return SingleView(self, entity)
+
+
+class Panel(object):
+  def __init__(self, label=None, *rows):
+    self.label = label
+    self.rows = rows
+
+
+class Row(object):
+  def __init__(self, *cols):
+    self.cols = cols
+
 
 #
 # Domain classes
@@ -119,14 +219,16 @@ class Account(Entity):
   meta(industry)
 
   # More stuff
-  __list_view__ = ['name', 'website']
+  #__list_view__ = ['name', 'website', 'type', 'industry']
 
-  __view__ = [
+  __list_viewer__ = ListViewer(name, website, type, industry)
+
+  __single_viewer__ = SingleViewer(
     Panel('Overview',
-      Row('name', 'website')),
+          Row(name, website)),
     Panel('More information',
-      Row('type', 'industry'))
-  ]
+          Row(type, industry)),
+  )
 
 
 class Contact(Entity):
@@ -147,7 +249,8 @@ class Contact(Entity):
   meta(department, searchable=True)
 
   # Views
-  __list_view__ = ['name', 'job_title', 'department', 'email']
+  __list_viewer__ = ListViewer('name', job_title, department, email)
+
   __view__ = [
     Panel('Overview',
           Row('first_name', 'last_name')),

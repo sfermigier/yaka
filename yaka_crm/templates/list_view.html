@@ -7,10 +7,9 @@ $(document).ready(function() {
   $('#contacts').dataTable( {
     "aoColumns": [
       { "asSorting": [] },
+      {% for col in range(1, table.column_names|count) %}
       { "asSorting": [ "asc", "desc" ] },
-      { "asSorting": [ "desc", "asc" ] },
-      { "asSorting": [ "desc", "asc" ] },
-      null
+      {% endfor %}
     ]
   });
 } );
@@ -21,19 +20,19 @@ $(document).ready(function() {
   <thead>
   <tr>
     <th width="2%"></th>
-    <th width="20%">{{ columns[0] }}</th>
-    {% for col in columns[1:] %}
-    <th width="20%">{{ col }}</th>
+    <th width="20%">{{ table.column_names[0] }}</th>
+    {% for name in table.column_names[1:] %}
+    <th width="20%">{{ name }}</th>
     {% endfor %}
   </tr>
   </thead>
   <tbody>
-  {% for entity in entities %}
+  {% for line in table %}
     <tr>
       <td><input type="checkbox"></td>
-      <td><a href="/contacts/{{entity.uid}}">{{ getattr(entity, columns[0]) }}</a></td>
-      {% for col in columns[1:] %}
-      <td>{{ getattr(entity, col) }}</td>
+      <td><a href="/contacts/{{line.uid}}">{{ line[0] }}</a></td>
+      {% for cell in line[1:] %}
+      <td>{{ cell }}</td>
       {% endfor %}
     </tr>
   {% endfor %}
@@ -41,9 +40,9 @@ $(document).ready(function() {
   <tfoot>
   <tr>
     <th></th>
-    <th>{{ columns[0] }}</th>
-    {% for col in columns[1:] %}
-      <th>{{ col }}</th>
+    <th>{{ table.column_names[0] }}</th>
+    {% for name in table.column_names[1:] %}
+      <th>{{ name }}</th>
     {% endfor %}
   </tr>
   </tfoot>
