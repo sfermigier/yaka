@@ -8,6 +8,7 @@ from sqlalchemy.orm.query import Query
 from sqlalchemy.orm.util import class_mapper
 from sqlalchemy.schema import Column, Table, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
+from sqlalchemy import event
 
 from . import db
 
@@ -16,14 +17,30 @@ from . import db
 
 
 #
-# Base classes
+# Base classes (TODO: move to framework)
 #
+def meta(column, searchable=False, editable=True):
+  """Utility function to add additional metadata to SQLAlchemy columns."""
+
+  class Meta(object):
+    pass
+  m = column.__yaka_meta__ = Meta()
+  m.searchable = searchable
+  m.editable = editable
+
+
 class Entity(AbstractConcreteBase, db.Model):
+  """Base class for Yaka entities."""
+
   uid = Column(Integer, primary_key=True)
 
   created_at = Column(DateTime, default=datetime.utcnow)
   updated_at = Column(DateTime, default=datetime.utcnow)
   deleted_at = Column(DateTime, default=datetime.utcnow)
+
+  meta(created_at, editable=False),
+  meta(updated_at, editable=False),
+  meta(deleted_at, editable=False),
 
 
   def __init__(self, **kw):
@@ -65,13 +82,28 @@ class Row(object):
   def __init__(self, *cols):
     self.cols = cols
 
+
+def register_meta(cls):
+  cls.__editable__ = set()
+  cls.__searchable__ = set()
+
+  for name, value in vars(cls).items():
+    if not hasattr(value, '__yaka_meta__'):
+      continue
+    meta = value.__yaka_meta__
+    if meta.editable:
+      cls.__editable__.add(name)
+    if meta.searchable:
+      cls.__searchable__.add(name)
+
+
+event.listen(Entity, 'class_instrument', register_meta)
+
 #
 # Domain classes
 #
-
 class Account(Entity):
 
-  # ORM stuff
   __tablename__ = 'account'
 
   name = Column(UnicodeText)
@@ -80,10 +112,13 @@ class Account(Entity):
   type = Column(UnicodeText)
   industry = Column(UnicodeText)
 
-  # More stuff
-  __searchable__ = ['website']
-  __editable__ = ['name', 'website']
+  # Additional metadata
+  meta(name, searchable=True)
+  meta(website)
+  meta(type)
+  meta(industry)
 
+  # More stuff
   __list_view__ = ['name', 'website']
 
   __view__ = [
@@ -105,9 +140,13 @@ class Contact(Entity):
 
   email = Column(UnicodeText)
 
-  #__searchable__ = ['first_name', 'last_name', 'job_title', 'department']
-  __editable__ = ['first_name', 'last_name', 'job_title', 'department', 'email']
+  # Meta
+  meta(first_name, searchable=True)
+  meta(last_name, searchable=True)
+  meta(job_title, searchable=True)
+  meta(department, searchable=True)
 
+  # Views
   __list_view__ = ['name', 'job_title', 'department', 'email']
   __view__ = [
     Panel('Overview',
@@ -115,7 +154,6 @@ class Contact(Entity):
     Panel('More information',
           Row('department', 'email'))
   ]
-
 
   @property
   def name(self):
@@ -133,7 +171,7 @@ class Lead(Entity):
 
   email = Column(UnicodeText)
 
-  __editable__ = ['first_name', 'last_name', 'job_title', 'department', 'email']
+  #__editable__ = ['first_name', 'last_name', 'job_title', 'department', 'email']
 
   __list_view__ = ['name', 'job_title', 'department', 'email']
   __view__ = [
@@ -155,7 +193,7 @@ class Opportunity(Entity):
 
   email = Column(UnicodeText)
 
-  __editable__ = ['first_name', 'last_name', 'job_title', 'department', 'email']
+  #__editable__ = ['first_name', 'last_name', 'job_title', 'department', 'email']
 
   __list_view__ = ['name', 'job_title', 'department', 'email']
   __view__ = [
@@ -178,7 +216,7 @@ class User(Entity):
   password = Column(UnicodeText)
 
   #__searchable__ = ['first_name', 'last_name', 'job_title']
-  __editable__ = ['first_name', 'last_name', 'job_title', 'email']
+  #__editable__ = ['first_name', 'last_name', 'job_title', 'email']
 
   @property
   def name(self):

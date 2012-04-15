@@ -63,10 +63,31 @@ def home():
   # TODO: dashboard
   return "OK"
 
+
+@app.route("/admin")
+def admin():
+  # TODO: admin
+  return "ADMIN"
+
+
+@app.route("/help")
+def help():
+  # TODO: help
+  return "HELP"
+
+
 @app.route("/<tab_id>/")
 def list_view(tab_id):
   g.tab = get_tab_for(tab_id)
   class_ = g.tab['class']
-  contacts = getattr(class_, 'query').all()
+  entities = getattr(class_, 'query').all()
   columns = class_.__list_view__
-  return render_template('list_view.html', objects=contacts, columns=columns, getattr=getattr)
+  return render_template('list_view.html', entities=entities, columns=columns, getattr=getattr)
+
+@app.route("/<tab_id>/<int:entity_id>")
+def entity_view(tab_id, entity_id):
+  g.tab = get_tab_for(tab_id)
+  class_ = g.tab['class']
+  entities = getattr(class_, 'query').get(entity_id)
+  columns = class_.__list_view__
+  return render_template('entity_view.html', entities=entities, columns=columns, getattr=getattr)

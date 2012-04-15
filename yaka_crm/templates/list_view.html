@@ -28,12 +28,12 @@ $(document).ready(function() {
   </tr>
   </thead>
   <tbody>
-  {% for object in objects %}
+  {% for entity in entities %}
     <tr>
       <td><input type="checkbox"></td>
-      <td><a href="/contacts/{{object.uid}}">{{ getattr(object, columns[0]) }}</a></td>
+      <td><a href="/contacts/{{entity.uid}}">{{ getattr(entity, columns[0]) }}</a></td>
       {% for col in columns[1:] %}
-      <td>{{ getattr(object, col) }}</td>
+      <td>{{ getattr(entity, col) }}</td>
       {% endfor %}
     </tr>
   {% endfor %}
