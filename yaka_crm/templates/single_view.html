@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+{% for panel in view.panels %}
+  <h2>{{ panel.label }}</h2>
+
+  {% for row in panel %}
+    {% if row|count == 1 %}
+      <p>
+        {{ row[0] }}: {{ view.get(panel, row, 0) }}
+      </p>
+    {%  else %}
+      <p>
+        {{ row[0] }}: {{ view.get(panel, row, 0) }}
+        {{ row[1] }}: {{ view.get(panel, row, 1) }}
+      </p>
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+{%  endblock %}

@@ -24,6 +24,7 @@ def meta(column, searchable=False, editable=True):
 
   class Meta(object):
     pass
+
   m = column.__yaka_meta__ = Meta()
   m.searchable = searchable
   m.editable = editable
@@ -74,7 +75,11 @@ class Entity(AbstractConcreteBase, db.Model):
     return json.dumps(self.to_dict())
 
   def single_view(self):
-    return self.single_viewer.view(self)
+    return self.__single_viewer__.view(self)
+
+  @classmethod
+  def list_view(cls, entities):
+    return cls.__list_viewer__.view(entities)
 
 
 def register_meta(cls):
@@ -176,13 +181,30 @@ class SingleView(object):
     self.viewer = viewer
     self.entity = entity
 
-  def column_names(self):
-    pass
+  @property
+  def panels(self):
+    return self.viewer.panels
+
+  def get(self, panel, row=None, col=None):
+    panel_index = self.viewer.panels.index(panel)
+    panel = self.viewer.panels[panel_index]
+
+    if row is None:
+      return panel
+
+    row_index = panel.rows.index(row)
+    row = panel.rows[row_index]
+
+    if col is None:
+      return row
+
+    attr_name = row.cols[col]
+    return getattr(self.entity, attr_name)
 
 
 class SingleViewer(object):
-  def __init__(self, *columns):
-    self.columns = columns
+  def __init__(self, *panels):
+    self.panels = panels
 
   def view(self, entity):
     return SingleView(self, entity)
@@ -193,10 +215,28 @@ class Panel(object):
     self.label = label
     self.rows = rows
 
+  def __iter__(self):
+    return iter(self.rows)
+
+  def __getitem__(self, item):
+    return self.rows[item]
+
+  def __len__(self):
+    return len(self.rows)
+
 
 class Row(object):
   def __init__(self, *cols):
     self.cols = cols
+
+  def __iter__(self):
+    return iter(self.cols)
+
+  def __getitem__(self, item):
+    return self.cols[item]
+
+  def __len__(self):
+    return len(self.cols)
 
 
 #
@@ -219,20 +259,17 @@ class Account(Entity):
   meta(industry)
 
   # More stuff
-  #__list_view__ = ['name', 'website', 'type', 'industry']
-
   __list_viewer__ = ListViewer(name, website, type, industry)
 
   __single_viewer__ = SingleViewer(
     Panel('Overview',
-          Row(name, website)),
+          Row('name', 'website')),
     Panel('More information',
-          Row(type, industry)),
+          Row('type', 'industry')),
   )
 
-
-class Contact(Entity):
-  __tablename__ = 'contact'
+class Person(object):
+  """Mixin class for persons."""
 
   first_name = Column(UnicodeText)
   last_name = Column(UnicodeText)
@@ -248,41 +285,30 @@ class Contact(Entity):
   meta(job_title, searchable=True)
   meta(department, searchable=True)
 
-  # Views
-  __list_viewer__ = ListViewer('name', job_title, department, email)
-
-  __view__ = [
-    Panel('Overview',
-          Row('first_name', 'last_name')),
-    Panel('More information',
-          Row('department', 'email'))
-  ]
-
   @property
   def name(self):
     return self.first_name + " " + self.last_name
 
 
-class Lead(Entity):
-  __tablename__ = 'lead'
+class Contact(Entity, Person):
+  __tablename__ = 'contact'
 
-  first_name = Column(UnicodeText)
-  last_name = Column(UnicodeText)
+  # Views
+  __list_viewer__ = ListViewer('name', 'job_title', 'department', 'email')
 
-  job_title = Column(UnicodeText)
-  department = Column(UnicodeText)
-
-  email = Column(UnicodeText)
-
-  #__editable__ = ['first_name', 'last_name', 'job_title', 'department', 'email']
-
-  __list_view__ = ['name', 'job_title', 'department', 'email']
   __view__ = [
     Panel('Overview',
           Row('first_name', 'last_name')),
     Panel('More information',
           Row('department', 'email'))
   ]
+
+
+class Lead(Entity, Person):
+  __tablename__ = 'lead'
+
+  # Views
+  __list_viewer__ = ListViewer('name', 'job_title', 'department', 'email')
 
 
 class Opportunity(Entity):
@@ -307,23 +333,11 @@ class Opportunity(Entity):
   ]
 
 
-class User(Entity):
+class User(Entity, Person):
   __tablename__ = 'user'
 
-  first_name = Column(UnicodeText)
-  last_name = Column(UnicodeText)
-
-  job_title = Column(UnicodeText)
-
-  email = Column(UnicodeText)
   password = Column(UnicodeText)
 
-  #__searchable__ = ['first_name', 'last_name', 'job_title']
-  #__editable__ = ['first_name', 'last_name', 'job_title', 'email']
-
-  @property
-  def name(self):
-    return self.first_name + " " + self.last_name
 
 # TODO: Address
 # TODO: Task

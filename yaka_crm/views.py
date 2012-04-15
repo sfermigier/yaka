@@ -82,15 +82,15 @@ def list_view(tab_id):
   cls = g.tab['class']
   entities = getattr(cls, 'query').all()
 
-  viewer = cls.__list_viewer__
-  table = viewer.view(entities)
+  table = cls.list_view(entities)
   return render_template('list_view.html', table=table)
 
 
 @app.route("/tab/<tab_id>/<int:entity_id>")
 def entity_view(tab_id, entity_id):
   g.tab = get_tab_for(tab_id)
-  class_ = g.tab['class']
-  entities = getattr(class_, 'query').get(entity_id)
-  columns = class_.__list_view__
-  return render_template('entity_view.html', entities=entities, columns=columns, getattr=getattr)
+  cls = g.tab['class']
+  entity = getattr(cls, 'query').get(entity_id)
+
+  view = entity.single_view()
+  return render_template('single_view.html', view=view)
