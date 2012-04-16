@@ -259,6 +259,7 @@ class Account(Entity):
 
   name = Column(UnicodeText)
   website = Column(UnicodeText)
+  office_phone = Column(UnicodeText)
 
   type = Column(UnicodeText)
   industry = Column(UnicodeText)
@@ -268,6 +269,7 @@ class Account(Entity):
   # Additional metadata
   meta(name, searchable=True)
   meta(website)
+  meta(office_phone)
   meta(type)
   meta(industry)
 
@@ -278,7 +280,8 @@ class Account(Entity):
 
   __single_viewer__ = SingleViewer(
     Panel('Overview',
-          Row('name', 'website')),
+          Row('name', 'website'),
+          Row('office_phone')),
     Panel('More information',
           Row('type', 'industry')),
   )
@@ -298,6 +301,7 @@ class Person(object):
   department = Column(UnicodeText)
 
   email = Column(UnicodeText)
+  description = Column(UnicodeText)
 
   # Meta
   meta(first_name, searchable=True)
@@ -326,7 +330,8 @@ class Contact(Entity, Person):
 
   __single_viewer__ = SingleViewer(
     Panel('Overview',
-          Row('first_name', 'last_name')),
+          Row('full_name'),
+          Row('description')),
     Panel('More information',
           Row('department', 'email')),
   )

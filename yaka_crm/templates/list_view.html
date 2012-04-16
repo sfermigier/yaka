@@ -7,7 +7,7 @@ $(document).ready(function() {
   $('#contacts').dataTable( {
     "aoColumns": [
       { "asSorting": [] },
-      {% for col in range(2, table.column_names|count) %}
+      {% for i in range(2, table.column_names|count) %}
       { "asSorting": [ "asc", "desc" ] },
       {% endfor %}
       { "asSorting": [ "asc", "desc" ] }
@@ -22,7 +22,7 @@ $(document).ready(function() {
   <tr>
     <th width="2%"></th>
     {% for name in table.column_names %}
-    <th width="20%">{{ name }}</th>
+    <th width="20%">{{ name|labelize }}</th>
     {% endfor %}
   </tr>
   </thead>
@@ -41,7 +41,7 @@ $(document).ready(function() {
   <tr>
     <th></th>
     {% for name in table.column_names %}
-    <th>{{ name }}</th>
+    <th>{{ name|labelize }}</th>
     {% endfor %}
   </tr>
   </tfoot>

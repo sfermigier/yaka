@@ -129,7 +129,7 @@
         <li><a href="{{ obj.path }}">{{ obj.label }}</a>
         <span class="divider">/</span></li>
         {% endfor %}
-        <li class="active">{{ g.breadcrumbs[-1].label }}</li>
+        <li class="active"><strong>{{ g.breadcrumbs[-1].label }}</strong></li>
       </ul>
 
       {% with messages = get_flashed_messages(with_categories=true) %}

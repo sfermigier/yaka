@@ -4,13 +4,7 @@ body {
 }
 
 .navbar-inner {
-    background-color: #154447;
-    background-image: none;
-}
-
-h2 {
-    font-size: 16px;
-    line-height: 24px;
+    background: #154447 none;
 }
 
 .avatar a {

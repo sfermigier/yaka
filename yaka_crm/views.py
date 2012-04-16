@@ -40,11 +40,18 @@ def get_tab_for(id):
     if d['id'] == id:
       return d
 
+
 @app.before_request
 def before_request():
   g.user = User.query.get(1)
   g.tabs = TABS
   g.breadcrumbs = [dict(path='/', label='Home')]
+
+
+@app.template_filter('labelize')
+def labelize(s):
+  return " ".join([ w.capitalize() for w in s.split("_") ])
+
 
 #  user_id = session.get("user_id")
 #  if user_id:
@@ -102,6 +109,25 @@ def entity_view(tab_id, entity_id):
 
   view = entity.single_view()
   return render_template('single_view.html', view=view)
+
+
+@app.route("/tab/<tab_id>/<int:entity_id>/edit")
+def entity_edit(tab_id, entity_id):
+  g.tab_id = tab_id
+  g.tab = get_tab_for(tab_id)
+  g.breadcrumbs.append(dict(path="/tab/%s" % tab_id, label=g.tab['label']))
+
+  cls = g.tab['class']
+  entity = getattr(cls, 'query').get(entity_id)
+  g.breadcrumbs.append(dict(path="", label=entity.display_name))
+
+  view = entity.single_view()
+  return render_template('edit_view.html', view=view)
+
+
+@app.route("/tab/<tab_id>/<int:entity_id>/delete")
+def entity_delete(tab_id, entity_id):
+  return "deleted"
 
 
 @app.route("/search")

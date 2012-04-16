@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<form>
+<a class="btn btn-primary" href="#"><i class="icon-ok icon-white"></i> Save changes</a>
+<a class="btn" href="{{ request.path }}/.."><i class="icon-remove"></i> Cancel</a>
+
+{% for panel in view.panels %}
+<div class="panel" style="border-top: 1px solid; margin-top: 10px;">
+  <h2>{{ panel.label }}</h2>
+
+  <table class="table table-striped" style="margin: 10px 0 15px 0;">
+    <tbody>
+    {% for row in panel %}
+    {% if row|count == 1 %}
+      <tr class="row">
+        <th class="span2">{{ row[0]|labelize}}</th>
+        <td class="span12" colspan="3"><input type="text" value="{{ view.get(panel, row, 0) }}"></td>
+      </tr>
+    {%  else %}
+      <tr class="row">
+        <th class="span2">{{ row[0]|labelize }}</th>
+        <td class="span5"><input type="text" value="{{ view.get(panel, row, 0) }}"></td>
+        <th class="span2">{{ row[1]|labelize }}</th>
+        <td class="span5"><input type="text" value="{{ view.get(panel, row, 1) }}"></td>
+      </tr>
+    {% endif %}
+    </tbody>
+    {% endfor %}
+  </table>
+
+</div>
+{% endfor %}
+<a class="btn btn-primary" href="#"><i class="icon-ok icon-white"></i> Save changes</a>
+<a class="btn" href="#"><i class="icon-remove"></i> Cancel</a>
+</form>
+
+{% endblock %}

@@ -2,21 +2,34 @@
 
 {% block main %}
 
+<a class="btn" href="{{ request.path }}/edit"><i class="icon-edit"></i> Edit</a>
+<a class="btn btn-danger" href="{{ request.path }}/delete"><i class="icon-trash icon-white"></i> Delete</a>
+
 {% for panel in view.panels %}
+<div class="panel" style="border-top: 1px solid; margin-top: 10px;">
   <h2>{{ panel.label }}</h2>
 
-  {% for row in panel %}
+  <table class="table table-striped table-condensed" style="margin: 10px 0 15px 0;">
+    <tbody>
+    {% for row in panel %}
     {% if row|count == 1 %}
-      <p>
-        {{ row[0] }}: {{ view.get(panel, row, 0) }}
-      </p>
+      <tr class="row">
+        <th class="span2">{{ row[0]|labelize}}</th>
+        <td class="span12" colspan="3">{{ view.get(panel, row, 0) }}</td>
+      </tr>
     {%  else %}
-      <p>
-        {{ row[0] }}: {{ view.get(panel, row, 0) }}
-        {{ row[1] }}: {{ view.get(panel, row, 1) }}
-      </p>
+      <tr class="row">
+        <th class="span2">{{ row[0]|labelize }}</th>
+        <td class="span5">{{ view.get(panel, row, 0) }}</td>
+        <th class="span2">{{ row[1]|labelize }}</th>
+        <td class="span5">{{ view.get(panel, row, 1) }}</td>
+      </tr>
     {% endif %}
-  {% endfor %}
+    </tbody>
+    {% endfor %}
+  </table>
+
+</div>
 {% endfor %}
 
-{%  endblock %}
+{% endblock %}
