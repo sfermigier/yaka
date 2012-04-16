@@ -1,6 +1,6 @@
 from flaskext.testing import TestCase
 
-from yaka_crm import app, db, finish_setup
+from yaka_crm import app, db
 from yaka_crm.config import TestConfig
 
 import yaka_crm.views # Don't remove
@@ -10,7 +10,6 @@ class TestViews(TestCase):
 
   def create_app(self):
     app.config.from_object(TestConfig())
-    finish_setup()
     return app
 
   def setUp(self):

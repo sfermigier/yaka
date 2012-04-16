@@ -318,7 +318,7 @@ class Person(object):
     return self.full_name
 
 
-class Contact(Entity, Person):
+class Contact(Person, Entity):
   __tablename__ = 'contact'
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
@@ -337,7 +337,7 @@ class Contact(Entity, Person):
   )
 
 
-class Lead(Entity, Person):
+class Lead(Person, Entity):
   __tablename__ = 'lead'
 
   # Views
@@ -372,7 +372,7 @@ class Opportunity(Entity):
   )
 
 
-class User(Entity, Person):
+class User(Person, Entity):
   __tablename__ = 'user'
 
   password = Column(UnicodeText)

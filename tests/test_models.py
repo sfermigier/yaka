@@ -1,7 +1,7 @@
-from nose.tools import eq_, ok_, raises
+from nose.tools import eq_, ok_
 from flaskext.testing import TestCase
 
-from yaka_crm import app, db, finish_setup
+from yaka_crm import app, db
 from yaka_crm.config import TestConfig
 from yaka_crm.entities import *
 
@@ -12,7 +12,6 @@ class TestModels(TestCase):
 
   def create_app(self):
     app.config.from_object(TestConfig())
-    finish_setup()
     return app
 
   def setUp(self):
