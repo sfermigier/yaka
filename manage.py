@@ -2,11 +2,12 @@
 
 from flaskext.script import Manager
 
-from yaka_crm import app, db, entities, views
+from yaka_crm import app, db, entities, views, finish_setup
 from config import DebugConfig
 
 # Config
 app.config.from_object(DebugConfig())
+finish_setup()
 
 # Manager
 manager = Manager(app)

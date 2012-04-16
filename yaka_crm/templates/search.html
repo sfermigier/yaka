@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+  {% if contacts %}
+    {% if contacts|count > 1 %}
+      <h2>Contacts ({{contacts|count}} matches)</h2>
+    {% else %}
+      <h2>Contacts (1 match)</h2>
+    {% endif %}
+
+    {% for contact in contacts %}
+      <p><img src="/static/img/avatar45.png" />
+        <strong><a href="/tab/contacts/{{contact.uid}}">{{contact.full_name}}</a></strong>
+      </p>
+    {% endfor %}
+  {% endif %}
+
+{%  endblock %}

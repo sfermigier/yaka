@@ -1,7 +1,7 @@
 from nose.tools import eq_, ok_, raises
 from flaskext.testing import TestCase
 
-from yaka_crm import app
+from yaka_crm import app, db, finish_setup
 from yaka_crm.config import TestConfig
 from yaka_crm.entities import *
 
@@ -12,6 +12,7 @@ class TestModels(TestCase):
 
   def create_app(self):
     app.config.from_object(TestConfig())
+    finish_setup()
     return app
 
   def setUp(self):
@@ -42,6 +43,9 @@ class TestModels(TestCase):
     table = Contact.list_view([contact])
     name_cell = table[0][0]
     eq_("John Test User", str(name_cell))
+
+    contacts = list(Contact.search_query(u"john").all())
+    eq_(1, len(contacts))
 
   def test_account(self):
     account = Account(name="John SARL")

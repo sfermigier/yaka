@@ -94,3 +94,14 @@ def entity_view(tab_id, entity_id):
 
   view = entity.single_view()
   return render_template('single_view.html', view=view)
+
+
+@app.route("/search")
+def search():
+  q = request.args.get("q")
+  g.tab = get_tab_for('accounts')
+
+  contacts = list(Contact.search_query(q).all())
+  accounts = list(Account.search_query(q).all())
+
+  return render_template('search.html', contacts=contacts, accounts=accounts)

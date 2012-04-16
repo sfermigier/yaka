@@ -1,18 +1,9 @@
 from flask import Flask
-
-from flaskext.mail import Mail
-from flaskext.openid import OpenID
-from flask_sqlalchemy import SQLAlchemy
-from flaskext.cache import Cache
 from whooshalchemy import IndexService
 
-__all__ = ['oid', 'mail', 'db', 'cache', 'app']
+from .extensions import *
 
-# Create helpers
-oid = OpenID()
-mail = Mail()
-db = SQLAlchemy()
-cache = Cache()
+__all__ = ['oid', 'mail', 'db', 'cache', 'app', 'finish_setup']
 
 # Create app
 app = Flask(__name__)
@@ -20,9 +11,15 @@ app = Flask(__name__)
 # Initialise helpers and services
 db.init_app(app)
 
+# TODO: autodiscovery of searchable classes
+from yaka_crm import entities
 index_service = IndexService(app.config)
-#index_service.register_class(models.User)
-#index_service.register_class(models.Message)
+print entities.Contact.__searchable__
+index_service.register_class(entities.Contact)
+index_service.register_class(entities.Account)
+
+def finish_setup():
+  pass
 
 # Register blueprints
 #app.register_blueprint(restapi)

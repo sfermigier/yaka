@@ -10,7 +10,7 @@ from sqlalchemy.schema import Column, Table, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
 from sqlalchemy import event
 
-from . import db
+from .extensions import db
 
 # TODO: get rid of flask-sqlalchemy, replace db.Model by Base
 #Base = declarative_base()
@@ -86,7 +86,8 @@ def register_meta(cls):
   cls.__editable__ = set()
   cls.__searchable__ = set()
 
-  for name, value in vars(cls).items():
+  for name in dir(cls):
+    value = getattr(cls, name)
     if not hasattr(value, '__yaka_meta__'):
       continue
     meta = value.__yaka_meta__
