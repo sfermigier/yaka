@@ -31,6 +31,7 @@ class TestModels(TestCase):
 
   def test_contact(self):
     contact = Contact(first_name="John", last_name="Test User", email="test@example.com")
+
     self.check_editable(contact)
 
     self.session.add(contact)
@@ -39,7 +40,8 @@ class TestModels(TestCase):
     ok_(datetime.utcnow() - contact.created_at < timedelta(1))
 
     table = Contact.list_view([contact])
-    eq_("John Test User", str(table[0][0]))
+    name_cell = table[0][0]
+    eq_("John Test User", str(name_cell))
 
   def test_account(self):
     account = Account(name="John SARL")

@@ -286,7 +286,7 @@ class Person(object):
   meta(department, searchable=True)
 
   @property
-  def name(self):
+  def full_name(self):
     return self.first_name + " " + self.last_name
 
 
@@ -294,43 +294,44 @@ class Contact(Entity, Person):
   __tablename__ = 'contact'
 
   # Views
-  __list_viewer__ = ListViewer('name', 'job_title', 'department', 'email')
+  __list_viewer__ = ListViewer('full_name', 'job_title', 'department', 'email')
 
-  __view__ = [
+  __single_viewer__ = SingleViewer(
     Panel('Overview',
           Row('first_name', 'last_name')),
     Panel('More information',
-          Row('department', 'email'))
-  ]
+          Row('department', 'email')),
+  )
 
 
 class Lead(Entity, Person):
   __tablename__ = 'lead'
 
   # Views
-  __list_viewer__ = ListViewer('name', 'job_title', 'department', 'email')
+  __list_viewer__ = ListViewer('full_name', 'job_title', 'department', 'email')
+  __single_viewer__ = SingleViewer(
+    Panel('Overview',
+          Row('first_name', 'last_name')),
+    Panel('More information',
+          Row('department', 'email')),
+  )
 
 
 class Opportunity(Entity):
   __tablename__ = 'opportunity'
 
-  first_name = Column(UnicodeText)
-  last_name = Column(UnicodeText)
+  name = Column(UnicodeText)
 
-  job_title = Column(UnicodeText)
-  department = Column(UnicodeText)
+  account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
 
-  email = Column(UnicodeText)
+  __list_viewer__ = ListViewer('name')
 
-  #__editable__ = ['first_name', 'last_name', 'job_title', 'department', 'email']
-
-  __list_view__ = ['name', 'job_title', 'department', 'email']
-  __view__ = [
+  __single_viewer__ = SingleViewer(
     Panel('Overview',
           Row('first_name', 'last_name')),
     Panel('More information',
-          Row('department', 'email'))
-  ]
+          Row('department', 'email')),
+  )
 
 
 class User(Entity, Person):
