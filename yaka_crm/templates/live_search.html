@@ -1,0 +1,5 @@
+{% for contact in contacts %}
+  <li><img src="/static/img/avatar45.png" />
+    <strong><a href="/tab/contacts/{{contact.uid}}">{{contact.full_name}}</a></strong>
+  </li>
+{% endfor %}

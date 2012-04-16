@@ -30,23 +30,6 @@ class TestModels(TestCase):
         ok_(hasattr(object, k), "Property '%s' of object %s is not editable" % (k, object))
 
 
-  def test_contact(self):
-    contact = Contact(first_name="John", last_name="Test User", email="test@example.com")
-
-    self.check_editable(contact)
-
-    self.session.add(contact)
-    self.session.commit()
-
-    ok_(datetime.utcnow() - contact.created_at < timedelta(1))
-
-    table = Contact.list_view([contact])
-    name_cell = table[0][0]
-    eq_("John Test User", str(name_cell))
-
-    contacts = list(Contact.search_query(u"john").all())
-    eq_(1, len(contacts))
-
   def test_account(self):
     account = Account(name="John SARL")
     self.check_editable(account)
@@ -58,3 +41,22 @@ class TestModels(TestCase):
 
     table = Account.list_view([account])
     eq_("John SARL", str(table[0][0]))
+
+  def test_contact(self):
+    contact = Contact(first_name="John", last_name="Test User", email="test@example.com")
+    self.check_editable(contact)
+
+    account = Account(name="John SARL")
+    contact.account = account
+
+    self.session.add(account)
+    self.session.add(contact)
+    self.session.commit()
+
+    ok_(datetime.utcnow() - contact.created_at < timedelta(1))
+
+    table = Contact.list_view([contact])
+    eq_("John Test User", str(table[0][0]))
+
+    contacts = list(Contact.search_query(u"john").all())
+    eq_(1, len(contacts))

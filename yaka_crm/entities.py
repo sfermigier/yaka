@@ -253,6 +253,8 @@ class Account(Entity):
   type = Column(UnicodeText)
   industry = Column(UnicodeText)
 
+  contacts = relationship("Contact", backref='account')
+
   # Additional metadata
   meta(name, searchable=True)
   meta(website)
@@ -268,6 +270,11 @@ class Account(Entity):
     Panel('More information',
           Row('type', 'industry')),
   )
+
+  @property
+  def display_name(self):
+    return self.name
+
 
 class Person(object):
   """Mixin class for persons."""
@@ -290,11 +297,17 @@ class Person(object):
   def full_name(self):
     return self.first_name + " " + self.last_name
 
+  @property
+  def display_name(self):
+    return self.full_name
+
 
 class Contact(Entity, Person):
   __tablename__ = 'contact'
 
-  # Views
+  account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
+
+# Views
   __list_viewer__ = ListViewer('full_name', 'job_title', 'department', 'email')
 
   __single_viewer__ = SingleViewer(
