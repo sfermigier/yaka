@@ -1,6 +1,8 @@
 from datetime import datetime
 
 import json
+import cgi
+from jinja2._markupsafe import Markup
 
 from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
 from sqlalchemy.orm import relationship
@@ -151,7 +153,14 @@ class Cell(object):
     self.value = value
 
   def __str__(self):
-    return str(self.value)
+    if not self.value:
+      return ""
+    elif isinstance(self.value, Entity):
+      return Markup('<a href="/tab/%s/%d">%s</a>' % (
+        self.value.__tab__, self.value.uid, cgi.escape(self.value.display_name)
+      ))
+    else:
+      return str(self.value)
 
 
 class ListViewer(object):
@@ -245,6 +254,7 @@ class Row(object):
 #
 class Account(Entity):
 
+  # ORM
   __tablename__ = 'account'
 
   name = Column(UnicodeText)
@@ -261,7 +271,9 @@ class Account(Entity):
   meta(type)
   meta(industry)
 
-  # More stuff
+  # Presentation
+  __tab__ = 'accounts'
+
   __list_viewer__ = ListViewer(name, website, type, industry)
 
   __single_viewer__ = SingleViewer(
@@ -307,8 +319,10 @@ class Contact(Entity, Person):
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
 
-# Views
-  __list_viewer__ = ListViewer('full_name', 'job_title', 'department', 'email')
+  # Views
+  __tab__ = 'contacts'
+
+  __list_viewer__ = ListViewer('full_name', 'account', 'job_title', 'department', 'email')
 
   __single_viewer__ = SingleViewer(
     Panel('Overview',
@@ -322,6 +336,8 @@ class Lead(Entity, Person):
   __tablename__ = 'lead'
 
   # Views
+  __tab__ = 'leads'
+
   __list_viewer__ = ListViewer('full_name', 'job_title', 'department', 'email')
   __single_viewer__ = SingleViewer(
     Panel('Overview',
@@ -332,12 +348,15 @@ class Lead(Entity, Person):
 
 
 class Opportunity(Entity):
+  # ORM
   __tablename__ = 'opportunity'
 
   name = Column(UnicodeText)
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
 
+  # Presentation
+  __tab__ = 'opportunities'
   __list_viewer__ = ListViewer('name')
 
   __single_viewer__ = SingleViewer(
