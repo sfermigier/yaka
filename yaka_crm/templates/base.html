@@ -114,22 +114,22 @@
 
     <div class="span12">
 
-      {% if request.path.startswith("/tab/") %}
-      <ul class="nav nav-tabs">
+      {% if request.path.startswith("/crm/") %}
+      <!--ul class="nav nav-tabs">
         <li><a href="/">Home</a></li>
         {% for tab in g.tabs %}
         <li {% if g.tab_id == tab.id %}class="active"{% endif %}><a
           href="/tab/{{ tab.id }}/">{{ tab.label }}</a></li>
         {% endfor %}
-      </ul>
+      </ul-->
       {% endif %}
 
       <ul class="breadcrumb">
-        {% for obj in g.breadcrumbs[0:-1] %}
+        {% for obj in breadcrumbs[0:-1] %}
         <li><a href="{{ obj.path }}">{{ obj.label }}</a>
         <span class="divider">/</span></li>
         {% endfor %}
-        <li class="active"><strong>{{ g.breadcrumbs[-1].label }}</strong></li>
+        <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
       </ul>
 
       {% with messages = get_flashed_messages(with_categories=true) %}

@@ -12,10 +12,15 @@ app = Flask(__name__)
 db.init_app(app)
 
 # TODO: autodiscovery of searchable classes
-from yaka_crm import entities
+from .entities import Contact, Account
 index_service = IndexService(app.config)
-index_service.register_class(entities.Contact)
-index_service.register_class(entities.Account)
+index_service.register_class(Contact)
+index_service.register_class(Account)
+
+from .frontend import CRM
+
+crm = CRM(app)
+
 
 # Register blueprints
 #app.register_blueprint(restapi)

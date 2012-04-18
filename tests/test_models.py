@@ -38,9 +38,6 @@ class TestModels(TestCase):
 
     ok_(datetime.utcnow() - account.created_at < timedelta(1))
 
-    table = Account.list_view([account])
-    eq_("John SARL", str(table[0][0]))
-
   def test_contact(self):
     contact = Contact(first_name="John", last_name="Test User", email="test@example.com")
     self.check_editable(contact)
@@ -53,9 +50,6 @@ class TestModels(TestCase):
     self.session.commit()
 
     ok_(datetime.utcnow() - contact.created_at < timedelta(1))
-
-    table = Contact.list_view([contact])
-    eq_("John Test User", str(table[0][0]))
 
     contacts = list(Contact.search_query(u"john").all())
     eq_(1, len(contacts))

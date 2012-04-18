@@ -30,7 +30,7 @@ $(document).ready(function() {
   {% for line in table %}
     <tr>
       <td><input type="checkbox"></td>
-      <td><a href="/tab/{{ g.tab.id }}/{{line.uid}}">{{ line[0] }}</a></td>
+      <td><a href="{{ line.url }}">{{ line[0] }}</a></td>
       {% for cell in line[1:] %}
       <td>{{ cell }}</td>
       {% endfor %}

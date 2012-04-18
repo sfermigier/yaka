@@ -1,8 +1,6 @@
 from datetime import datetime
 
 import json
-import cgi
-from jinja2._markupsafe import Markup
 
 from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
 from sqlalchemy.orm import relationship
@@ -76,13 +74,6 @@ class Entity(AbstractConcreteBase, db.Model):
   def to_json(self):
     return json.dumps(self.to_dict())
 
-  def single_view(self):
-    return self.__single_viewer__.view(self)
-
-  @classmethod
-  def list_view(cls, entities):
-    return cls.__list_viewer__.view(entities)
-
 
 def register_meta(cls):
   cls.__editable__ = set()
@@ -100,154 +91,6 @@ def register_meta(cls):
 
 
 event.listen(Entity, 'class_instrument', register_meta)
-
-
-#
-# View classes
-#
-class Table(object):
-  def __init__(self, viewer, entities):
-    self.viewer = viewer
-    self.entities = entities
-
-  @property
-  def column_names(self):
-    return self.viewer.column_names
-
-  def __getitem__(self, item):
-    return Line(self.viewer, self.entities[item])
-
-
-class Line(object):
-  def __init__(self, viewer, entity):
-    self.viewer = viewer
-    self.entity = entity
-
-  @property
-  def uid(self):
-    return self.entity.uid
-
-  @property
-  def column_names(self):
-    return self.viewer.column_names
-
-  def __getitem__(self, item):
-    if type(item) == int:
-      if item >= len(self.column_names):
-        raise IndexError
-      name = self.column_names[item]
-      return Cell(self.viewer, name, getattr(self.entity, name))
-    else:
-      cells = []
-      for i in range(*item.indices(len(self.column_names))):
-        name = self.column_names[i]
-        cells += [Cell(self.viewer, name, getattr(self.entity, name))]
-        print cells
-      return cells
-
-
-class Cell(object):
-  def __init__(self, viewer, name, value):
-    self.viewer = viewer
-    self.name = name
-    self.value = value
-
-  def __str__(self):
-    if not self.value:
-      return ""
-    elif isinstance(self.value, Entity):
-      return Markup('<a href="/tab/%s/%d">%s</a>' % (
-        self.value.__tab__, self.value.uid, cgi.escape(self.value.display_name)
-      ))
-    else:
-      return str(self.value)
-
-
-class ListViewer(object):
-
-  _column_names = None
-
-  def __init__(self, *columns):
-    self.columns = columns
-
-  @property
-  def column_names(self):
-    if not self._column_names:
-      column_names = []
-      for c in self.columns:
-        if type(c) == str:
-          column_names += [c]
-        else:
-          column_names += [c.name]
-      self._column_names = column_names
-    return self._column_names
-
-  def view(self, entities):
-    return Table(self, entities)
-
-
-class SingleView(object):
-  def __init__(self, viewer, entity):
-    self.viewer = viewer
-    self.entity = entity
-
-  @property
-  def panels(self):
-    return self.viewer.panels
-
-  def get(self, panel, row=None, col=None):
-    panel_index = self.viewer.panels.index(panel)
-    panel = self.viewer.panels[panel_index]
-
-    if row is None:
-      return panel
-
-    row_index = panel.rows.index(row)
-    row = panel.rows[row_index]
-
-    if col is None:
-      return row
-
-    attr_name = row.cols[col]
-    return getattr(self.entity, attr_name)
-
-
-class SingleViewer(object):
-  def __init__(self, *panels):
-    self.panels = panels
-
-  def view(self, entity):
-    return SingleView(self, entity)
-
-
-class Panel(object):
-  def __init__(self, label=None, *rows):
-    self.label = label
-    self.rows = rows
-
-  def __iter__(self):
-    return iter(self.rows)
-
-  def __getitem__(self, item):
-    return self.rows[item]
-
-  def __len__(self):
-    return len(self.rows)
-
-
-class Row(object):
-  def __init__(self, *cols):
-    self.cols = cols
-
-  def __iter__(self):
-    return iter(self.cols)
-
-  def __getitem__(self, item):
-    return self.cols[item]
-
-  def __len__(self):
-    return len(self.cols)
-
 
 #
 # Domain classes
@@ -273,18 +116,6 @@ class Account(Entity):
   meta(type)
   meta(industry)
 
-  # Presentation
-  __tab__ = 'accounts'
-
-  __list_viewer__ = ListViewer(name, website, type, industry)
-
-  __single_viewer__ = SingleViewer(
-    Panel('Overview',
-          Row('name', 'website'),
-          Row('office_phone')),
-    Panel('More information',
-          Row('type', 'industry')),
-  )
 
   @property
   def display_name(self):
@@ -323,33 +154,9 @@ class Contact(Person, Entity):
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
 
-  # Views
-  __tab__ = 'contacts'
-
-  __list_viewer__ = ListViewer('full_name', 'account', 'job_title', 'department', 'email')
-
-  __single_viewer__ = SingleViewer(
-    Panel('Overview',
-          Row('full_name'),
-          Row('description')),
-    Panel('More information',
-          Row('department', 'email')),
-  )
-
 
 class Lead(Person, Entity):
   __tablename__ = 'lead'
-
-  # Views
-  __tab__ = 'leads'
-
-  __list_viewer__ = ListViewer('full_name', 'job_title', 'department', 'email')
-  __single_viewer__ = SingleViewer(
-    Panel('Overview',
-          Row('first_name', 'last_name')),
-    Panel('More information',
-          Row('department', 'email')),
-  )
 
 
 class Opportunity(Entity):
@@ -359,17 +166,6 @@ class Opportunity(Entity):
   name = Column(UnicodeText)
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
-
-  # Presentation
-  __tab__ = 'opportunities'
-  __list_viewer__ = ListViewer('name')
-
-  __single_viewer__ = SingleViewer(
-    Panel('Overview',
-          Row('first_name', 'last_name')),
-    Panel('More information',
-          Row('department', 'email')),
-  )
 
 
 class User(Person, Entity):
