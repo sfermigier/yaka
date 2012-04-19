@@ -41,11 +41,24 @@ class TestViews(TestCase):
     response = self.client.get("/crm/accounts/1")
     self.assert_200(response)
 
-    #response = self.client.get("/crm/contacts/")
-    #self.assert_200(response)
+  def test_contacts(self):
+    response = self.client.get("/crm/contacts/")
+    self.assert_200(response)
 
-    #response = self.client.get("/crm/contacts/1")
-    #self.assert_200(response)
+    response = self.client.get("/crm/contacts/1")
+    self.assert_200(response)
+
+  def test_leads(self):
+    response = self.client.get("/crm/leads/")
+    self.assert_200(response)
+
+  def test_opportunities(self):
+    response = self.client.get("/crm/opportunities/")
+    self.assert_200(response)
+
+  def test_documents(self):
+    response = self.client.get("/crm/documents/")
+    self.assert_200(response)
 
   def test_search(self):
     response = self.client.get("/search?q=john")

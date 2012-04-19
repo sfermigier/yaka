@@ -1,9 +1,8 @@
 import cgi
-from flask.globals import request
 import re
 from jinja2._markupsafe import Markup
 
-from flask.templating import render_template
+from flask import session, redirect, request, g, url_for, render_template
 from flask.blueprints import Blueprint
 
 from .entities import *
@@ -27,6 +26,20 @@ class BreadCrumbs(object):
 
   def __getitem__(self, item):
     return self._bc[item]
+
+
+def add_to_recent_items(entity=None):
+  g.recent_items.insert(0, dict(name=entity.name, url=entity.url))
+  s = set()
+  l = []
+  for item in g.recent_items:
+    if item['url'] in s:
+      continue
+    s.add(item['url'])
+    l.append(item)
+  if len(l) > 10:
+    del l[10:]
+  session['recent_items'] = g.recent_items = l
 
 
 #
@@ -56,13 +69,15 @@ class SingleEntityModel(object):
 class TableView(object):
   def __init__(self, columns):
     self.columns = columns
+    self.name = id(self)
 
   def render(self, model):
     table = []
     for entity in model:
       table.append(self.render_line(entity))
 
-    return Markup(render_template('render_table.html', table=table, column_names=self.columns))
+    return Markup(render_template('render_table.html', table=table, column_names=self.columns,
+                                  table_name=self.name))
 
   def render_line(self, entity):
     line = []
@@ -89,7 +104,21 @@ class SingleView(object):
       return self.get(model, attr_name)
     return Markup(render_template('render_single.html', panels=self.panels, get=get))
 
+  def render_for_edit(self, model):
+    def get(attr_name):
+      return self.get_for_edit(model, attr_name)
+    return Markup(render_template('render_for_edit.html', panels=self.panels, get=get))
+
   def get(self, model, attr_name):
+    value = getattr(model, attr_name)
+    if value is None:
+      return ""
+    elif isinstance(value, Entity):
+      return Markup('<a href="%s">%s</a>' % (value.url, cgi.escape(value.name)))
+    else:
+      return str(value)
+
+  def get_for_edit(self, model, attr_name):
     value = getattr(model, attr_name)
     if value is None:
       return ""
@@ -269,6 +298,7 @@ class Module(object):
 
     entity = self.managed_class.query.get(entity_id)
     bc.add("", entity.name)
+    add_to_recent_items(entity)
 
     rendered_entity = self.single_view.render(entity)
     related_views = self.render_related_views(entity)
@@ -285,6 +315,44 @@ class Module(object):
       rendered.append(obj)
     return rendered
 
+  @expose("/<int:entity_id>/edit")
+  def entity_edit(self, entity_id):
+    bc = BreadCrumbs()
+    bc.add("/", "Home")
+    bc.add("/crm/" + self.endpoint, self.label)
+
+    entity = self.managed_class.query.get(entity_id)
+    bc.add("", entity.name)
+    add_to_recent_items(entity)
+
+    rendered_entity = self.single_view.render_for_edit(entity)
+
+    return render_template('single_view.html', rendered_entity=rendered_entity,
+                           breadcrumbs=bc, module=self)
+
+  @expose("/<int:entity_id>/edit", methods=['POST'])
+  def entity_edit_post(self, entity_id):
+    return "OK"
+    bc = BreadCrumbs()
+    bc.add("/", "Home")
+    bc.add("/crm/" + self.endpoint, self.label)
+
+    entity = self.managed_class.query.get(entity_id)
+    bc.add("", entity.name)
+    add_to_recent_items(entity)
+
+    rendered_entity = self.single_view.render_for_edit(entity)
+
+    return render_template('single_view.html', rendered_entity=rendered_entity,
+                           breadcrumbs=bc, module=self)
+
+  @expose("/<int:entity_id>/delete")
+  def entity_delete(self, entity_id):
+    # TODO: don't really delete, switch state to "deleted"
+    entity = self.managed_class.query.get(entity_id)
+    db.session.delete(entity)
+    db.session.commit()
+    return redirect(self.url)
 
   @staticmethod
   def _prettify_name(name):
@@ -378,7 +446,18 @@ class Opportunities(Module):
     )
 
 
+class Documents(Module):
+  managed_class = Document
+
+  list_view_columns = ('name', 'owner')
+
+  single_view = SingleView(
+    Panel('Overview',
+          Row('name', 'owner')),
+    )
+
+
 class CRM(CRUD):
-  modules = [Accounts(), Contacts(), Opportunities(), Leads()]
+  modules = [Accounts(), Contacts(), Opportunities(), Leads(), Documents()]
 
   url = "/crm"

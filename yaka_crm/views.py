@@ -15,6 +15,7 @@ __all__ = []
 def before_request():
   g.user = User.query.get(1)
   g.modules = CRM.modules
+  g.recent_items = session.get('recent_items', [])
 
 
 @app.template_filter('labelize')

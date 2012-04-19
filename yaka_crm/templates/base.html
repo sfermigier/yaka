@@ -109,18 +109,46 @@
 
 <div class="container">
 
+  {% if request.path.startswith("/crm/") %}
+    <ul class="nav nav-tabs">
+      {% for module in g.modules %}
+        <li {% if module.is_current() %}class="active"{% endif %}><a
+                href="{{ module.url }}/">{{ module.label }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
   <div class="row">
+    <div class="span2">
+      <select class="span2">
+        <option>Create new...</option>
+        <option>Lead</option>
+        <option>Opportunity</option>
+        <option>Contact</option>
+        <option>Account</option>
+        <option>Document</option>
+      </select>
 
-    <div class="span12">
+      <div>&nbsp;</div>
 
-      {% if request.path.startswith("/crm/") %}
-      <ul class="nav nav-tabs">
-        {% for module in g.modules %}
-          <li {% if module.is_current() %}class="active"{% endif %}><a
-                  href="{{ module.url }}/">{{ module.label }}</a></li>
-        {% endfor %}
-      </ul>
+      {% if g.recent_items %}
+      <div class="well" style="padding: 8px 0;">
+        <ul class="nav nav-list">
+          <li class="nav-header">
+            Recent items
+          </li>
+          {% for item in g.recent_items %}
+          <li>
+            <a href="{{ item.url }}">{{ item.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
       {% endif %}
+
+    </div><!-- /span2 -->
+
+    <div class="span10">
 
       <ul class="breadcrumb">
         {% for obj in breadcrumbs[0:-1] %}

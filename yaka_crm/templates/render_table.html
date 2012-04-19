@@ -1,6 +1,6 @@
 <script>
 $(document).ready(function() {
-  $('#contacts').dataTable( {
+  $('#{{ table_name }}').dataTable( {
     "aoColumns": [
       { "asSorting": [] },
       {% for i in range(2, column_names|count) %}
@@ -13,7 +13,8 @@ $(document).ready(function() {
 </script>
 
 <form>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="contacts">
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered"
+       id="{{ table_name }}">
   <thead>
   <tr>
     <th width="2%"></th>
