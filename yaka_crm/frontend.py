@@ -61,7 +61,7 @@ class TableView(object):
     for entity in model:
       table.append(self.render_line(entity))
 
-    return render_template('table_view.html', table=table, column_names=self.columns)
+    return Markup(render_template('render_table.html', table=table, column_names=self.columns))
 
   def render_line(self, entity):
     line = []
@@ -78,25 +78,17 @@ class TableView(object):
 
 
 class SingleView(object):
-  def __init__(self, columns):
-    self.columns = columns
+  def __init__(self, *panels):
+    self.panels = panels
 
   def render(self, model):
-    pass
+    def get(panel, row=None, col=None):
+      return self.get(model, panel, row, col)
+    return Markup(render_template('render_single.html', panels=self.panels, get=get))
 
-
-class SingleView(object):
-  def __init__(self, viewer, entity):
-    self.viewer = viewer
-    self.entity = entity
-
-  @property
-  def panels(self):
-    return self.viewer.panels
-
-  def get(self, panel, row=None, col=None):
-    panel_index = self.viewer.panels.index(panel)
-    panel = self.viewer.panels[panel_index]
+  def get(self, model, panel, row=None, col=None):
+    panel_index = self.panels.index(panel)
+    panel = self.panels[panel_index]
 
     if row is None:
       return panel
@@ -108,17 +100,12 @@ class SingleView(object):
       return row
 
     attr_name = row.cols[col]
-    return getattr(self.entity, attr_name)
+    return getattr(model, attr_name)
 
 
-class SingleViewer(object):
-  def __init__(self, *panels):
-    self.panels = panels
-
-  def view(self, entity):
-    return SingleView(self, entity)
-
-
+#
+# Used to describe single entity views.
+#
 class Panel(object):
   def __init__(self, label=None, *rows):
     self.label = label
@@ -206,11 +193,14 @@ class Module(object):
   endpoint = None
   label = None
   managed_class = None
-  list_viewer = None
-  single_viewer = None
+  list_view = None
+  list_view_columns = []
+  single_view = None
   url = None
   name = None
   static_folder = None
+
+  _urls = []
 
 
   def __init__(self):
@@ -277,8 +267,10 @@ class Module(object):
 
     entity = self.managed_class.query.get(entity_id)
     bc.add("", entity.display_name)
-    view = self.single_viewer.view(entity)
-    return render_template('single_view.html', view=view, breadcrumbs=bc, module=self)
+
+    rendered_entity = self.single_view.render(entity)
+    print rendered_entity
+    return render_template('single_view.html', rendered_entity=rendered_entity, breadcrumbs=bc, module=self)
 
   @staticmethod
   def _prettify_name(name):
@@ -318,7 +310,7 @@ class Accounts(Module):
 
   list_view_columns = ('name', 'website', 'type', 'industry')
 
-  single_viewer = SingleViewer(
+  single_view = SingleView(
     Panel('Overview',
           Row('name', 'website'),
           Row('office_phone')),
@@ -332,7 +324,7 @@ class Contacts(Module):
 
   list_view_columns = ('full_name', 'account', 'job_title', 'department', 'email')
 
-  single_viewer = SingleViewer(
+  single_view = SingleView(
     Panel('Overview',
           Row('full_name'),
           Row('description')),
@@ -346,7 +338,7 @@ class Leads(Module):
 
   list_view_columns = ('full_name', 'job_title', 'department', 'email')
 
-  single_viewer = SingleViewer(
+  single_view = SingleView(
     Panel('Overview',
           Row('first_name', 'last_name')),
     Panel('More information',
@@ -359,7 +351,7 @@ class Opportunities(Module):
 
   list_view_columns = ('name',)
 
-  single_viewer = SingleViewer(
+  single_view = SingleView(
     Panel('Overview',
           Row('first_name', 'last_name')),
     Panel('More information',
