@@ -67,6 +67,8 @@ class TableView(object):
     line = []
     for column_name in self.columns:
       value = getattr(entity, column_name)
+      if value is None:
+        value = ""
       if column_name == 'name':
         cell = Markup('<a href="%s">%s</a>' % (entity.url, cgi.escape(value)))
       elif isinstance(value, Entity):
@@ -82,25 +84,19 @@ class SingleView(object):
     self.panels = panels
 
   def render(self, model):
-    def get(panel, row=None, col=None):
-      return self.get(model, panel, row, col)
+    def get(attr_name):
+      return self.get(model, attr_name)
     return Markup(render_template('render_single.html', panels=self.panels, get=get))
 
-  def get(self, model, panel, row=None, col=None):
-    panel_index = self.panels.index(panel)
-    panel = self.panels[panel_index]
+  def get(self, model, attr_name):
+    value = getattr(model, attr_name)
+    if value is None:
+      return ""
+    elif isinstance(value, Entity):
+      return Markup('<a href="%s">%s</a>' % (value.url, cgi.escape(value.name)))
+    else:
+      return str(value)
 
-    if row is None:
-      return panel
-
-    row_index = panel.rows.index(row)
-    row = panel.rows[row_index]
-
-    if col is None:
-      return row
-
-    attr_name = row.cols[col]
-    return getattr(model, attr_name)
 
 
 #
@@ -199,6 +195,7 @@ class Module(object):
   url = None
   name = None
   static_folder = None
+  related_views = []
 
   _urls = []
 
@@ -266,11 +263,23 @@ class Module(object):
     bc.add("/crm/" + self.endpoint, self.label)
 
     entity = self.managed_class.query.get(entity_id)
-    bc.add("", entity.display_name)
+    bc.add("", entity.name)
 
     rendered_entity = self.single_view.render(entity)
-    print rendered_entity
-    return render_template('single_view.html', rendered_entity=rendered_entity, breadcrumbs=bc, module=self)
+    related_views = self.render_related_views(entity)
+
+    return render_template('single_view.html', rendered_entity=rendered_entity,
+                           related_views=related_views, breadcrumbs=bc, module=self)
+
+  def render_related_views(self, entity):
+    rendered = []
+    for label, attr_name, column_names in self.related_views:
+      view = TableView(column_names)
+      related_entities = getattr(entity, attr_name)
+      obj = dict(label=label, rendered=view.render(related_entities))
+      rendered.append(obj)
+    return rendered
+
 
   @staticmethod
   def _prettify_name(name):
@@ -318,16 +327,21 @@ class Accounts(Module):
           Row('type', 'industry')),
     )
 
+  related_views = [
+    ('Contacts', 'contacts', ('name', 'job_title', 'department')),
+  ]
+
 
 class Contacts(Module):
   managed_class = Contact
 
-  list_view_columns = ('full_name', 'account', 'job_title', 'department', 'email')
+  list_view_columns = ('name', 'account', 'job_title', 'department', 'email')
 
   single_view = SingleView(
     Panel('Overview',
-          Row('full_name'),
-          Row('description')),
+          Row('name'),
+          Row('description'),
+          Row('account')),
     Panel('More information',
           Row('department', 'email')),
     )

@@ -11,14 +11,14 @@
     {% if row|count == 1 %}
       <tr class="row">
         <th class="span2">{{ row[0]|labelize}}</th>
-        <td class="span12" colspan="3">{{ get(panel, row, 0) }}</td>
+        <td class="span12" colspan="3">{{ get(row[0]) }}</td>
       </tr>
     {%  else %}
       <tr class="row">
         <th class="span2">{{ row[0]|labelize }}</th>
-        <td class="span5">{{ get(panel, row, 0) }}</td>
+        <td class="span5">{{ get(row[0]) }}</td>
         <th class="span2">{{ row[1]|labelize }}</th>
-        <td class="span5">{{ get(panel, row, 1) }}</td>
+        <td class="span5">{{ get(row[1]) }}</td>
       </tr>
     {% endif %}
     </tbody>

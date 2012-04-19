@@ -4,4 +4,10 @@
 
 {{ rendered_entity }}
 
+{% for view in related_views %}
+  <h2>{{ view.label }}</h2>
+
+  {{ view.rendered }}
+{% endfor %}
+
 {% endblock %}

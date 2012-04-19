@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from flask import g
+
 import sqlalchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
 from sqlalchemy.orm import relationship
@@ -10,6 +12,7 @@ from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
 from sqlalchemy import event
 
 from .extensions import db
+
 
 # TODO: get rid of flask-sqlalchemy, replace db.Model by Base
 #Base = declarative_base()
@@ -39,7 +42,7 @@ class Entity(AbstractConcreteBase, db.Model):
   uid = Column(Integer, primary_key=True)
 
   created_at = Column(DateTime, default=datetime.utcnow, editable=False)
-  updated_at = Column(DateTime, default=datetime.utcnow, editable=False)
+  updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, editable=False)
   deleted_at = Column(DateTime, default=None, editable=False)
 
 
@@ -96,14 +99,10 @@ class Account(Entity):
   contacts = relationship("Contact", backref='account')
 
 
-  @property
-  def display_name(self):
-    return self.name
-
-
 class Person(object):
   """Mixin class for persons."""
 
+  salutation = Column(UnicodeText)
   first_name = Column(UnicodeText, searchable=True)
   last_name = Column(UnicodeText, searchable=True)
 
@@ -114,12 +113,8 @@ class Person(object):
   description = Column(UnicodeText, searchable=True)
 
   @property
-  def full_name(self):
+  def name(self):
     return self.first_name + " " + self.last_name
-
-  @property
-  def display_name(self):
-    return self.full_name
 
 
 class Contact(Person, Entity):

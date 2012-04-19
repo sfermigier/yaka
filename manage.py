@@ -34,7 +34,6 @@ def dropdb():
 @manager.command
 def initdata():
   """Initializes DB with some dummy data."""
-
   from tests.util import init_data
   init_data(db)
 
