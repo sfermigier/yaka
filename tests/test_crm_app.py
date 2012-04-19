@@ -5,6 +5,8 @@ from yaka_crm.config import TestConfig
 
 import yaka_crm.views # Don't remove
 
+from util import init_data
+
 
 class TestViews(TestCase):
 
@@ -16,6 +18,7 @@ class TestViews(TestCase):
     TestCase.setUp(self)
     db.create_all()
     self.session = db.session
+    init_data(db)
 
   def tearDown(self):
     db.session.remove()
@@ -34,6 +37,15 @@ class TestViews(TestCase):
   def test_accounts(self):
     response = self.client.get("/crm/accounts/")
     self.assert_200(response)
+
+    response = self.client.get("/crm/accounts/1")
+    self.assert_200(response)
+
+    #response = self.client.get("/crm/contacts/")
+    #self.assert_200(response)
+
+    #response = self.client.get("/crm/contacts/1")
+    #self.assert_200(response)
 
   def test_search(self):
     response = self.client.get("/search?q=john")

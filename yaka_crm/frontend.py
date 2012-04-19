@@ -1,4 +1,6 @@
+import cgi
 import re
+from jinja2._markupsafe import Markup
 
 from flask.templating import render_template
 from flask.blueprints import Blueprint
@@ -7,91 +9,80 @@ from .entities import *
 
 
 #
-# View classes
+# Helper classes
 #
-class Table(object):
-  def __init__(self, viewer, entities):
-    self.viewer = viewer
-    self.entities = entities
+class BreadCrumbs(object):
 
-  @property
-  def column_names(self):
-    return self.viewer.column_names
+  def __init__(self, l=()):
+    self._bc = []
+    for path, label in l:
+      self.add(path, label)
+
+  def add(self, path="", label=""):
+    if path != "" and not path.startswith("/"):
+      previous = self._bc[-1]
+      path = previous['path'] + "/" + path
+    self._bc.append(dict(path=path, label=label))
 
   def __getitem__(self, item):
-    return Line(self.viewer, self.entities[item])
+    return self._bc[item]
 
 
-class Line(object):
-  def __init__(self, viewer, entity):
-    self.viewer = viewer
+#
+# UI model classes
+#
+class EntityListModel(object):
+  """Wraps a list of entities for presentation by a TableView."""
+
+  # TODO: not used for now
+
+  def __init__(self, entity_list):
+    self.entity_list = entity_list
+
+
+class SingleEntityModel(object):
+  """Wraps an entity for presentation by a SingleView."""
+
+  # TODO: not used for now
+
+  def __init__(self, entity):
     self.entity = entity
 
-  @property
-  def uid(self):
-    return self.entity.uid
 
-  @property
-  def url(self):
-    return "/crm/accounts/%d" % self.entity.uid
-
-  @property
-  def column_names(self):
-    return self.viewer.column_names
-
-  def __getitem__(self, item):
-    if type(item) == int:
-      if item >= len(self.column_names):
-        raise IndexError
-      name = self.column_names[item]
-      return Cell(self.viewer, name, getattr(self.entity, name))
-    else:
-      cells = []
-      for i in range(*item.indices(len(self.column_names))):
-        name = self.column_names[i]
-        cells += [Cell(self.viewer, name, getattr(self.entity, name))]
-        print cells
-      return cells
-
-
-class Cell(object):
-  def __init__(self, viewer, name, value):
-    self.viewer = viewer
-    self.name = name
-    self.value = value
-
-  def __str__(self):
-    if not self.value:
-      return ""
-    elif isinstance(self.value, Entity):
-      return Markup('<a href="/tab/%s/%d">%s</a>' % (
-        self.value.__tab__, self.value.uid, cgi.escape(self.value.display_name)
-        ))
-    else:
-      return str(self.value)
-
-
-class ListViewer(object):
-
-  _column_names = None
-
-  def __init__(self, *columns):
+#
+# UI views
+#
+class TableView(object):
+  def __init__(self, columns):
     self.columns = columns
 
-  @property
-  def column_names(self):
-    if not self._column_names:
-      column_names = []
-      for c in self.columns:
-        if type(c) == str:
-          column_names += [c]
-        else:
-          column_names += [c.name]
-      self._column_names = column_names
-    return self._column_names
+  def render(self, model):
+    table = []
+    for entity in model:
+      table.append(self.render_line(entity))
 
-  def view(self, entities):
-    return Table(self, entities)
+    return render_template('table_view.html', table=table, column_names=self.columns)
+
+  def render_line(self, entity):
+    line = []
+    for column_name in self.columns:
+      value = getattr(entity, column_name)
+      if column_name == 'name':
+        cell = Markup('<a href="%s">%s</a>' % (entity.url, cgi.escape(value)))
+      elif isinstance(value, Entity):
+        cell = Markup('<a href="%s">%s</a>' % (value.url, cgi.escape(value.name)))
+      else:
+        cell = str(value)
+      line.append(cell)
+    return line
+
+
+class SingleView(object):
+  def __init__(self, columns):
+    self.columns = columns
+
+  def render(self, model):
+    pass
 
 
 class SingleView(object):
@@ -155,7 +146,6 @@ class Row(object):
 
   def __len__(self):
     return len(self.cols)
-
 
 
 def expose(url='/', methods=('GET',)):
@@ -262,23 +252,33 @@ class Module(object):
                                   getattr(self, name),
                                   methods=methods)
 
+    self.managed_class.base_url = self.url
+
     return self.blueprint
 
   @expose("/")
   def list_view(self):
-    breadcrumbs = self.crud_app.breadcrumbs + [dict(path="", label=self.label)]
+    bc = BreadCrumbs()
+    bc.add("/", "Home")
+    bc.add("", self.label)
+
     entities = self.managed_class.query.all()
-    table = self.list_viewer.view(entities)
-    return render_template('list_view.html', table=table, breadcrumbs=breadcrumbs, module=self)
+
+    table_view = TableView(self.list_view_columns)
+    rendered_table = table_view.render(entities)
+
+    return render_template('list_view.html', rendered_table=rendered_table, breadcrumbs=bc, module=self)
 
   @expose("/<int:entity_id>")
   def entity_view(self, entity_id):
-    breadcrumbs = self.crud_app.breadcrumbs + [dict(path=self.endpoint, label=self.label)]
+    bc = BreadCrumbs()
+    bc.add("/", "Home")
+    bc.add("/crm/" + self.endpoint, self.label)
 
     entity = self.managed_class.query.get(entity_id)
-    breadcrumbs += [dict(path="", label=entity.display_name)]
+    bc.add("", entity.display_name)
     view = self.single_viewer.view(entity)
-    return render_template('single_view.html', view=view, breadcrumbs=breadcrumbs, module=self)
+    return render_template('single_view.html', view=view, breadcrumbs=bc, module=self)
 
   @staticmethod
   def _prettify_name(name):
@@ -316,7 +316,7 @@ class CRUD(object):
 class Accounts(Module):
   managed_class = Account
 
-  list_viewer = ListViewer('name', 'website', 'type', 'industry')
+  list_view_columns = ('name', 'website', 'type', 'industry')
 
   single_viewer = SingleViewer(
     Panel('Overview',
@@ -330,7 +330,7 @@ class Accounts(Module):
 class Contacts(Module):
   managed_class = Contact
 
-  list_viewer = ListViewer('full_name', 'account', 'job_title', 'department', 'email')
+  list_view_columns = ('full_name', 'account', 'job_title', 'department', 'email')
 
   single_viewer = SingleViewer(
     Panel('Overview',
@@ -344,7 +344,8 @@ class Contacts(Module):
 class Leads(Module):
   managed_class = Lead
 
-  list_viewer = ListViewer('full_name', 'job_title', 'department', 'email')
+  list_view_columns = ('full_name', 'job_title', 'department', 'email')
+
   single_viewer = SingleViewer(
     Panel('Overview',
           Row('first_name', 'last_name')),
@@ -356,7 +357,7 @@ class Leads(Module):
 class Opportunities(Module):
   managed_class = Opportunity
 
-  list_viewer = ListViewer('name')
+  list_view_columns = ('name',)
 
   single_viewer = SingleViewer(
     Panel('Overview',

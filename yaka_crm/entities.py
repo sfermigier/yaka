@@ -1,12 +1,11 @@
 from datetime import datetime
 
-import json
-
+import sqlalchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.query import Query
 from sqlalchemy.orm.util import class_mapper
-from sqlalchemy.schema import Column, Table, ForeignKey
+from sqlalchemy.schema import ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
 from sqlalchemy import event
 
@@ -19,29 +18,29 @@ from .extensions import db
 #
 # Base Entity classes (TODO: move to framework)
 #
-def meta(column, searchable=False, editable=True):
-  """Utility function to add additional metadata to SQLAlchemy columns."""
+class Column(sqlalchemy.schema.Column):
 
-  class Meta(object):
-    pass
+  def __init__(self, *args, **kwargs):
+    class YakaMetadata(object):
+      pass
 
-  m = column.__yaka_meta__ = Meta()
-  m.searchable = searchable
-  m.editable = editable
+    m = self.__yaka_metadata__ = YakaMetadata()
+    m.editable = kwargs.pop('editable', True)
+    m.searchable = kwargs.pop('searchable', False)
+
+    sqlalchemy.schema.Column.__init__(self, *args, **kwargs)
 
 
 class Entity(AbstractConcreteBase, db.Model):
   """Base class for Yaka entities."""
 
+  base_url = None
+
   uid = Column(Integer, primary_key=True)
 
-  created_at = Column(DateTime, default=datetime.utcnow)
-  updated_at = Column(DateTime, default=datetime.utcnow)
-  deleted_at = Column(DateTime, default=datetime.utcnow)
-
-  meta(created_at, editable=False),
-  meta(updated_at, editable=False),
-  meta(deleted_at, editable=False),
+  created_at = Column(DateTime, default=datetime.utcnow, editable=False)
+  updated_at = Column(DateTime, default=datetime.utcnow, editable=False)
+  deleted_at = Column(DateTime, default=None, editable=False)
 
 
   def __init__(self, **kw):
@@ -58,49 +57,36 @@ class Entity(AbstractConcreteBase, db.Model):
         v = unicode(v)
       setattr(self, k, v)
 
-  def to_dict(self):
-    if hasattr(self, "__exportable__"):
-      exported = self.__exportable__
-    else:
-      exported = self.column_names
-    d = {}
-    for k in exported:
-      v = getattr(self, k)
-      if type(v) == datetime:
-        v = v.isoformat()
-      d[k] = v
-    return d
-
-  def to_json(self):
-    return json.dumps(self.to_dict())
+  @property
+  def url(self):
+    return "%s/%s" % (self.base_url, self.uid)
 
 
-def register_meta(cls):
+def register_metadata(cls):
   cls.__editable__ = set()
   cls.__searchable__ = set()
 
   for name in dir(cls):
     value = getattr(cls, name)
-    if not hasattr(value, '__yaka_meta__'):
+    metadata = getattr(value, '__yaka_metadata__', None)
+    if not metadata:
       continue
-    meta = value.__yaka_meta__
-    if meta.editable:
+    if metadata.editable:
       cls.__editable__.add(name)
-    if meta.searchable:
+    if metadata.searchable:
       cls.__searchable__.add(name)
 
 
-event.listen(Entity, 'class_instrument', register_meta)
+event.listen(Entity, 'class_instrument', register_metadata)
+
 
 #
 # Domain classes
 #
 class Account(Entity):
-
-  # ORM
   __tablename__ = 'account'
 
-  name = Column(UnicodeText)
+  name = Column(UnicodeText, searchable=True)
   website = Column(UnicodeText)
   office_phone = Column(UnicodeText)
 
@@ -108,13 +94,6 @@ class Account(Entity):
   industry = Column(UnicodeText)
 
   contacts = relationship("Contact", backref='account')
-
-  # Additional metadata
-  meta(name, searchable=True)
-  meta(website)
-  meta(office_phone)
-  meta(type)
-  meta(industry)
 
 
   @property
@@ -125,20 +104,14 @@ class Account(Entity):
 class Person(object):
   """Mixin class for persons."""
 
-  first_name = Column(UnicodeText)
-  last_name = Column(UnicodeText)
+  first_name = Column(UnicodeText, searchable=True)
+  last_name = Column(UnicodeText, searchable=True)
 
-  job_title = Column(UnicodeText)
-  department = Column(UnicodeText)
+  job_title = Column(UnicodeText, searchable=True)
+  department = Column(UnicodeText, searchable=True)
 
   email = Column(UnicodeText)
-  description = Column(UnicodeText)
-
-  # Meta
-  meta(first_name, searchable=True)
-  meta(last_name, searchable=True)
-  meta(job_title, searchable=True)
-  meta(department, searchable=True)
+  description = Column(UnicodeText, searchable=True)
 
   @property
   def full_name(self):
@@ -160,7 +133,6 @@ class Lead(Person, Entity):
 
 
 class Opportunity(Entity):
-  # ORM
   __tablename__ = 'opportunity'
 
   name = Column(UnicodeText)

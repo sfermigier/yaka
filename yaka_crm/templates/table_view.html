@@ -1,0 +1,44 @@
+<script>
+$(document).ready(function() {
+  $('#contacts').dataTable( {
+    "aoColumns": [
+      { "asSorting": [] },
+      {% for i in range(2, column_names|count) %}
+      { "asSorting": [ "asc", "desc" ] },
+      {% endfor %}
+      { "asSorting": [ "asc", "desc" ] }
+    ]
+  });
+} );
+</script>
+
+<form>
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="contacts">
+  <thead>
+  <tr>
+    <th width="2%"></th>
+    {% for name in column_names %}
+    <th width="20%">{{ name|labelize }}</th>
+    {% endfor %}
+  </tr>
+  </thead>
+  <tbody>
+  {% for line in table %}
+    <tr>
+      <td><input type="checkbox"></td>
+      {% for cell in line %}
+      <td>{{ cell }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+  <tr>
+    <th></th>
+    {% for name in column_names %}
+    <th>{{ name|labelize }}</th>
+    {% endfor %}
+  </tr>
+  </tfoot>
+</table>
+</form>
