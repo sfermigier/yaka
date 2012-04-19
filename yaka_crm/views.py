@@ -5,6 +5,7 @@ from flask.globals import g
 
 from . import app
 from .entities import *
+from .frontend import CRM
 
 
 __all__ = []
@@ -13,6 +14,7 @@ __all__ = []
 @app.before_request
 def before_request():
   g.user = User.query.get(1)
+  g.modules = CRM.modules
 
 
 @app.template_filter('labelize')
@@ -49,52 +51,6 @@ def admin():
 def help():
   # TODO: help
   return "HELP"
-
-
-#@app.route("/tab/<tab_id>/")
-#def list_view(tab_id):
-#  g.tab_id = tab_id
-#  g.tab = get_tab_for(tab_id)
-#  g.breadcrumbs.append(dict(path="", label=g.tab['label']))
-#
-#  cls = g.tab['class']
-#  entities = getattr(cls, 'query').all()
-#
-#  table = cls.list_view(entities)
-#  return render_template('list_view.html', table=table)
-#
-#
-#@app.route("/tab/<tab_id>/<int:entity_id>")
-#def entity_view(tab_id, entity_id):
-#  g.tab_id = tab_id
-#  g.tab = get_tab_for(tab_id)
-#  g.breadcrumbs.append(dict(path="/tab/%s" % tab_id, label=g.tab['label']))
-#
-#  cls = g.tab['class']
-#  entity = getattr(cls, 'query').get(entity_id)
-#  g.breadcrumbs.append(dict(path="", label=entity.display_name))
-#
-#  view = entity.single_view()
-#  return render_template('single_view.html', view=view)
-#
-#
-#@app.route("/tab/<tab_id>/<int:entity_id>/edit")
-#def entity_edit(tab_id, entity_id):
-#  g.tab_id = tab_id
-#  g.tab = get_tab_for(tab_id)
-#  g.breadcrumbs.append(dict(path="/tab/%s" % tab_id, label=g.tab['label']))
-#
-#  cls = g.tab['class']
-#  entity = getattr(cls, 'query').get(entity_id)
-#  g.breadcrumbs.append(dict(path="", label=entity.display_name))
-#
-#  view = entity.single_view()
-#  return render_template('edit_view.html', view=view)
-#
-#
-#@app.route("/tab/<tab_id>/<int:entity_id>/delete")
-#def entity_delete(tab_id, entity_id):
-#  return "deleted"
 
 
 @app.route("/search")

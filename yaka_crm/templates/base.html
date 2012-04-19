@@ -114,13 +114,12 @@
     <div class="span12">
 
       {% if request.path.startswith("/crm/") %}
-      <!--ul class="nav nav-tabs">
-        <li><a href="/">Home</a></li>
-        {% for tab in g.tabs %}
-        <li {% if g.tab_id == tab.id %}class="active"{% endif %}><a
-          href="/tab/{{ tab.id }}/">{{ tab.label }}</a></li>
+      <ul class="nav nav-tabs">
+        {% for module in g.modules %}
+          <li {% if module.is_current() %}class="active"{% endif %}><a
+                  href="{{ module.url }}/">{{ module.label }}</a></li>
         {% endfor %}
-      </ul-->
+      </ul>
       {% endif %}
 
       <ul class="breadcrumb">

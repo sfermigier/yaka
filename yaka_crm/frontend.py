@@ -1,4 +1,5 @@
 import cgi
+from flask.globals import request
 import re
 from jinja2._markupsafe import Markup
 
@@ -242,6 +243,10 @@ class Module(object):
     self.managed_class.base_url = self.url
 
     return self.blueprint
+
+  def is_current(self):
+    return request.path.startswith(self.url)
+
 
   @expose("/")
   def list_view(self):

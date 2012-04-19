@@ -1,11 +1,8 @@
 from datetime import datetime
 
-from flask import g
-
 import sqlalchemy
-from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
+from sqlalchemy.ext.declarative import AbstractConcreteBase
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm.query import Query
 from sqlalchemy.orm.util import class_mapper
 from sqlalchemy.schema import ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
@@ -133,6 +130,12 @@ class Opportunity(Entity):
   name = Column(UnicodeText)
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
+
+
+class Document(Entity):
+  __tablename__ = 'document'
+
+  blob = Column(LargeBinary)
 
 
 class User(Person, Entity):
