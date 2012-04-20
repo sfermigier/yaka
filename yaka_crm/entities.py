@@ -117,7 +117,7 @@ class Person(object):
 class Contact(Person, Entity):
   __tablename__ = 'contact'
 
-  account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
+  account_id = Column(Integer, ForeignKey(Account.uid), nullable=True)
 
 
 class Lead(Person, Entity):

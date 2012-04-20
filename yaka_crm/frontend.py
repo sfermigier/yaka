@@ -1,9 +1,14 @@
 import cgi
+from flask.helpers import flash
+from flaskext.wtf.form import Form
 import re
 from jinja2._markupsafe import Markup
 
 from flask import session, redirect, request, g, url_for, render_template
 from flask.blueprints import Blueprint
+
+from wtforms.fields.simple import TextField
+from wtforms.validators import Length, Email
 
 from .entities import *
 
@@ -100,14 +105,13 @@ class SingleView(object):
     self.panels = panels
 
   def render(self, model):
+    # TODO: refactor by passing a model instead
     def get(attr_name):
       return self.get(model, attr_name)
     return Markup(render_template('render_single.html', panels=self.panels, get=get))
 
-  def render_for_edit(self, model):
-    def get(attr_name):
-      return self.get_for_edit(model, attr_name)
-    return Markup(render_template('render_for_edit.html', panels=self.panels, get=get))
+  def render_for_edit(self, model, form):
+    return Markup(render_template('render_for_edit.html', form=form, panels=self.panels))
 
   def get(self, model, attr_name):
     value = getattr(model, attr_name)
@@ -117,17 +121,6 @@ class SingleView(object):
       return Markup('<a href="%s">%s</a>' % (value.url, cgi.escape(value.name)))
     else:
       return str(value)
-
-  def get_for_edit(self, model, attr_name):
-    value = getattr(model, attr_name)
-    if value is None:
-      return ""
-    elif isinstance(value, Entity):
-      return Markup('<a href="%s">%s</a>' % (value.url, cgi.escape(value.name)))
-    else:
-      return str(value)
-
-
 
 #
 # Used to describe single entity views.
@@ -222,6 +215,7 @@ class Module(object):
   list_view = None
   list_view_columns = []
   single_view = None
+  edit_form = None
   url = None
   name = None
   static_folder = None
@@ -273,15 +267,12 @@ class Module(object):
 
     return self.blueprint
 
-  def is_current(self):
-    return request.path.startswith(self.url)
-
-
+  #
+  # Exposed views
+  #
   @expose("/")
   def list_view(self):
-    bc = BreadCrumbs()
-    bc.add("/", "Home")
-    bc.add("", self.label)
+    bc = self.bread_crumbs()
 
     entities = self.managed_class.query.all()
 
@@ -292,12 +283,8 @@ class Module(object):
 
   @expose("/<int:entity_id>")
   def entity_view(self, entity_id):
-    bc = BreadCrumbs()
-    bc.add("/", "Home")
-    bc.add("/crm/" + self.endpoint, self.label)
-
     entity = self.managed_class.query.get(entity_id)
-    bc.add("", entity.name)
+    bc = self.bread_crumbs(entity.name)
     add_to_recent_items(entity)
 
     rendered_entity = self.single_view.render(entity)
@@ -305,6 +292,60 @@ class Module(object):
 
     return render_template('single_view.html', rendered_entity=rendered_entity,
                            related_views=related_views, breadcrumbs=bc, module=self)
+
+  @expose("/<int:entity_id>/edit")
+  def entity_edit(self, entity_id):
+    entity = self.managed_class.query.get(entity_id)
+    bc = self.bread_crumbs(entity.name)
+    add_to_recent_items(entity)
+
+    form = self.edit_form(obj=entity)
+    rendered_entity = self.single_view.render_for_edit(entity, form)
+
+    return render_template('single_view.html', rendered_entity=rendered_entity,
+                           breadcrumbs=bc, module=self)
+
+  @expose("/<int:entity_id>/edit", methods=['POST'])
+  def entity_edit_post(self, entity_id):
+    entity = self.managed_class.query.get(entity_id)
+    form = self.edit_form(obj=entity)
+
+    if form.validate():
+      flash("Entity successfully edited", "success")
+      form.populate_obj(entity)
+      db.session.commit()
+      return redirect("%s/%d" % (self.url, entity_id))
+    else:
+      flash("Error", "error")
+      rendered_entity = self.single_view.render_for_edit(entity, form)
+      bc = self.bread_crumbs(entity.name)
+      return render_template('single_view.html', rendered_entity=rendered_entity,
+                             breadcrumbs=bc, module=self)
+
+  @expose("/<int:entity_id>/delete")
+  def entity_delete(self, entity_id):
+    # TODO: don't really delete, switch state to "deleted"
+    entity = self.managed_class.query.get(entity_id)
+    db.session.delete(entity)
+    db.session.commit()
+    flash("Entity deleted", "success")
+    return redirect(self.url)
+
+  #
+  # Utils
+  #
+  def is_current(self):
+    return request.path.startswith(self.url)
+
+  def bread_crumbs(self, label=None):
+    bc = BreadCrumbs()
+    bc.add("/", "Home")
+    if label:
+      bc.add("/crm/" + self.endpoint, self.label)
+      bc.add("", label)
+    else:
+      bc.add("", self.label)
+    return bc
 
   def render_related_views(self, entity):
     rendered = []
@@ -314,45 +355,6 @@ class Module(object):
       obj = dict(label=label, rendered=view.render(related_entities))
       rendered.append(obj)
     return rendered
-
-  @expose("/<int:entity_id>/edit")
-  def entity_edit(self, entity_id):
-    bc = BreadCrumbs()
-    bc.add("/", "Home")
-    bc.add("/crm/" + self.endpoint, self.label)
-
-    entity = self.managed_class.query.get(entity_id)
-    bc.add("", entity.name)
-    add_to_recent_items(entity)
-
-    rendered_entity = self.single_view.render_for_edit(entity)
-
-    return render_template('single_view.html', rendered_entity=rendered_entity,
-                           breadcrumbs=bc, module=self)
-
-  @expose("/<int:entity_id>/edit", methods=['POST'])
-  def entity_edit_post(self, entity_id):
-    return "OK"
-    bc = BreadCrumbs()
-    bc.add("/", "Home")
-    bc.add("/crm/" + self.endpoint, self.label)
-
-    entity = self.managed_class.query.get(entity_id)
-    bc.add("", entity.name)
-    add_to_recent_items(entity)
-
-    rendered_entity = self.single_view.render_for_edit(entity)
-
-    return render_template('single_view.html', rendered_entity=rendered_entity,
-                           breadcrumbs=bc, module=self)
-
-  @expose("/<int:entity_id>/delete")
-  def entity_delete(self, entity_id):
-    # TODO: don't really delete, switch state to "deleted"
-    entity = self.managed_class.query.get(entity_id)
-    db.session.delete(entity)
-    db.session.commit()
-    return redirect(self.url)
 
   @staticmethod
   def _prettify_name(name):
@@ -384,8 +386,18 @@ class CRUD(object):
   def breadcrumbs(self):
     return [dict(path='/', label='Home')]
 
-
+#
 # Specific classes
+#
+
+# TODO: generate from View
+class AccountEditForm(Form):
+  name = TextField("Name", validators=[Length(min=3, max=50)])
+  website = TextField("Website")
+  office_phone = TextField("Office Phone")
+  type = TextField("Type")
+  industry = TextField("Industry")
+
 
 class Accounts(Module):
   managed_class = Account
@@ -400,10 +412,20 @@ class Accounts(Module):
           Row('type', 'industry')),
     )
 
+  edit_form = AccountEditForm
+
   related_views = [
     ('Contacts', 'contacts', ('name', 'job_title', 'department')),
   ]
 
+
+class ContactEditForm(Form):
+  first_name = TextField("First Name")
+  last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
+  description = TextField("Description")
+  #account = TextField("Description")
+  department = TextField("Department")
+  email = TextField("email", validators=[Email()])
 
 class Contacts(Module):
   managed_class = Contact
@@ -412,12 +434,16 @@ class Contacts(Module):
 
   single_view = SingleView(
     Panel('Overview',
-          Row('name'),
+          #Row('name'),
           Row('description'),
-          Row('account')),
+          #Row('account'),
+          ),
     Panel('More information',
-          Row('department', 'email')),
+          Row('department', 'email')
+          ),
     )
+
+  edit_form = ContactEditForm
 
 
 class Leads(Module):

@@ -1,9 +1,21 @@
-<form action="{{ request.path }}" method="POST" class="form-horizontal">
-
-  <div class="form-actions">
-    <button type="submit" class="btn">Cancel</button>
-    <button type="submit" class="btn btn-primary">Save changes</button>
+{% macro render_field(field) %}
+  <div class="control-group">
+    {% if field.errors %}
+      {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
+      {{ field.label }}
+      {{ field(class=css_class, **kwargs) }}
+      <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+    {% else %}
+      <label class="control-label" for="input-{{ field.name }}">{{ field.label }}</label>
+      <div class="controls">
+        {{ field(**kwargs) }}
+      </div>
+    {% endif %}
   </div>
+{% endmacro %}
+
+<form action="{{ request.path }}" method="POST" class="form-horizontal">
+  {{ form.csrf }}
 
   {% for panel in panels %}
     <legend>{{ panel.label }}</legend>
@@ -11,31 +23,18 @@
     <fieldset>
       {% for row in panel %}
         {% if row|count == 1 %}
-          <div class="control-group">
-            <label class="control-label" for="input-{{ row[0] }}">{{ row[0]|labelize }}</label>
-
-            <div class="controls">
-              <input type="text" class="input-xlarge" id="input-{{ row[0] }}" value="{{ get(row[0]) }}">
-            </div>
-          </div>
+          {{ render_field(form[row[0]]) }}
         {% else %}
-          <div class="control-group">
-            <label class="control-label" for="input-{{ row[0] }}">{{ row[0]|labelize }}</label>
-
-            <div class="controls">
-              <input type="text" class="input-xlarge" id="input-{{ row[0] }}" value="{{ get(row[0]) }}">
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="input-{{ row[1] }}">{{ row[1]|labelize }}</label>
-
-            <div class="controls">
-              <input type="text" class="input-xlarge" id="input-{{ row[1] }}" value="{{ get(row[1]) }}">
-            </div>
-          </div>
-
+          {{ render_field(form[row[0]]) }}
+          {{ render_field(form[row[1]]) }}
         {% endif %}
       {% endfor %}
     </fieldset>
   {% endfor %}
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    <button type="submit" class="btn">Cancel</button>
+  </div>
+
 </form>
