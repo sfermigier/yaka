@@ -2,7 +2,7 @@ from .core.entities import *
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, LargeBinary
+from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date
 
 #
 # Domain classes
@@ -47,11 +47,17 @@ class Contact(Person, Entity):
 class Lead(Person, Entity):
   __tablename__ = 'lead'
 
+  lead_status = Column(UnicodeText)
+
 
 class Opportunity(Entity):
   __tablename__ = 'opportunity'
 
-  name = Column(UnicodeText)
+  name = Column(UnicodeText, searchable=True)
+  type = Column(UnicodeText)
+  stage = Column(UnicodeText)
+
+  close_date = Column(Date)
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
 

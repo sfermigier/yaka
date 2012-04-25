@@ -1,19 +1,24 @@
 {% extends "base.html" %}
 
-{% block main %}
-
-  {% if contacts %}
-    {% if contacts|count > 1 %}
-      <h2>Contacts ({{contacts|count}} matches)</h2>
+{% macro render(list, path) %}
+  {% if list %}
+    {% if list|count > 1 %}
+      <h2>{{ path|capitalize }} ({{list|count}} matches)</h2>
     {% else %}
-      <h2>Contacts (1 match)</h2>
+      <h2>{{ path|capitalize }} (1 match)</h2>
     {% endif %}
 
-    {% for contact in contacts %}
-      <p><img src="/static/img/avatar45.png" />
-        <strong><a href="/tab/contacts/{{contact.uid}}">{{contact.full_name}}</a></strong>
+    {% for obj in list %}
+      <p>
+        <strong><a href="/crm/{{ path }}/{{obj.uid}}">{{obj.name}}</a></strong>
       </p>
     {% endfor %}
   {% endif %}
+{% endmacro %}
 
+{% block main %}
+  {{ render(contacts, "contacts") }}
+  {{ render(leads, "leads") }}
+  {{ render(opportunities, "opportunities") }}
+  {{ render(accounts, "accounts") }}
 {%  endblock %}

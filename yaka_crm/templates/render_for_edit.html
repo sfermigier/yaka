@@ -17,24 +17,24 @@
 <form action="{{ request.path }}" method="POST" class="form-horizontal">
   {{ form.csrf }}
 
-  {% for panel in panels %}
-    <legend>{{ panel.label }}</legend>
+  {% for label, field_names in form._groups %}
+    <legend>{{ label }}</legend>
 
     <fieldset>
-      {% for row in panel %}
-        {% if row|count == 1 %}
-          {{ render_field(form[row[0]]) }}
-        {% else %}
-          {{ render_field(form[row[0]]) }}
-          {{ render_field(form[row[1]]) }}
-        {% endif %}
+      {% for field_name in field_names %}
+        {{ render_field(form[field_name]) }}
       {% endfor %}
     </fieldset>
   {% endfor %}
 
   <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Save changes</button>
-    <button type="submit" class="btn">Cancel</button>
+    {% if for_new %}
+      <button type="submit" class="btn btn-primary">Add new</button>
+      <button type="submit" class="btn">Cancel</button>
+    {% else %}
+      <button type="submit" class="btn btn-primary">Save changes</button>
+      <button type="submit" class="btn">Cancel</button>
+    {% endif %}
   </div>
 
 </form>

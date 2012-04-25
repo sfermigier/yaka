@@ -1,4 +1,5 @@
 from flaskext.wtf.form import Form
+from flaskext.wtf.html5 import DateField
 from wtforms.fields.simple import TextField
 from wtforms.validators import Length, Email
 
@@ -15,9 +16,14 @@ class AccountEditForm(Form):
   name = TextField("Name", validators=[Length(min=3, max=50)])
   website = TextField("Website")
   office_phone = TextField("Office Phone")
+
   type = TextField("Type")
   industry = TextField("Industry")
 
+  _groups = [
+    ["Main", ['name', 'website', 'office_phone']],
+    ["Additional information", ['type', 'industry']],
+  ]
 
 class Accounts(Module):
   managed_class = Account
@@ -48,9 +54,15 @@ class ContactEditForm(Form):
   first_name = TextField("First Name")
   last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
   description = TextField("Description")
+
   #account = TextField("Description")
   department = TextField("Department")
   email = TextField("email", validators=[Email()])
+
+  _groups = [
+    ["Main", ['first_name', 'last_name', 'description']],
+    ["Additional information", ['department', 'email']],
+  ]
 
 class Contacts(Module):
   managed_class = Contact
@@ -59,9 +71,9 @@ class Contacts(Module):
 
   single_view = SingleView(
     Panel('Overview',
-          #Row('name'),
+          Row('name'),
           Row('description'),
-          #Row('account'),
+          Row('account'),
           ),
     Panel('More information',
           Row('department', 'email')
@@ -70,6 +82,20 @@ class Contacts(Module):
 
   edit_form = ContactEditForm
 
+
+class LeadEditForm(Form):
+  first_name = TextField("First Name")
+  last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
+  description = TextField("Description")
+
+  #account = TextField("Description")
+  department = TextField("Department")
+  email = TextField("email", validators=[Email()])
+
+  _groups = [
+    ["Main", ['first_name', 'last_name', 'description']],
+    ["Additional information", ['department', 'email']],
+  ]
 
 class Leads(Module):
   managed_class = Lead
@@ -83,6 +109,17 @@ class Leads(Module):
           Row('department', 'email')),
     )
 
+  edit_form = LeadEditForm
+
+
+class OpportunityEditForm(Form):
+  name = TextField("Name")
+  type = TextField("Last Name")
+  close_date = DateField("Close Date")
+
+  _groups = [
+    ["Main", ['name', 'type', 'close_date']],
+  ]
 
 class Opportunities(Module):
   managed_class = Opportunity
@@ -91,10 +128,11 @@ class Opportunities(Module):
 
   single_view = SingleView(
     Panel('Overview',
-          Row('first_name', 'last_name')),
-    Panel('More information',
-          Row('department', 'email')),
+          Row('name', 'type'),
+          Row('close_date')),
     )
+
+  edit_form = OpportunityEditForm
 
 
 class Documents(Module):

@@ -59,10 +59,19 @@ def search():
 
   contacts = list(Contact.search_query(q).all())
   accounts = list(Account.search_query(q).all())
+  leads = list(Lead.search_query(q).all())
+  opportunities = list(Opportunity.search_query(q).all())
+
+  num_results = len(contacts) + len(accounts) + len(leads) + len(opportunities)
 
   if live:
-    if not contacts:
+    if not num_results:
       return ""
-    return render_template('live_search.html', contacts=contacts, accounts=accounts)
+    return render_template('live_search.html', contacts=contacts,
+                           accounts=accounts, leads=leads,
+                           opportunities=opportunities)
   else:
-    return render_template('search.html', contacts=contacts, accounts=accounts, breadcrumbs=breadcrumbs)
+    return render_template('search.html', contacts=contacts,
+                           accounts=accounts, leads=leads,
+                           opportunities=opportunities,
+                           breadcrumbs=breadcrumbs)

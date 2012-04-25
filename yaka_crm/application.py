@@ -12,10 +12,12 @@ app = Flask(__name__)
 db.init_app(app)
 
 # TODO: autodiscovery of searchable classes
-from .entities import Contact, Account
+from .entities import Contact, Account, Opportunity, Lead
 index_service = IndexService(app.config)
 index_service.register_class(Contact)
 index_service.register_class(Account)
+index_service.register_class(Opportunity)
+index_service.register_class(Lead)
 
 from .frontend import CRM
 
