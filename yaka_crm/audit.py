@@ -3,6 +3,8 @@ from datetime import datetime
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, UnicodeText, DateTime, Text
 
+from .extensions import db
+
 
 class AuditEntry(db.Model):
   """Logs modifications to auditable classes."""

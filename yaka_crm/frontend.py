@@ -103,7 +103,7 @@ class Documents(Module):
     )
 
 
-class CRM(CRUD):
+class CRM(CRUDApp):
   modules = [Accounts(), Contacts(), Opportunities(), Leads(), Documents()]
 
   url = "/crm"

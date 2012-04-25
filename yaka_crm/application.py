@@ -21,6 +21,6 @@ from .frontend import CRM
 
 crm = CRM(app)
 
-
-# Register blueprints
-#app.register_blueprint(restapi)
+# Register additional blueprints
+from admin import admin
+app.register_blueprint(admin)

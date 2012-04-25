@@ -6,6 +6,7 @@ from jinja2._markupsafe import Markup
 from flask import session, redirect, request, g, url_for, render_template
 from flask.blueprints import Blueprint
 
+from ..extensions import db
 from .entities import *
 
 
@@ -106,7 +107,11 @@ class SingleView(object):
       return self.get(model, attr_name)
     return Markup(render_template('render_single.html', panels=self.panels, get=get))
 
-  def render_for_edit(self, model, form):
+  def render_for_edit(self, form):
+    return Markup(render_template('render_for_edit.html', form=form, panels=self.panels))
+
+  # TODO: remove if not necessary.
+  def render_for_new(self, form):
     return Markup(render_template('render_for_edit.html', form=form, panels=self.panels))
 
   def get(self, model, attr_name):
@@ -296,7 +301,7 @@ class Module(object):
     add_to_recent_items(entity)
 
     form = self.edit_form(obj=entity)
-    rendered_entity = self.single_view.render_for_edit(entity, form)
+    rendered_entity = self.single_view.render_for_edit(form)
 
     return render_template('single_view.html', rendered_entity=rendered_entity,
                            breadcrumbs=bc, module=self)
@@ -313,7 +318,35 @@ class Module(object):
       return redirect("%s/%d" % (self.url, entity_id))
     else:
       flash("Error", "error")
-      rendered_entity = self.single_view.render_for_edit(entity, form)
+      rendered_entity = self.single_view.render_for_edit(form)
+      bc = self.bread_crumbs(entity.name)
+      return render_template('single_view.html', rendered_entity=rendered_entity,
+                             breadcrumbs=bc, module=self)
+
+  @expose("/new")
+  def entity_new(self):
+    bc = self.bread_crumbs("New %s" % self.managed_class.__name__)
+
+    form = self.edit_form()
+    rendered_entity = self.single_view.render_for_new(form)
+
+    return render_template('single_view.html', rendered_entity=rendered_entity,
+                           breadcrumbs=bc, module=self)
+
+  @expose("/new", methods=['PUT'])
+  def entity_new_put(self):
+    form = self.edit_form()
+    entity = self.managed_class()
+
+    if form.validate():
+      flash("Entity successfully edited", "success")
+      form.populate_obj(entity)
+      db.session.add(entity)
+      db.session.commit()
+      return redirect("%s/%d" % (self.url, entity.uid))
+    else:
+      flash("Error", "error")
+      rendered_entity = self.single_view.render_for_new(form)
       bc = self.bread_crumbs(entity.name)
       return render_template('single_view.html', rendered_entity=rendered_entity,
                              breadcrumbs=bc, module=self)
@@ -364,7 +397,7 @@ class Module(object):
     return re.sub(r'(?<=.)([A-Z])', r' \1', name)
 
 
-class CRUD(object):
+class CRUDApp(object):
 
   def __init__(self, app, modules=None):
     if modules:

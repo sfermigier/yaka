@@ -42,12 +42,6 @@ def home():
   return "OK"
 
 
-@app.route("/admin/")
-def admin():
-  # TODO: admin
-  return "ADMIN"
-
-
 @app.route("/help/")
 def help():
   # TODO: help

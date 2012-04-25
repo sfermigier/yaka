@@ -10,7 +10,6 @@ def init_data(db):
   contact1 = Contact(first_name="Stefane", last_name="Fermigier", email="sf@example.com")
   contact1.account = account1
   contact2 = Contact(first_name="Paul", last_name="Dupont", email="paul@example.com")
-  contact2.account = account1
 
   user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com")
 
