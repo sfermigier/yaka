@@ -70,20 +70,35 @@ class SingleEntityModel(object):
 #
 class TableView(object):
   def __init__(self, columns):
-    self.columns = columns
+    self.init_columns(columns)
     self.name = id(self)
 
+  def init_columns(self, columns):
+    # TODO
+    self.columns = []
+    default_width = 0.99 / len(columns)
+    for col in columns:
+      if type(col) == str:
+        self.columns.append(dict(name=col, width=default_width))
+      else:
+        self.columns.append(col)
+
   def render(self, model):
+    columns = [ {'name': labelize(col['name']), 'width': col['width']} for col in self.columns ]
     table = []
     for entity in model:
       table.append(self.render_line(entity))
 
-    return Markup(render_template('render_table.html', table=table, column_names=self.columns,
+    return Markup(render_template('render_table.html', table=table, columns=columns,
                                   table_name=self.name))
 
   def render_line(self, entity):
     line = []
-    for column_name in self.columns:
+    for col in self.columns:
+      if type(col) == str:
+        column_name = col
+      else:
+        column_name = col['name']
       value = getattr(entity, column_name)
       if value is None:
         value = ""
@@ -95,6 +110,12 @@ class TableView(object):
         cell = str(value)
       line.append(cell)
     return line
+
+  def get_col(self, i):
+    pass
+
+  def get_cell(self, i, j):
+    pass
 
 
 class SingleView(object):

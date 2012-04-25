@@ -22,7 +22,12 @@ class AccountEditForm(Form):
 class Accounts(Module):
   managed_class = Account
 
-  list_view_columns = ('name', 'website', 'type', 'industry')
+  list_view_columns = [
+    dict(name='name', width=25),
+    dict(name='website', width=25),
+    dict(name='type', width=25),
+    dict(name='industry', width=24),
+  ]
 
   single_view = SingleView(
     Panel('Overview',
