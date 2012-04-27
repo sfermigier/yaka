@@ -1,7 +1,9 @@
 .idea
 .tox
 .DS_Store
+.coverage
 whoosh*
+yaka.db
 *.pyc
 *.egg-info
-yaka.db
+*.swp

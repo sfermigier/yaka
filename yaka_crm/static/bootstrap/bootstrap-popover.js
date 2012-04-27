@@ -26,7 +26,7 @@
     this.init('popover', element, options)
   }
 
-  /* NOTE: POPOVER EXTENDS BOOTSTRAP-TOOLTIP.js
+  /* NOTE: POPOVER EXTENDS BOOTSTRAP-TOOLTIP.bootstrap
      ========================================== */
 
   Popover.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype, {

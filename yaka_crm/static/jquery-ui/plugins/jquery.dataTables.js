@@ -3960,7 +3960,7 @@
 				 *   Basically the issue here is that the Javascript engine in modern browsers don't 
 				 * appear to allow the rendering engine to update the display while it is still excuting
 				 * it's thread (well - it does but only after long intervals). This means that the 
-				 * 'processing' display doesn't appear for a table sort. To break the js thread up a bit
+				 * 'processing' display doesn't appear for a table sort. To break the bootstrap thread up a bit
 				 * I force an execution break by using setTimeout - but this breaks the expected 
 				 * thread continuation for the end-developer's point of view (their code would execute
 				 * too early), so we on;y do it when we absolutely have to.
@@ -4675,11 +4675,11 @@
 		
 		
 		/**
-		 * JSON stringify. If JSON.stringify it provided by the browser, json2.js or any other
+		 * JSON stringify. If JSON.stringify it provided by the browser, json2.bootstrap or any other
 		 * library, then we use that as it is fast, safe and accurate. If the function isn't 
 		 * available then we need to built it ourselves - the insperation for this function comes
 		 * from Craig Buckler ( http://www.sitepoint.com/javascript-json-serialization/ ). It is
-		 * not perfect and absolutely should not be used as a replacement to json2.js - but it does
+		 * not perfect and absolutely should not be used as a replacement to json2.bootstrap - but it does
 		 * do what we need, without requiring a dependency for DataTables.
 		 *  @param {object} o JSON object to be converted
 		 *  @returns {string} JSON string
