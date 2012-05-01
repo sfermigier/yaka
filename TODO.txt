@@ -1,10 +1,10 @@
 TODO
 ====
 
-- Select fields
-- Relation field
 - Audit
 - Security
+- Better default models
+- Graphical cleanup
 
 DONE
 ====
@@ -14,3 +14,6 @@ DONE
 + Create views
 + Use datatable.net for tables
 + Box: "Recent items"
++ Select fields
++ Relation field
+

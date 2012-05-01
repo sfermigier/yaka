@@ -14,5 +14,5 @@ class DebugConfig(ProductionConfig):
   DEBUG = True
   SQLALCHEMY_DATABASE_URI = "sqlite:///yaka.db"
   #SQLALCHEMY_ECHO = True
-  DEBUG_TB_INTERCEPT_REDIRECTS = True
+  #DEBUG_TB_INTERCEPT_REDIRECTS = True
 

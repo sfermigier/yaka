@@ -1,5 +1,6 @@
 from flaskext.wtf.form import Form
 from flaskext.wtf.html5 import DateField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextField
 from wtforms.validators import Length, Email
@@ -11,6 +12,8 @@ from .core.frontend import *
 #
 # Domain-specific application classes
 #
+from yaka_crm.core import forms
+from yaka_crm.core.forms import Chosen
 
 TYPES = ['', 'Analyst', 'Competitor', 'Customer', 'Integrator', 'Investor',
          'Press', 'Partner', 'Prospect', 'Reseller', 'Other']
@@ -61,17 +64,21 @@ class Accounts(Module):
   ]
 
 
+def accounts():
+  return Account.query.all()
+
 class ContactEditForm(Form):
   first_name = TextField("First Name")
   last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
   description = TextField("Description")
 
-  #account = TextField("Description")
+  account = QuerySelectField("Account", widget=Chosen(), query_factory=accounts, allow_blank=True)
+
   department = TextField("Department")
-  email = TextField("email", validators=[Email()])
+  email = TextField("Email", validators=[Email()])
 
   _groups = [
-    ["Main", ['first_name', 'last_name', 'description']],
+    ["Main", ['first_name', 'last_name', 'description', 'account']],
     ["Additional information", ['department', 'email']],
   ]
 

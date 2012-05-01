@@ -19,6 +19,9 @@ class Account(Entity):
 
   contacts = relationship("Contact", backref='account')
 
+  def __unicode__(self):
+    return self.name
+
 
 class Person(object):
   """Mixin class for persons."""
