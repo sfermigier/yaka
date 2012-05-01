@@ -36,6 +36,9 @@
   </style>
   <script type="text/javascript" language="javascript" src="/static/jquery-ui/plugins/jquery.dataTables.js"></script>
 
+  <link type="text/css" href="/static/chosen/chosen.css" rel="stylesheet" />
+  <script type="text/javascript" language="javascript" src="/static/chosen/chosen.jquery.min.js"></script>
+
   <!-- our app -->
   <script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
 
@@ -184,8 +187,10 @@
 <script src="/static/bootstrap/bootstrap-carousel.js"></script>
 <script src="/static/bootstrap/bootstrap-typeahead.js"></script>
 -->
-<script>
+<script type="text/javascript">
   $('.dropdown-toggle').dropdown();
+  $(".chzn-select").chosen();
+  $(".chzn-select-deselect").chosen({allow_single_deselect:true});
 </script>
 
 </body>

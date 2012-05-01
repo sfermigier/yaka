@@ -1,5 +1,6 @@
 from flaskext.wtf.form import Form
 from flaskext.wtf.html5 import DateField
+from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextField
 from wtforms.validators import Length, Email
 
@@ -11,14 +12,24 @@ from .core.frontend import *
 # Domain-specific application classes
 #
 
+TYPES = ['', 'Analyst', 'Competitor', 'Customer', 'Integrator', 'Investor',
+         'Press', 'Partner', 'Prospect', 'Reseller', 'Other']
+INDUSTRIES = ['', "Apparel", "Banking", "Biotechnology", "Chemicals", "Communications",
+              "Construction", "Consulting", "Education", "Electronics", "Energy",
+              "Engineering", "Entertainment", "Environmental", "Finance", "Government",
+              "Healthcare", "Hospitality", "Insurance", "Machinery", "Manufacturing",
+              "Media", "Not For Profit", "Recreation", "Retail", "Shipping", "Technology",
+              "Telecommunications", "Transportation", "Utilities", "Other"]
+
+
 # TODO: generate from View
 class AccountEditForm(Form):
   name = TextField("Name", validators=[Length(min=3, max=50)])
   website = TextField("Website")
   office_phone = TextField("Office Phone")
 
-  type = TextField("Type")
-  industry = TextField("Industry")
+  type = SelectField("Type", choices=[ (x, x) for x in TYPES ])
+  industry = SelectField("Industry", choices=[ (x, x) for x in INDUSTRIES ])
 
   _groups = [
     ["Main", ['name', 'website', 'office_phone']],

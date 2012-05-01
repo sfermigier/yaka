@@ -1,7 +1,10 @@
 TODO
 ====
 
-- Box: "Recent items"
+- Select fields
+- Relation field
+- Audit
+- Security
 
 DONE
 ====
@@ -10,3 +13,4 @@ DONE
 + Create data classes
 + Create views
 + Use datatable.net for tables
++ Box: "Recent items"
