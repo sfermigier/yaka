@@ -1,7 +1,8 @@
 from flaskext.testing import TestCase
 
 from yaka_crm import app, db
-from yaka_crm.config import TestConfig
+
+from config import TestConfig
 
 import yaka_crm.views # Don't remove
 

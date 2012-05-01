@@ -1,7 +1,7 @@
 from flaskext.testing import TestCase
 
 from yaka_crm import app, db
-from yaka_crm.config import TestConfig
+from config import TestConfig
 
 import yaka_crm.views # Don't remove
 
@@ -25,6 +25,9 @@ class TestViews(TestCase):
     db.drop_all()
     TestCase.tearDown(self)
 
+  def assert_302(self, response):
+    self.assertStatus(response, 302)
+
 
   def test_home(self):
     response = self.client.get("/")
@@ -46,7 +49,10 @@ class TestViews(TestCase):
 
     form_data = {'name': "some other name"}
     response = self.client.post("/crm/accounts/1/edit", data=form_data)
-    self.assert_200(response)
+    self.assert_302(response)
+    self.assertEquals('http://localhost/crm/accounts/1', response.location)
+
+    response = self.client.get("/crm/accounts/1")
     self.assert_("some other name" in response.data)
 
   def test_contacts(self):

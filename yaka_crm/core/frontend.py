@@ -319,13 +319,15 @@ class Module(object):
     entity = self.managed_class.query.get(entity_id)
     form = self.edit_form(obj=entity)
 
-    if form.validate():
+    if request.form.get('_action') == 'cancel':
+      return redirect("%s/%d" % (self.url, entity_id))
+    elif form.validate():
       flash("Entity successfully edited", "success")
       form.populate_obj(entity)
       db.session.commit()
       return redirect("%s/%d" % (self.url, entity_id))
     else:
-      flash("Error", "error")
+      flash("Please fix the error below", "error")
       rendered_entity = self.single_view.render_form(form)
       bc = self.bread_crumbs(entity.name)
       return render_template('single_view.html', rendered_entity=rendered_entity,
@@ -346,8 +348,10 @@ class Module(object):
     form = self.edit_form()
     entity = self.managed_class()
 
-    if form.validate():
-      flash("Entity successfully edited", "success")
+    if request.form.get('_action') == 'cancel':
+      return redirect("%s/" % self.url)
+    elif form.validate():
+      flash("Entity successfully added", "success")
       form.populate_obj(entity)
       db.session.add(entity)
       db.session.commit()

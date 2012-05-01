@@ -29,11 +29,11 @@
 
   <div class="form-actions">
     {% if for_new %}
-      <button type="submit" class="btn btn-primary">Add new</button>
-      <button type="submit" class="btn">Cancel</button>
+      <button type="submit" class="btn btn-primary" name="_action" value="add">Add new</button>
+      <button type="submit" class="btn" name="_action" value="cancel">Cancel</button>
     {% else %}
-      <button type="submit" class="btn btn-primary">Save changes</button>
-      <button type="submit" class="btn">Cancel</button>
+      <button type="submit" class="btn btn-primary" name="_action" value="save">Save changes</button>
+      <button type="submit" class="btn" name="_action" value="cancel">Cancel</button>
     {% endif %}
   </div>
 

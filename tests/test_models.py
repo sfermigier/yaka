@@ -2,8 +2,9 @@ from nose.tools import eq_, ok_
 from flaskext.testing import TestCase
 
 from yaka_crm import app, db
-from yaka_crm.config import TestConfig
 from yaka_crm.entities import *
+
+from config import TestConfig
 
 from datetime import datetime, timedelta
 

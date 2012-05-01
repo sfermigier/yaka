@@ -2,6 +2,9 @@
 
 from flaskext.script import Manager
 
+from flask.ext.sqlalchemy import get_debug_queries, SQLAlchemy
+import sys
+
 from yaka_crm import app, db, entities, views
 from config import DebugConfig
 
@@ -39,4 +42,6 @@ def initdata():
 
 
 if __name__ == '__main__':
-    manager.run()
+  if len(sys.argv) == 1:
+    sys.argv.append('runserver')
+  manager.run()
