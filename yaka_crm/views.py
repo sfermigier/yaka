@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import render_template, redirect, session, request
+from flask import render_template, session, request
 from flask.globals import g
 
 from . import app

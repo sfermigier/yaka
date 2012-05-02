@@ -13,6 +13,6 @@ class ProductionConfig(object):
 class DebugConfig(ProductionConfig):
   DEBUG = True
   SQLALCHEMY_DATABASE_URI = "sqlite:///yaka.db"
-  #SQLALCHEMY_ECHO = True
-  #DEBUG_TB_INTERCEPT_REDIRECTS = True
+  SQLALCHEMY_ECHO = False
+  DEBUG_TB_INTERCEPT_REDIRECTS = False
 

@@ -15,6 +15,9 @@ from .core.frontend import *
 from yaka_crm.core import forms
 from yaka_crm.core.forms import Chosen
 
+#
+# Select lists choices
+#
 TYPES = ['', 'Analyst', 'Competitor', 'Customer', 'Integrator', 'Investor',
          'Press', 'Partner', 'Prospect', 'Reseller', 'Other']
 INDUSTRIES = ['', "Apparel", "Banking", "Biotechnology", "Chemicals", "Communications",
@@ -24,9 +27,18 @@ INDUSTRIES = ['', "Apparel", "Banking", "Biotechnology", "Chemicals", "Communica
               "Media", "Not For Profit", "Recreation", "Retail", "Shipping", "Technology",
               "Telecommunications", "Transportation", "Utilities", "Other"]
 
+#
+# Mixins for forms
+#
+class AddressForm(object):
+  address_street = TextField("Street")
+  address_city = TextField("City")
+  address_state = TextField("State/Region")
+  address_country = TextField("Country")
 
-# TODO: generate from View
-class AccountEditForm(Form):
+
+# TODO: generate all the forms automagically
+class AccountEditForm(AddressForm, Form):
   name = TextField("Name", validators=[Length(min=3, max=50)])
   website = TextField("Website")
   office_phone = TextField("Office Phone")
@@ -36,6 +48,7 @@ class AccountEditForm(Form):
 
   _groups = [
     ["Main", ['name', 'website', 'office_phone']],
+    ["Address", ['address_street', 'address_city', 'address_state', 'address_country']],
     ["Additional information", ['type', 'industry']],
   ]
 
@@ -43,16 +56,18 @@ class Accounts(Module):
   managed_class = Account
 
   list_view_columns = [
-    dict(name='name', width=25),
+    dict(name='name', width=35),
     dict(name='website', width=25),
-    dict(name='type', width=25),
-    dict(name='industry', width=24),
+    dict(name='type', width=20),
+    dict(name='industry', width=14),
   ]
 
   single_view = SingleView(
     Panel('Overview',
           Row('name', 'website'),
           Row('office_phone')),
+    Panel('Address',
+          Row('address')),
     Panel('More information',
           Row('type', 'industry')),
     )
@@ -67,7 +82,7 @@ class Accounts(Module):
 def accounts():
   return Account.query.all()
 
-class ContactEditForm(Form):
+class ContactEditForm(AddressForm, Form):
   first_name = TextField("First Name")
   last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
   description = TextField("Description")
@@ -79,6 +94,7 @@ class ContactEditForm(Form):
 
   _groups = [
     ["Main", ['first_name', 'last_name', 'description', 'account']],
+    ["Address", ['address_street', 'address_city', 'address_state', 'address_country']],
     ["Additional information", ['department', 'email']],
   ]
 
@@ -93,6 +109,8 @@ class Contacts(Module):
           Row('description'),
           Row('account'),
           ),
+    Panel('Address',
+          Row('address')),
     Panel('More information',
           Row('department', 'email')
           ),
@@ -101,7 +119,7 @@ class Contacts(Module):
   edit_form = ContactEditForm
 
 
-class LeadEditForm(Form):
+class LeadEditForm(AddressForm, Form):
   first_name = TextField("First Name")
   last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
   description = TextField("Description")
@@ -112,17 +130,20 @@ class LeadEditForm(Form):
 
   _groups = [
     ["Main", ['first_name', 'last_name', 'description']],
+    ["Address", ['address_street', 'address_city', 'address_state', 'address_country']],
     ["Additional information", ['department', 'email']],
   ]
 
 class Leads(Module):
   managed_class = Lead
 
-  list_view_columns = ('full_name', 'job_title', 'department', 'email')
+  list_view_columns = ('name', 'job_title', 'department', 'email')
 
   single_view = SingleView(
     Panel('Overview',
           Row('first_name', 'last_name')),
+    Panel('Address',
+          Row('address')),
     Panel('More information',
           Row('department', 'email')),
     )

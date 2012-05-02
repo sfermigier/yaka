@@ -5,24 +5,8 @@ from sqlalchemy.schema import ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date
 
 #
-# Domain classes
+# Mixins
 #
-class Account(Entity):
-  __tablename__ = 'account'
-
-  name = Column(UnicodeText, searchable=True)
-  website = Column(UnicodeText)
-  office_phone = Column(UnicodeText)
-
-  type = Column(UnicodeText)
-  industry = Column(UnicodeText)
-
-  contacts = relationship("Contact", backref='account')
-
-  def __unicode__(self):
-    return self.name
-
-
 class Person(object):
   """Mixin class for persons."""
 
@@ -41,13 +25,50 @@ class Person(object):
     return self.first_name + " " + self.last_name
 
 
-class Contact(Person, Entity):
+class Addressable(object):
+  """Mixin class for entities with an address."""
+
+  address_street = Column(UnicodeText)
+  address_city = Column(UnicodeText)
+  address_state = Column(UnicodeText)
+  address_country = Column(UnicodeText)
+
+  @property
+  def address(self):
+    if self.address_city or self.address_country or self.address_state or self.address_street:
+      return "%s, %s, %s, %s" % (
+        self.address_street, self.address_city, self.address_state, self.address_country)
+    else:
+      return ""
+
+
+#
+# Domain classes
+#
+
+class Account(Addressable, Entity):
+  __tablename__ = 'account'
+
+  name = Column(UnicodeText, searchable=True)
+  website = Column(UnicodeText)
+  office_phone = Column(UnicodeText)
+
+  type = Column(UnicodeText)
+  industry = Column(UnicodeText)
+
+  contacts = relationship("Contact", backref='account')
+
+  def __unicode__(self):
+    return self.name
+
+
+class Contact(Addressable, Person, Entity):
   __tablename__ = 'contact'
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=True)
 
 
-class Lead(Person, Entity):
+class Lead(Addressable, Person, Entity):
   __tablename__ = 'lead'
 
   lead_status = Column(UnicodeText)
@@ -77,5 +98,4 @@ class User(Person, Entity):
   password = Column(UnicodeText)
 
 
-# TODO: Address
 # TODO: Task

@@ -3,12 +3,12 @@ PYTHON=python
 test:
 	$(PYTHON) -m nose.core tests
 
-run: yaka/yaka.db
+run: yaka_crm/yaka.db
 	$(PYTHON) manage.py runserver
 
-yaka/yaka.db:
+yaka_crm/yaka.db:
 	$(PYTHON) manage.py initdb
-	$(PYTHON) manage.py initdata
+	$(PYTHON) manage.py loaddata
 
 full-test:
 	tox -e py27
