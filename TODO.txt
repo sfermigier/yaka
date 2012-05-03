@@ -1,10 +1,17 @@
 TODO
 ====
 
+- Login
 - Audit
 - Security
-- Better default models
 - Graphical cleanup
+- whooshalchemy is performing poorly: fix this
+- Search
+- GED
+- Convert leads to account + opportunity
+- Export to csv
+- Reports
+
 
 DONE
 ====
@@ -17,4 +24,5 @@ DONE
 + Select fields
 + Relation field
 + Load dummy data
++ Finish import and default data model
 

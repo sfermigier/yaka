@@ -1,9 +1,16 @@
 import csv
-from pprint import pprint
 import os.path
-import time
-import sys
-from yaka_crm.entities import Contact, Account, User, Opportunity
+import datetime
+
+from yaka_crm.entities import Contact, Account, User, Opportunity, Lead
+
+
+def parse_date(str):
+  day = int(str[0:2])
+  month = int(str[3:5])
+  year = int(str[6:10])
+  return datetime.date(year, month, day)
+
 
 def init_data(db):
   """Initializes DB with some dummy data."""
@@ -35,6 +42,8 @@ class DataLoader(object):
   def load_data(self):
     self.load_accounts()
     self.load_contacts()
+    self.load_opportunities()
+    self.load_leads()
     self.db.session.commit()
 
   def load_accounts(self):
@@ -62,17 +71,46 @@ class DataLoader(object):
         d["address_" + k.lower()] = line["Primary Address %s" % k]
 
       contact = Contact(**d)
+
       account = self.accounts_map.get(line['Account Name'])
       if account:
         contact.account = account
+
       self.db.session.add(contact)
 
   def load_opportunities(self):
     reader = self.get_reader("Opportunities.csv")
-    for d in reader:
-      contact = Opportunity(
-        first_name=d['First Name'], last_name=d['Last Name'], email=d['Email Address'])
-      self.db.session.add(contact)
+    for line in reader:
+      d = {}
+      for col in ['Name', 'Description', 'Type']:
+        d[col.lower().replace(" ", "_")] = line[col]
+      d['stage'] = line['Sales Stage']
+      d['amount'] = line['Opportunity Amount'][3:]
+      d['close_date'] = parse_date(line['Expected Close Date'])
+      d['probability'] = line['Probability (%)']
+      opportunity = Opportunity(**d)
+
+      account = self.accounts_map.get(line['Account Name'])
+      if not account:
+        print "Skipping account", line['Account Name']
+        continue
+      opportunity.account = account
+
+      self.db.session.add(opportunity)
+
+  def load_leads(self):
+    reader = self.get_reader("Leads.csv")
+    for line in reader:
+      d = {}
+      d['email'] = line['Email Address']
+      d['job_title'] = line['Title']
+      for col in ['First Name', 'Last Name', 'Department', 'Account Name']:
+        d[col.lower().replace(" ", "_")] = line[col]
+
+      for k in ['Street', 'City', 'State', 'Country']:
+        d["address_" + k.lower()] = line["Primary Address %s" % k]
+      lead = Lead(**d)
+      self.db.session.add(lead)
 
   @staticmethod
   def get_reader(filename):

@@ -1,9 +1,9 @@
 from flaskext.wtf.form import Form
-from flaskext.wtf.html5 import DateField
+from flaskext.wtf.html5 import DateField, URLField, TelField, IntegerField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.core import SelectField
-from wtforms.fields.simple import TextField
-from wtforms.validators import Length, Email
+from wtforms.fields.simple import TextField, TextAreaField
+from wtforms.validators import Length, Email, url
 
 from .entities import *
 from .core.frontend import *
@@ -40,8 +40,8 @@ class AddressForm(object):
 # TODO: generate all the forms automagically
 class AccountEditForm(AddressForm, Form):
   name = TextField("Name", validators=[Length(min=3, max=50)])
-  website = TextField("Website")
-  office_phone = TextField("Office Phone")
+  website = URLField("Website", validators=[url()])
+  office_phone = TelField("Office Phone")
 
   type = SelectField("Type", choices=[ (x, x) for x in TYPES ])
   industry = SelectField("Industry", choices=[ (x, x) for x in INDUSTRIES ])
@@ -76,6 +76,7 @@ class Accounts(Module):
 
   related_views = [
     ('Contacts', 'contacts', ('name', 'job_title', 'department')),
+    ('Opportunities', 'opportunities', ('name', 'type', 'amount', 'stage')),
   ]
 
 
@@ -85,7 +86,7 @@ def accounts():
 class ContactEditForm(AddressForm, Form):
   first_name = TextField("First Name")
   last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
-  description = TextField("Description")
+  description = TextAreaField("Description")
 
   account = QuerySelectField("Account", widget=Chosen(), query_factory=accounts, allow_blank=True)
 
@@ -119,10 +120,41 @@ class Contacts(Module):
   edit_form = ContactEditForm
 
 
+class OpportunityEditForm(Form):
+  name = TextField("Name")
+  description = TextAreaField("Description")
+  type = TextField("Type")
+  stage = TextField("Stage")
+  amount = IntegerField("Amount")
+  probability = IntegerField("Probability")
+  close_date = DateField("Close Date")
+
+  account = QuerySelectField("Account", widget=Chosen(), query_factory=accounts, allow_blank=True)
+
+  _groups = [
+    ["Main", ['name', 'description', 'account', 'type', 'stage', 'amount', 'probability', 'close_date']],
+  ]
+
+class Opportunities(Module):
+  managed_class = Opportunity
+
+  list_view_columns = ('name', 'account', 'type', 'amount', 'stage')
+
+  single_view = SingleView(
+    Panel('Overview',
+          Row('name', 'type'),
+          Row('description'),
+          Row('account'),
+          Row('stage', 'amount'),
+          Row('probability', 'close_date')))
+
+  edit_form = OpportunityEditForm
+
+
 class LeadEditForm(AddressForm, Form):
   first_name = TextField("First Name")
   last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
-  description = TextField("Description")
+  description = TextAreaField("Description")
 
   #account = TextField("Description")
   department = TextField("Department")
@@ -149,29 +181,6 @@ class Leads(Module):
     )
 
   edit_form = LeadEditForm
-
-
-class OpportunityEditForm(Form):
-  name = TextField("Name")
-  type = TextField("Last Name")
-  close_date = DateField("Close Date")
-
-  _groups = [
-    ["Main", ['name', 'type', 'close_date']],
-  ]
-
-class Opportunities(Module):
-  managed_class = Opportunity
-
-  list_view_columns = ('name',)
-
-  single_view = SingleView(
-    Panel('Overview',
-          Row('name', 'type'),
-          Row('close_date')),
-    )
-
-  edit_form = OpportunityEditForm
 
 
 class Documents(Module):

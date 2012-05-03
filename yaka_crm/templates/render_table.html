@@ -2,12 +2,14 @@
 <script>
 $(document).ready(function() {
   $('#{{ table_name }}').dataTable( {
-    "aoColumns": [
-      { "asSorting": [] },
+    aoColumns: [
+      { asSorting: [] },
       {% for i in range(0, columns|count) %}
-      { "asSorting": [ "asc", "desc" ] },
+      { asSorting: [ "asc", "desc" ] },
       {% endfor %}
-    ]
+    ],
+    bFilter: false,
+    bLengthChange: false
   });
 } );
 </script>
@@ -47,3 +49,5 @@ $(document).ready(function() {
 {% else %}
 No data. <a href="">Create new</a>.
 {% endif %}
+
+<div style="clear: both;"></div>

@@ -57,6 +57,7 @@ class Account(Addressable, Entity):
   industry = Column(UnicodeText)
 
   contacts = relationship("Contact", backref='account')
+  opportunities = relationship("Opportunity", backref='account')
 
   def __unicode__(self):
     return self.name
@@ -68,22 +69,25 @@ class Contact(Addressable, Person, Entity):
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=True)
 
 
-class Lead(Addressable, Person, Entity):
-  __tablename__ = 'lead'
-
-  lead_status = Column(UnicodeText)
-
-
 class Opportunity(Entity):
   __tablename__ = 'opportunity'
 
   name = Column(UnicodeText, searchable=True)
+  description = Column(UnicodeText, searchable=True)
   type = Column(UnicodeText)
   stage = Column(UnicodeText)
-
+  amount = Column(Integer)
+  probability = Column(Integer)
   close_date = Column(Date)
 
   account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
+
+
+class Lead(Addressable, Person, Entity):
+  __tablename__ = 'lead'
+
+  account_name = Column(UnicodeText)
+  lead_status = Column(UnicodeText)
 
 
 class Document(Entity):
