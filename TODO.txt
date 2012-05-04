@@ -4,14 +4,17 @@ TODO
 - Login
 - Audit
 - Security
-- Graphical cleanup
-- whooshalchemy is performing poorly: fix this
+- Graphical cleanup (datatables)
 - Search
 - GED
 - Convert leads to account + opportunity
 - Export to csv
 - Reports
-
+- Home page
+- Actions
+- Ownership
+- Timelines
+- whooshalchemy is performing poorly: fix this
 
 DONE
 ====

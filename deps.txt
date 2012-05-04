@@ -1,15 +1,17 @@
 Flask
 Flask-SQLAlchemy
 Flask-Testing
-Flask-Cache
-Flask-Principal
+Flask-Security
 Flask-WTF
-Flask-Mail
 Flask-Script
-Flask-OpenID
-Flask-Babel
-Flask-Themes
 Flask-DebugToolbar
+Flask-Uploads
+
+Flask-Themes
+Flask-Babel
+Flask-Mail
+Flask-OpenID
+Flask-Cache
 
 sqlalchemy
 WhooshAlchemy
@@ -18,5 +20,7 @@ feedparser
 blinker
 requests
 iso8601
+passlib
+py-bcrypt
 
-coverage
+coverage==3.5.1

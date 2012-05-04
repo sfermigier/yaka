@@ -20,6 +20,8 @@ class Person(object):
   email = Column(UnicodeText)
   description = Column(UnicodeText, searchable=True)
 
+  photo = Column(LargeBinary)
+
   @property
   def name(self):
     return self.first_name + " " + self.last_name
@@ -56,8 +58,11 @@ class Account(Addressable, Entity):
   type = Column(UnicodeText)
   industry = Column(UnicodeText)
 
+  logo = Column(LargeBinary)
+
   contacts = relationship("Contact", backref='account')
   opportunities = relationship("Opportunity", backref='account')
+
 
   def __unicode__(self):
     return self.name
@@ -99,7 +104,8 @@ class Document(Entity):
 class User(Person, Entity):
   __tablename__ = 'user'
 
-  password = Column(UnicodeText)
+  #login = Column(UnicodeText, nullable=False)
+  #password = Column(UnicodeText, nullable=False)
 
 
 # TODO: Task

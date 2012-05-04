@@ -1,3 +1,8 @@
+"""
+Catchall module for security related stuff.
+
+TODO: split later.
+"""
 
 class SecurityManager(object):
 

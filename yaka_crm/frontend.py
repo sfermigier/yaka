@@ -1,3 +1,5 @@
+from flaskext.uploads import UploadSet, IMAGES
+from flaskext.wtf.file import FileField, file_allowed
 from flaskext.wtf.form import Form
 from flaskext.wtf.html5 import DateField, URLField, TelField, IntegerField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -12,7 +14,6 @@ from .core.frontend import *
 #
 # Domain-specific application classes
 #
-from yaka_crm.core import forms
 from yaka_crm.core.forms import Chosen
 
 #
@@ -46,8 +47,10 @@ class AccountEditForm(AddressForm, Form):
   type = SelectField("Type", choices=[ (x, x) for x in TYPES ])
   industry = SelectField("Industry", choices=[ (x, x) for x in INDUSTRIES ])
 
+  logo = FileField("Logo", validators=[file_allowed(UploadSet("images", IMAGES), "Images only!")])
+
   _groups = [
-    ["Main", ['name', 'website', 'office_phone']],
+    ["Main", ['name', 'website', 'office_phone', 'logo']],
     ["Address", ['address_street', 'address_city', 'address_state', 'address_country']],
     ["Additional information", ['type', 'industry']],
   ]
