@@ -67,11 +67,11 @@ def search():
   if live:
     if not num_results:
       return ""
-    return render_template('live_search.html', contacts=contacts,
+    return render_template('search/live_search.html', contacts=contacts,
                            accounts=accounts, leads=leads,
                            opportunities=opportunities)
   else:
-    return render_template('search.html', contacts=contacts,
+    return render_template('search/search.html', contacts=contacts,
                            accounts=accounts, leads=leads,
                            opportunities=opportunities,
                            breadcrumbs=breadcrumbs)

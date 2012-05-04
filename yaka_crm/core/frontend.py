@@ -86,7 +86,7 @@ class TableView(object):
     for entity in model:
       table.append(self.render_line(entity))
 
-    return Markup(render_template('render_table.html', table=table, columns=columns,
+    return Markup(render_template('crm/render_table.html', table=table, columns=columns,
                                   table_name=self.name))
 
   def render_line(self, entity):
@@ -117,10 +117,10 @@ class SingleView(object):
     # TODO: refactor by passing a model instead
     def get(attr_name):
       return self.get(model, attr_name)
-    return Markup(render_template('render_single.html', panels=self.panels, get=get))
+    return Markup(render_template('crm/render_single.html', panels=self.panels, get=get))
 
   def render_form(self, form, for_new=False):
-    return Markup(render_template('render_for_edit.html', form=form, for_new=for_new))
+    return Markup(render_template('crm/render_for_edit.html', form=form, for_new=for_new))
 
   def get(self, model, attr_name):
     value = getattr(model, attr_name)
@@ -263,7 +263,7 @@ class Module(object):
     # Create blueprint and register rules
     self.blueprint = Blueprint(self.endpoint, __name__,
                                url_prefix=self.url,
-                               template_folder='templates',
+                               template_folder='templates/crm',
                                static_folder=self.static_folder)
 
     for url, name, methods in self._urls:
@@ -288,7 +288,8 @@ class Module(object):
     table_view = TableView(self.list_view_columns)
     rendered_table = table_view.render(entities)
 
-    return render_template('list_view.html', rendered_table=rendered_table, breadcrumbs=bc, module=self)
+    return render_template('crm/list_view.html',
+                           rendered_table=rendered_table, breadcrumbs=bc, module=self)
 
   @expose("/<int:entity_id>")
   def entity_view(self, entity_id):
@@ -299,7 +300,7 @@ class Module(object):
     rendered_entity = self.single_view.render(entity)
     related_views = self.render_related_views(entity)
 
-    return render_template('single_view.html', rendered_entity=rendered_entity,
+    return render_template('crm/single_view.html', rendered_entity=rendered_entity,
                            related_views=related_views, breadcrumbs=bc, module=self)
 
   @expose("/<int:entity_id>/edit")
@@ -311,7 +312,7 @@ class Module(object):
     form = self.edit_form(obj=entity)
     rendered_entity = self.single_view.render_form(form)
 
-    return render_template('single_view.html', rendered_entity=rendered_entity,
+    return render_template('crm/single_view.html', rendered_entity=rendered_entity,
                            breadcrumbs=bc, module=self)
 
   @expose("/<int:entity_id>/edit", methods=['POST'])
@@ -330,7 +331,7 @@ class Module(object):
       flash("Please fix the error below", "error")
       rendered_entity = self.single_view.render_form(form)
       bc = self.bread_crumbs(entity.name)
-      return render_template('single_view.html', rendered_entity=rendered_entity,
+      return render_template('crm/single_view.html', rendered_entity=rendered_entity,
                              breadcrumbs=bc, module=self)
 
   @expose("/new")
@@ -340,7 +341,7 @@ class Module(object):
     form = self.edit_form()
     rendered_entity = self.single_view.render_form(form, for_new=True)
 
-    return render_template('single_view.html', rendered_entity=rendered_entity,
+    return render_template('crm/single_view.html', rendered_entity=rendered_entity,
                            breadcrumbs=bc, module=self)
 
   @expose("/new", methods=['PUT', 'POST'])
@@ -360,7 +361,7 @@ class Module(object):
       flash("Error", "error")
       rendered_entity = self.single_view.render_form(form, for_new=True)
       bc = self.bread_crumbs("New %s" % self.managed_class.__name__)
-      return render_template('single_view.html', rendered_entity=rendered_entity,
+      return render_template('crm/single_view.html', rendered_entity=rendered_entity,
                              breadcrumbs=bc, module=self)
 
   @expose("/<int:entity_id>/delete")

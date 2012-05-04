@@ -27,3 +27,7 @@ crm = CRM(app)
 # Register additional blueprints
 from admin import admin
 app.register_blueprint(admin)
+
+from ged import ged
+app.register_blueprint(ged)
+

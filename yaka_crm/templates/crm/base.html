@@ -26,7 +26,7 @@
   <!-- various jQuery plugins -->
   <script type="text/javascript" language="javascript" src="/static/jquery-ui/js/jquery-1.7.2.min.js"></script>
 
-  <link type="text/css" href="/static/jquery-ui/css/ui-lightness/jquery-ui-1.8.19.custom.css" rel="stylesheet"/>
+  <link type="text/css" href="/static/jquery-ui/css/ui-lightness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />
   <script type="text/javascript" src="/static/jquery-ui/js/jquery-ui-1.8.19.custom.min.js"></script>
 
   <style type="text/css" title="currentStyle">
@@ -36,14 +36,14 @@
   </style>
   <script type="text/javascript" language="javascript" src="/static/jquery-ui/plugins/jquery.dataTables.js"></script>
 
-  <link type="text/css" href="/static/chosen/chosen.css" rel="stylesheet"/>
+  <link type="text/css" href="/static/chosen/chosen.css" rel="stylesheet" />
   <script type="text/javascript" language="javascript" src="/static/chosen/chosen.jquery.min.js"></script>
 
   <!-- our app -->
   <script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
 
   <!-- DEBUG -->
-  <link type="text/css" href="/static/css/holmes.css" rel="stylesheet"/>
+  <link type="text/css" href="/static/css/holmes.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -62,7 +62,7 @@
       <ul class="nav pull-right">
         <li id="fat-menu" class="dropdown">
 
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ g.user.full_name }}<b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{g.user.full_name}}<b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a href="/users/{{g.user.uid}}">My profile</a></li>
             <li><a href="/users/{{g.user.uid}}/edit">Edit profile</a></li>
@@ -74,8 +74,10 @@
       </ul>
 
       <form class="navbar-search pull-right" action="/search">
-        <input type="text" name="q" class="search-query" placeholder="Search" autocomplete="off" id="search-box">
-        <ul class="dropdown-menu" id="live-search-results" style="width: 250px;"></ul>
+          <input type="text" name="q" class="search-query"
+                 placeholder="Search" autocomplete="off" id="search-box">
+        <ul class="dropdown-menu" id="live-search-results" style="width: 250px;">
+        </ul>
       </form>
     </div>
   </div>
@@ -84,19 +86,78 @@
 
 <div class="container">
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-block alert-{{category}}">
-          <a class="close" data-dismiss="alert">&times;</a>
-          {{ message }}
-        </div>
+  {% if request.path.startswith("/crm/") %}
+    <ul class="nav nav-tabs">
+      {% for module in g.modules %}
+        <li {% if module.is_current() %}class="active"{% endif %}><a
+                href="{{ module.url }}/">{{ module.label }}</a></li>
       {% endfor %}
-    {% endif %}
-  {% endwith %}
+    </ul>
+  {% endif %}
 
-  {% block main %}
-  {% endblock %}
+  <div class="row">
+    <div class="span2">
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown">
+          Create new...
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu"> <!-- TODO: un-hardcode this -->
+          <li><a href="/crm/leads/new">Lead</a></li>
+          <li><a href="/crm/opportunities/new">Opportunity</a></li>
+          <li><a href="/crm/contacts/new">Contact</a></li>
+          <li><a href="/crm/accounts/new">Account</a></li>
+          <li><a href="/crm/documents/new">Document</a></li>
+          <!-- dropdown menu links -->
+        </ul>
+      </div>
+
+      <div>&nbsp;</div>
+
+      {% if g.recent_items %}
+      <div class="well" style="padding: 8px 0;">
+        <ul class="nav nav-list">
+          <li class="nav-header">
+            Recent items
+          </li>
+          {% for item in g.recent_items %}
+          <li>
+            <a href="{{ item.url }}">{{ item.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+    </div><!-- /span2 -->
+
+    <div class="span10">
+
+      <ul class="breadcrumb">
+        {% for obj in breadcrumbs[0:-1] %}
+        <li><a href="{{ obj.path }}">{{ obj.label }}</a>
+        <span class="divider">/</span></li>
+        {% endfor %}
+        <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
+      </ul>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-block alert-{{category}}">
+              <a class="close" data-dismiss="alert">&times;</a>
+              {{message}}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block main %}
+      {% endblock %}
+    </div>
+    <!--/span-->
+  </div>
+  <!--/row-->
 
   <hr>
 
@@ -128,7 +189,7 @@
 -->
 <script type="text/javascript">
   $('.dropdown-toggle').dropdown();
-  $(".chzn-select").chosen({allow_single_deselect: true});
+  $(".chzn-select").chosen({allow_single_deselect:true});
   //$(".chzn-select-deselect").chosen({allow_single_deselect:true});
 </script>
 
