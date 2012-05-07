@@ -1,16 +1,13 @@
 {% macro render(list, path) %}
 {% for obj in list %}
-<li><strong><a href="/crm/{{ path }}/{{obj.uid}}">{{obj.name}}</a></strong>
+<li><strong><a href="{{obj.url}}">{{obj.name}}</a></strong>
 </li>
 {% endfor %}
 {% endmacro %}
 
-{% for contact in contacts %}
-  <li>
-    <strong><a href="/crm/contacts/{{contact.uid}}"><img src="/static/img/avatar45.png" /> {{contact.name}}</a></strong>
-  </li>
-{% endfor %}
 
-{{ render(leads, "leads") }}
-{{ render(opportunities, "opportunities") }}
-{{ render(accounts, "accounts") }}
+{% block container %}
+  {% for k, l in res %}
+    {{ render(l, k) }}
+  {%  endfor %}
+{%  endblock %}

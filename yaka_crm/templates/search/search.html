@@ -1,24 +1,23 @@
 {% extends "base.html" %}
 
-{% macro render(list, path) %}
+{% macro render(list, plural) %}
   {% if list %}
     {% if list|count > 1 %}
-      <h2>{{ path|capitalize }} ({{list|count}} matches)</h2>
+      <h2>{{ plural }} ({{list|count}} matches)</h2>
     {% else %}
-      <h2>{{ path|capitalize }} (1 match)</h2>
+      <h2>{{ plural }} (1 match)</h2>
     {% endif %}
 
     {% for obj in list %}
       <p>
-        <strong><a href="/crm/{{ path }}/{{obj.uid}}">{{obj.name}}</a></strong>
+        <strong><a href="{{obj.url}}">{{obj.name}}</a></strong>
       </p>
     {% endfor %}
   {% endif %}
 {% endmacro %}
 
-{% block main %}
-  {{ render(contacts, "contacts") }}
-  {{ render(leads, "leads") }}
-  {{ render(opportunities, "opportunities") }}
-  {{ render(accounts, "accounts") }}
+{% block container %}
+  {% for k, l in res %}
+    {{ render(l, k) }}
+  {%  endfor %}
 {%  endblock %}

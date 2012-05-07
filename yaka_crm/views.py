@@ -6,6 +6,7 @@ from flask.globals import g
 from . import app
 from .entities import *
 from .frontend import CRM
+from yaka_crm.ged import File
 
 
 __all__ = []
@@ -57,21 +58,19 @@ def search():
     dict(path="", label="Search for '%s'" % q),
   ]
 
-  contacts = list(Contact.search_query(q).all())
-  accounts = list(Account.search_query(q).all())
-  leads = list(Lead.search_query(q).all())
-  opportunities = list(Opportunity.search_query(q).all())
+  res = []
+  for klass in [Contact, Account, Lead, Opportunity, File]:
+    plural = klass.__name__ + 's'
+    if plural == 'Opportunitys':
+      plural = 'Opportunities'
+    res.append((plural, list(klass.search_query(q).all())))
 
-  num_results = len(contacts) + len(accounts) + len(leads) + len(opportunities)
+  num_results = sum([len(x) for x in res])
 
   if live:
     if not num_results:
       return ""
-    return render_template('search/live_search.html', contacts=contacts,
-                           accounts=accounts, leads=leads,
-                           opportunities=opportunities)
+    return render_template('search/live_search.html', res=res)
   else:
-    return render_template('search/search.html', contacts=contacts,
-                           accounts=accounts, leads=leads,
-                           opportunities=opportunities,
+    return render_template('search/search.html', res=res,
                            breadcrumbs=breadcrumbs)

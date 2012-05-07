@@ -1,3 +1,6 @@
+"""Static configuration for the application.
+"""
+
 from flask import Flask
 from whooshalchemy import IndexService
 
@@ -13,12 +16,15 @@ db.init_app(app)
 
 # TODO: autodiscovery of searchable classes
 from .entities import Contact, Account, Opportunity, Lead, Document
+from yaka_crm.ged import File
+
 index_service = IndexService(app.config)
 index_service.register_class(Contact)
 index_service.register_class(Account)
 index_service.register_class(Opportunity)
 index_service.register_class(Lead)
 index_service.register_class(Document)
+index_service.register_class(File)
 
 from .frontend import CRM
 

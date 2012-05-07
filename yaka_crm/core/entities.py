@@ -44,6 +44,9 @@ class Entity(AbstractConcreteBase, db.Model):
   updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, editable=False)
   deleted_at = Column(DateTime, default=None, editable=False)
 
+  creator_id = Column(Integer)
+  owner_id = Column(Integer)
+
 
   def __init__(self, **kw):
     self.update(kw)

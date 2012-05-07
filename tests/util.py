@@ -1,8 +1,10 @@
 import csv
+import mimetypes
 import os.path
 import datetime
 
 from yaka_crm.entities import Contact, Account, User, Opportunity, Lead
+from yaka_crm.ged import File, convert
 
 
 def parse_date(str):
@@ -44,6 +46,9 @@ class DataLoader(object):
     self.load_contacts()
     self.load_opportunities()
     self.load_leads()
+
+    self.load_files()
+
     self.db.session.commit()
 
   def load_accounts(self):
@@ -116,6 +121,20 @@ class DataLoader(object):
   def get_reader(filename):
     path = os.path.join(os.path.dirname(__file__), "dummy_data", filename)
     return csv.DictReader(open(path))
+
+  def load_files(self):
+    dir_path = os.path.join(os.path.dirname(__file__), "dummy_files")
+    file_names = os.listdir(dir_path)
+    for fn in file_names:
+      path = os.path.join(dir_path, fn)
+      f = File()
+      f.data = open(path).read()
+      f.name = unicode(fn)
+      f.mime_type = mimetypes.guess_type(fn)[0]
+      f.size = len(f.data)
+      convert(f)
+      self.db.session.add(f)
+
 
 
 def load_data(db):

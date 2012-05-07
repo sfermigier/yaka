@@ -1,0 +1,88 @@
+{% extends "ged/base.html" %}
+
+{% block main %}
+
+{% if files %}
+  <script>
+    $(document).ready(function() {
+      $('#files-table').dataTable( {
+        aoColumns: [
+          { asSorting: [] },
+          { asSorting: [ "asc", "desc" ] },
+          { asSorting: [ "asc", "desc" ] },
+          { asSorting: [ "asc", "desc" ] }
+        ],
+        bFilter: false,
+        bLengthChange: false
+      });
+    } );
+  </script>
+
+  <form>
+
+    <div class="btn-toolbar">
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          Select
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="">All</a></li>
+          <li><a href="">All</a></li>
+          <!-- dropdown menu links -->
+        </ul>
+      </div>
+
+      <div class="btn-group pull-right">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i><span class="caret"></span></a>
+        <ul class="dropdown-menu" style="left: -300%;">
+          <li><a href="#">All file types</a></li>
+          <li><a href="#">Only documents</a></li>
+          <li><a href="#">Only images</a></li>
+          <li><a href="#">Only videos</a></li>
+        </ul>
+      </div>
+      <div class="btn-group pull-right">
+        <button class="btn">1</button>
+        <button class="btn">2</button>
+        <button class="btn">3</button>
+      </div>
+    </div>
+
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped"
+            id="files-table">
+      <thead>
+        <tr>
+          <th width="1%"></th>
+          <th width="50%">Title</th>
+          <th width="29%">Owner</th>
+          <th width="20%">Age</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for file in files %}
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><img src="{{ file.icon }}" style="vertical-align: middle;"> <a href="{{ file.uid }}">{{ file.name }}</a></td>
+          <td>Stefane Fermigier</td>
+          <td>0</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th></th>
+          <th>Title</th>
+          <th>Owner</th>
+          <th>Age</th>
+        </tr>
+      </tfoot>
+    </table>
+  </form>
+{% else %}
+  No data. <a href="">Create new</a>.
+{% endif %}
+
+<div style="clear: both;"></div>
+
+{%  endblock %}

@@ -1,0 +1,132 @@
+{% extends "ged/base.html" %}
+
+{% block main %}
+
+<div style="width: 70%; position: relative; float: left;">
+
+  <h2>{{ file.name }}</h2>
+
+  <img src="/ged/{{ file.uid }}/preview" width="450px">
+
+  <h2>Properties</h2>
+
+  <p>
+    Size: {{ file.size }}
+  </p>
+  <p>
+    MIME Type: {{ file.mime_type }}
+  </p>
+  <p>
+    Creator: {{ file.creator }}
+  </p>
+  <p>
+    Created on: {{ file.created_at }}
+  </p>
+  <p>
+    Last modified on: {{ file.modified_at }}
+  </p>
+
+</div>
+
+<div style="width: 30%; position: relative; float: right;">
+
+<div class="well" style="padding: 8px 0;">
+
+  <ul class="nav nav-list">
+    <li class="nav-header">Actions</li>
+    <li><a href="/ged/{{ file.uid }}/download"><i class="icon-eye-open"></i> View in browser</a></li>
+
+    <li><a href="/ged/{{ file.uid }}/download?attach=true"><i class="icon-download"></i> Download</a></li>
+    <li><a href="#upload-new-version" data-toggle="modal"><i class="icon-upload"></i> Upload new version</a></li>
+    <li><a href="#send-by-email" data-toggle="modal"><i class="icon-envelope"></i> Email</a></li>
+    <li><a href="#delete" data-toggle="modal"><i class="icon-trash"></i> Delete</a></li>
+  </ul>
+</div>
+
+</div>
+
+
+<!-- modal stuff -->
+
+<div class="modal fade" id="upload-new-version">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">&times;</button>
+    <h3>Upload new version</h3>
+  </div>
+  <div class="modal-body">
+    <form id="fileupload" action="server/php/" method="POST" enctype="multipart/form-data">
+      <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+      <div class="row fileupload-buttonbar">
+        <div class="span7">
+          <!-- The fileinput-button span is used to style the file input field as button -->
+          <span class="btn btn-success fileinput-button">
+            <i class="icon-plus icon-white"></i>
+            <span>Add files...</span>
+            <input type="file" name="files" multiple class="hide">
+          </span>
+          <button type="submit" class="btn btn-primary start">
+            <i class="icon-upload icon-white"></i>
+            <span>Start upload</span>
+          </button>
+          <button type="reset" class="btn btn-warning cancel">
+            <i class="icon-ban-circle icon-white"></i>
+            <span>Cancel upload</span>
+          </button>
+        </div>
+        <!-- The global progress information -->
+        <div class="span5 fileupload-progress fade">
+          <!-- The global progress bar -->
+          <div class="progress progress-success progress-striped active">
+            <div class="bar" style="width:0%;"></div>
+          </div>
+          <!-- The extended global progress information -->
+          <div class="progress-extended">&nbsp;</div>
+        </div>
+      </div>
+      <!-- The loading indicator is shown during file processing -->
+      <div class="fileupload-loading"></div>
+      <br>
+      <!-- The table listing the files available for upload/download -->
+      <table class="table table-striped">
+        <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody>
+      </table>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn">Close</a>
+    <a href="" class="btn btn-primary">Save changes</a>
+  </div>
+</div>
+
+<div class="modal fade" id="send-by-email">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">&times;</button>
+    <h3>Send by email</h3>
+  </div>
+  <div class="modal-body">
+    <form>
+      <input type="file">
+      <input type="submit">
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn">Close</a>
+    <a href="" class="btn btn-primary">Send</a>
+  </div>
+</div>
+
+<div class="modal fade" id="delete">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">&times;</button>
+    <h3>Delete File</h3>
+  </div>
+  <div class="modal-body">
+    Are you sure you want to delete the file {{ file.name }} ?
+  </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn">Cancel</a>
+    <a href="/ged/{{ file.uid }}/delete" class="btn btn-primary">Really Delete</a>
+  </div>
+</div>
+
+{% endblock %}
