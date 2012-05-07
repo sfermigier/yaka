@@ -1,197 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Yaka CRM - Social Business</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
+{% extends "base.html" %}
 
-  <!-- Le styles -->
-  <link href="/static/css/bootstrap.css" rel="stylesheet">
-  <!--link href="css/bootstrap-responsive.css" rel="stylesheet"-->
-  <link href="/static/css/override.css" rel="stylesheet">
+{% block container %}
 
-  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-  <!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+<ul class="nav nav-tabs">
+  {% for module in g.modules %}
+    <li {% if module.is_current() %}class="active"{% endif %}><a
+            href="{{ module.url }}/">{{ module.label }}</a></li>
+  {% endfor %}
+</ul>
 
-  <!-- Le fav and touch icons -->
-  <link rel="shortcut icon" href="/static/images/favicon.ico">
-  <link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="/static/images/apple-touch-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="/static/images/apple-touch-icon-114x114.png">
-
-  <!-- various jQuery plugins -->
-  <script type="text/javascript" language="javascript" src="/static/jquery-ui/js/jquery-1.7.2.min.js"></script>
-
-  <link type="text/css" href="/static/jquery-ui/css/ui-lightness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />
-  <script type="text/javascript" src="/static/jquery-ui/js/jquery-ui-1.8.19.custom.min.js"></script>
-
-  <style type="text/css" title="currentStyle">
-    @import "/static/css/demo_page.css";
-    @import "/static/css/header.css";
-    @import "/static/css/demo_table.css";
-  </style>
-  <script type="text/javascript" language="javascript" src="/static/jquery-ui/plugins/jquery.dataTables.js"></script>
-
-  <link type="text/css" href="/static/chosen/chosen.css" rel="stylesheet" />
-  <script type="text/javascript" language="javascript" src="/static/chosen/chosen.jquery.min.js"></script>
-
-  <!-- our app -->
-  <script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
-
-  <!-- DEBUG -->
-  <link type="text/css" href="/static/css/holmes.css" rel="stylesheet" />
-</head>
-
-<body>
-
-<div class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="container">
-
-      <a class="brand" href="/">Yaka CRM</a>
-
-      <ul class="nav">
-        <li><a href="/admin">Admin</a></li>
-        <li><a href="/help">Help</a></li>
+<div class="row">
+  <div class="span3">
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown">
+        Create new...
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu"> <!-- TODO: un-hardcode this -->
+        <li><a href="/crm/leads/new">Lead</a></li>
+        <li><a href="/crm/opportunities/new">Opportunity</a></li>
+        <li><a href="/crm/contacts/new">Contact</a></li>
+        <li><a href="/crm/accounts/new">Account</a></li>
+        <li><a href="/crm/documents/new">Document</a></li>
+        <!-- dropdown menu links -->
       </ul>
-
-      <ul class="nav pull-right">
-        <li id="fat-menu" class="dropdown">
-
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{g.user.full_name}}<b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="/users/{{g.user.uid}}">My profile</a></li>
-            <li><a href="/users/{{g.user.uid}}/edit">Edit profile</a></li>
-            <li><a href="/help">Help</a></li>
-            <li class="divider"></li>
-            <li><a href="/logout">Log out</a></li>
-          </ul>
-        </li>
-      </ul>
-
-      <form class="navbar-search pull-right" action="/search">
-          <input type="text" name="q" class="search-query"
-                 placeholder="Search" autocomplete="off" id="search-box">
-        <ul class="dropdown-menu" id="live-search-results" style="width: 250px;">
-        </ul>
-      </form>
     </div>
-  </div>
-</div>
 
+    <div>&nbsp;</div>
 
-<div class="container">
-
-  {% if request.path.startswith("/crm/") %}
-    <ul class="nav nav-tabs">
-      {% for module in g.modules %}
-        <li {% if module.is_current() %}class="active"{% endif %}><a
-                href="{{ module.url }}/">{{ module.label }}</a></li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  <div class="row">
-    <div class="span2">
-      <div class="btn-group">
-        <a class="btn dropdown-toggle" data-toggle="dropdown">
-          Create new...
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu"> <!-- TODO: un-hardcode this -->
-          <li><a href="/crm/leads/new">Lead</a></li>
-          <li><a href="/crm/opportunities/new">Opportunity</a></li>
-          <li><a href="/crm/contacts/new">Contact</a></li>
-          <li><a href="/crm/accounts/new">Account</a></li>
-          <li><a href="/crm/documents/new">Document</a></li>
-          <!-- dropdown menu links -->
-        </ul>
-      </div>
-
-      <div>&nbsp;</div>
-
-      {% if g.recent_items %}
+    {% if g.recent_items %}
       <div class="well" style="padding: 8px 0;">
         <ul class="nav nav-list">
           <li class="nav-header">
             Recent items
           </li>
           {% for item in g.recent_items %}
-          <li>
-            <a href="{{ item.url }}">{{ item.name }}</a>
-          </li>
+            <li>
+              <a href="{{ item.url }}">{{ item.name }}</a>
+            </li>
           {% endfor %}
         </ul>
       </div>
-      {% endif %}
+    {% endif %}
 
-    </div><!-- /span2 -->
+  </div><!-- /span2 -->
 
-    <div class="span10">
+  <div class="span9">
 
-      <ul class="breadcrumb">
-        {% for obj in breadcrumbs[0:-1] %}
+    <ul class="breadcrumb">
+      {% for obj in breadcrumbs[0:-1] %}
         <li><a href="{{ obj.path }}">{{ obj.label }}</a>
-        <span class="divider">/</span></li>
+          <span class="divider">/</span></li>
+      {% endfor %}
+      <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
+    </ul>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-block alert-{{category}}">
+            <a class="close" data-dismiss="alert">&times;</a>
+            {{message}}
+          </div>
         {% endfor %}
-        <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
-      </ul>
+      {% endif %}
+    {% endwith %}
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-block alert-{{category}}">
-              <a class="close" data-dismiss="alert">&times;</a>
-              {{message}}
-            </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-
-      {% block main %}
-      {% endblock %}
-    </div>
-    <!--/span-->
+    {% block main %}
+    {% endblock %}
   </div>
-  <!--/row-->
-
-  <hr>
-
-  <footer>
-    <p>&copy; Yaka Project 2012</p>
-  </footer>
-
+  <!--/span-->
 </div>
-<!--/.fluid-container-->
+<!--/row-->
 
-<!-- Le javascript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="/static/bootstrap/bootstrap.js"></script>
-<script src="/static/bootstrap/bootstrap-dropdown.js"></script>
-<script src="/static/bootstrap/bootstrap-alert.js"></script>
-<script src="/static/bootstrap/bootstrap-button.js"></script>
+<hr>
 
-<!--
-<script src="/static/bootstrap/bootstrap-transition.js"></script>
-<script src="/static/bootstrap/bootstrap-modal.js"></script>
-<script src="/static/bootstrap/bootstrap-scrollspy.js"></script>
-<script src="/static/bootstrap/bootstrap-tab.js"></script>
-<script src="/static/bootstrap/bootstrap-tooltip.js"></script>
-<script src="/static/bootstrap/bootstrap-popover.js"></script>
-<script src="/static/bootstrap/bootstrap-collapse.js"></script>
-<script src="/static/bootstrap/bootstrap-carousel.js"></script>
-<script src="/static/bootstrap/bootstrap-typeahead.js"></script>
--->
-<script type="text/javascript">
-  $('.dropdown-toggle').dropdown();
-  $(".chzn-select").chosen({allow_single_deselect:true});
-  //$(".chzn-select-deselect").chosen({allow_single_deselect:true});
-</script>
+<footer>
+  <p>&copy; Yaka Project 2012</p>
+</footer>
 
-</body>
-</html>
+{% endblock %}

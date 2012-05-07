@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Yaka CRM - Social Business</title>
+  <title>Yaka</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -52,9 +52,13 @@
   <div class="navbar-inner">
     <div class="container">
 
-      <a class="brand" href="/">Yaka CRM</a>
+      <a class="brand" href="/">Yaka</a>
 
       <ul class="nav">
+        <li><a href="/crm/">CRM</a></li>
+        <li><a href="/ged/">GED</a></li>
+        <li><a href="/rse/">RSE</a></li>
+
         <li><a href="/admin">Admin</a></li>
         <li><a href="/help">Help</a></li>
       </ul>
@@ -95,7 +99,7 @@
     {% endif %}
   {% endwith %}
 
-  {% block main %}
+  {% block container %}
   {% endblock %}
 
   <hr>
