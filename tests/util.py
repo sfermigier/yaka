@@ -3,21 +3,12 @@ import mimetypes
 import os.path
 import datetime
 
-from yaka_crm.entities import Contact, Account, User, Opportunity, Lead
+from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
 from yaka_crm.ged import File, convert
-
-
-def parse_date(str):
-  day = int(str[0:2])
-  month = int(str[3:5])
-  year = int(str[6:10])
-  return datetime.date(year, month, day)
 
 
 def init_data(db):
   """Initializes DB with some dummy data."""
-
-  from yaka_crm.entities import Contact, Account, User
 
   account1 = Account(name="Fermi Corp", website="http://fermigier.com/")
   db.session.add(account1)
@@ -91,7 +82,7 @@ class DataLoader(object):
         d[col.lower().replace(" ", "_")] = line[col]
       d['stage'] = line['Sales Stage']
       d['amount'] = line['Opportunity Amount'][3:]
-      d['close_date'] = parse_date(line['Expected Close Date'])
+      d['close_date'] = self.parse_date(line['Expected Close Date'])
       d['probability'] = line['Probability (%)']
       opportunity = Opportunity(**d)
 
@@ -117,11 +108,6 @@ class DataLoader(object):
       lead = Lead(**d)
       self.db.session.add(lead)
 
-  @staticmethod
-  def get_reader(filename):
-    path = os.path.join(os.path.dirname(__file__), "dummy_data", filename)
-    return csv.DictReader(open(path))
-
   def load_files(self):
     dir_path = os.path.join(os.path.dirname(__file__), "dummy_files")
     file_names = os.listdir(dir_path)
@@ -135,6 +121,18 @@ class DataLoader(object):
       convert(f)
       self.db.session.add(f)
 
+  # Utilities
+  @staticmethod
+  def get_reader(filename):
+    path = os.path.join(os.path.dirname(__file__), "dummy_data", filename)
+    return csv.DictReader(open(path))
+
+  @staticmethod
+  def parse_date(str):
+    day = int(str[0:2])
+    month = int(str[3:5])
+    year = int(str[6:10])
+    return datetime.date(year, month, day)
 
 
 def load_data(db):

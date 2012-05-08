@@ -74,3 +74,8 @@ def search():
   else:
     return render_template('search/search.html', res=res,
                            breadcrumbs=breadcrumbs)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+  return render_template('error404.html'), 404

@@ -7,6 +7,7 @@ import os
 from flask import Blueprint, render_template, redirect, request, make_response
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer
+from werkzeug.exceptions import abort
 
 from yaka_crm.core.entities import Entity, Column
 from yaka_crm.extensions import db
@@ -37,7 +38,13 @@ class File(Entity):
   mime_type = Column(UnicodeText, nullable=False)
   size = Column(Integer)
 
+  #: for full-text search
   text = Column(UnicodeText, default=u"", searchable=True)
+
+  #: for "view as PDF"
+  pdf = Column(LargeBinary)
+
+  #: preview image
   preview = Column(LargeBinary)
 
   @property
@@ -50,7 +57,6 @@ class File(Entity):
 #
 # Controllers
 #
-
 @ged.route("/")
 def home():
   bc = [dict(path="/ged/", label="GED Home")]
@@ -62,56 +68,68 @@ def home():
 def upload_new():
   fd = request.files['file']
   f = File()
-  f.name = unicode(fd.filename, errors='ignore')
+  if isinstance(fd.filename, unicode):
+    f.name = fd.filename
+  else:
+    f.name = unicode(fd.filename, errors='ignore')
   f.data = fd.read()
   f.mime_type = fd.content_type
   f.size = fd.content_length
 
   db.session.add(f)
+  convert(f)
   db.session.commit()
+
   return redirect("/ged/%d" % f.uid)
 
 
 @ged.route("/<int:file_id>")
 def view(file_id):
+  f = get_file(file_id)
+
   bc = [dict(path="/ged/", label="GED Home")]
-  f = File.query.get(file_id)
   bc.append(dict(label=f.name))
 
   return render_template("ged/file.html", file=f, breadcrumbs=bc)
 
 
-@ged.route("/<int:file_id>/delete")
+@ged.route("/<int:file_id>/delete", methods=['POST'])
 def delete(file_id):
-  f = File.query.get(file_id)
+  f = get_file(file_id)
+
   db.session.delete(f)
   db.session.commit()
+
   return redirect("/ged/")
 
 
 @ged.route("/<int:file_id>", methods=['POST'])
 def upload_new_version(file_id):
+  f = get_file(file_id)
+
   fd = request.files['file']
-  f = File.query.get(file_id)
   f.name = unicode(fd.filename, errors='ignore')
   f.data = fd.read()
   f.mime_type = fd.content_type
   f.size = fd.content_length
 
   db.session.commit()
+
   return redirect("/ged/%d" % f.uid)
 
 
 @ged.route("/<int:file_id>/download")
 def download(file_id):
-  """Returns a preview (image) for the file given by its id."""
+  """Download the file's content."""
+
+  f = get_file(file_id)
 
   attach = request.args.get('attach')
-  f = File.query.get(file_id)
   response = make_response(f.data)
   response.headers['content-type'] = f.mime_type
   if attach:
     response.headers['content-disposition'] = "attachment"
+
   return response
 
 
@@ -119,10 +137,20 @@ def download(file_id):
 def preview(file_id):
   """Returns a preview (image) for the file given by its id."""
 
-  f = File.query.get(file_id)
+  f = get_file(file_id)
   response = make_response(f.preview)
   response.headers['content-type'] = "image/jpeg"
+
   return response
+
+#
+# Utils
+#
+def get_file(uid):
+  f = File.query.get(uid)
+  if not f:
+    abort(404)
+  return f
 
 
 # TODO: make asynchronous
@@ -137,9 +165,10 @@ def convert(f):
   tmp_out_fn = tempfile.mktemp()
 
   if f.mime_type == 'application/pdf':
+    print subprocess.__file__
+    print 'pdftotext', tmp_in_fn, tmp_out_fn
     subprocess.check_output(['pdftotext', tmp_in_fn, tmp_out_fn])
     text = open(tmp_out_fn).read()
-    print text
     f.text = unicode(text, 'utf8', errors='ignore')
     os.unlink(tmp_out_fn)
 

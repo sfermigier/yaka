@@ -36,4 +36,3 @@ app.register_blueprint(admin)
 
 from ged import ged
 app.register_blueprint(ged)
-

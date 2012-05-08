@@ -131,6 +131,7 @@ class SingleView(object):
     else:
       return str(value)
 
+
 #
 # Used to describe single entity views.
 #
@@ -240,7 +241,6 @@ class Module(object):
 
     if self.label is None:
       self.label = labelize(self.endpoint)
-
 
   def create_blueprint(self, crud_app):
     """
@@ -427,4 +427,3 @@ class CRUDApp(object):
   @property
   def breadcrumbs(self):
     return [dict(path='/', label='Home')]
-

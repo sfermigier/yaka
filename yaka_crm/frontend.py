@@ -28,6 +28,7 @@ INDUSTRIES = ['', "Apparel", "Banking", "Biotechnology", "Chemicals", "Communica
               "Media", "Not For Profit", "Recreation", "Retail", "Shipping", "Technology",
               "Telecommunications", "Transportation", "Utilities", "Other"]
 
+
 #
 # Mixins for forms
 #
@@ -39,6 +40,10 @@ class AddressForm(object):
 
 
 # TODO: generate all the forms automagically
+
+#
+# Accounts
+#
 class AccountEditForm(AddressForm, Form):
   name = TextField("Name", validators=[Length(min=3, max=50)])
   website = URLField("Website", validators=[url()])
@@ -83,8 +88,12 @@ class Accounts(Module):
   ]
 
 
+#
+# Contacts
+#
 def accounts():
   return Account.query.all()
+
 
 class ContactEditForm(AddressForm, Form):
   first_name = TextField("First Name")
@@ -101,6 +110,7 @@ class ContactEditForm(AddressForm, Form):
     ["Address", ['address_street', 'address_city', 'address_state', 'address_country']],
     ["Additional information", ['department', 'email']],
   ]
+
 
 class Contacts(Module):
   managed_class = Contact
@@ -123,6 +133,9 @@ class Contacts(Module):
   edit_form = ContactEditForm
 
 
+#
+# Opportunities
+#
 class OpportunityEditForm(Form):
   name = TextField("Name")
   description = TextAreaField("Description")
@@ -137,6 +150,7 @@ class OpportunityEditForm(Form):
   _groups = [
     ["Main", ['name', 'description', 'account', 'type', 'stage', 'amount', 'probability', 'close_date']],
   ]
+
 
 class Opportunities(Module):
   managed_class = Opportunity
@@ -154,6 +168,9 @@ class Opportunities(Module):
   edit_form = OpportunityEditForm
 
 
+#
+# Leads
+#
 class LeadEditForm(AddressForm, Form):
   first_name = TextField("First Name")
   last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
@@ -186,6 +203,9 @@ class Leads(Module):
   edit_form = LeadEditForm
 
 
+#
+# Documents
+#
 class Documents(Module):
   managed_class = Document
 
@@ -197,6 +217,9 @@ class Documents(Module):
     )
 
 
+#
+# Main App
+#
 class CRM(CRUDApp):
   modules = [Accounts(), Contacts(), Opportunities(), Leads(), Documents()]
 
