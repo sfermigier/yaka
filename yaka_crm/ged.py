@@ -4,10 +4,9 @@ Don't worry, it's just a prototype. Will be refactored later.
 """
 import os
 
-from flask import Blueprint, render_template, redirect, request, make_response
+from flask import Blueprint, render_template, redirect, request, make_response, flash, abort
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer
-from werkzeug.exceptions import abort
 
 from yaka_crm.core.entities import Entity, Column
 from yaka_crm.extensions import db
@@ -50,8 +49,14 @@ class File(Entity):
   @property
   def icon(self):
     # XXX Hack for now
+    if not "." in self.name:
+      return '/static/fileicons/bin.png'
+
     suffix = self.name.split(".")[-1]
-    return '/static/fileicons/%s.png' % suffix
+    if os.path.exists("yaka_crm/static/fileicons/%s.png" % suffix):
+      return '/static/fileicons/%s.png' % suffix
+    else:
+      return '/static/fileicons/bin.png'
 
 
 #
@@ -66,7 +71,24 @@ def home():
 
 @ged.route("/", methods=['POST'])
 def upload_new():
-  fd = request.files['file']
+  fds = request.files.getlist('file')
+  if len(fds) > 1:
+    for fd in fds:
+      create_file(fd)
+    f = None
+  else:
+    f = create_file(fds[0])
+  db.session.commit()
+
+  flash("%d files successfully uploaded" % len(fds), "success")
+
+  if len(fds) == 1:
+    return redirect("/ged/%d" % f.uid)
+  else:
+    return redirect("/ged/")
+
+
+def create_file(fd):
   f = File()
   if isinstance(fd.filename, unicode):
     f.name = fd.filename
@@ -75,12 +97,9 @@ def upload_new():
   f.data = fd.read()
   f.mime_type = fd.content_type
   f.size = fd.content_length
-
   db.session.add(f)
   convert(f)
-  db.session.commit()
-
-  return redirect("/ged/%d" % f.uid)
+  return f
 
 
 @ged.route("/<int:file_id>")
