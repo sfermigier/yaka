@@ -43,6 +43,7 @@ table {
 body {
     padding-top: 50px;
     padding-bottom: 40px;
+    /* background: url("/static/img/backgrd.png") repeat !important; TODO LATER */
 }
 
 .navbar-inner {

@@ -2,14 +2,18 @@
 
 Don't worry, it's just a prototype. Will be refactored later.
 """
+from flask.helpers import json
+
 import os
 
-from flask import Blueprint, render_template, redirect, request, make_response, flash, abort
+from flask import Blueprint, render_template, redirect, request,\
+  make_response, flash, abort
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer
 
-from yaka_crm.core.entities import Entity, Column
-from yaka_crm.extensions import db
+from .core.entities import Entity, Column
+from .extensions import db
+from .converter import convert
 
 
 ged = Blueprint("ged", __name__, url_prefix="/ged")
@@ -119,6 +123,8 @@ def delete(file_id):
   db.session.delete(f)
   db.session.commit()
 
+  flash("File successfully deleted.", "success")
+
   return redirect("/ged/")
 
 
@@ -162,6 +168,26 @@ def preview(file_id):
 
   return response
 
+
+@ged.route("/upload")
+def upload_form():
+  bc = [dict(path="/ged/", label="GED Home")]
+  return render_template("ged/upload.html", breadcrumbs=bc)
+
+
+@ged.route("/upload", methods=['POST'])
+def upload_post():
+  fds = request.files.getlist('file')
+  print fds
+  result = []
+  for fd in fds:
+    result.append(dict(name=fd.filename))
+
+  resp = make_response(json.dumps(result))
+  resp.headers['Content-Type'] = "application/json"
+  return resp
+
+
 #
 # Utils
 #
@@ -170,31 +196,3 @@ def get_file(uid):
   if not f:
     abort(404)
   return f
-
-
-# TODO: make asynchronous
-def convert(f):
-  import tempfile, subprocess
-
-  tmp_in_fn = tempfile.mktemp()
-  tmp_in_fd = open(tmp_in_fn, 'wc')
-  tmp_in_fd.write(f.data)
-  tmp_in_fd.close()
-
-  tmp_out_fn = tempfile.mktemp()
-
-  if f.mime_type == 'application/pdf':
-    print subprocess.__file__
-    print 'pdftotext', tmp_in_fn, tmp_out_fn
-    subprocess.check_output(['pdftotext', tmp_in_fn, tmp_out_fn])
-    text = open(tmp_out_fn).read()
-    f.text = unicode(text, 'utf8', errors='ignore')
-    os.unlink(tmp_out_fn)
-
-    subprocess.check_output(['pdftoppm', '-singlefile', '-jpeg', '-l', '1', tmp_in_fn, tmp_out_fn])
-    preview = open(tmp_out_fn + '.jpg').read()
-    f.preview = preview
-    print tmp_out_fn + '.jpg'
-    #os.unlink(tmp_out_fn)
-
-  os.unlink(tmp_in_fn)

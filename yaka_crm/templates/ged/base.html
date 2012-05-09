@@ -64,9 +64,16 @@
       <button class="close" data-dismiss="modal">&times;</button>
       <h3>Upload new file(s)</h3>
     </div>
+
     <div class="modal-body">
-      <input type="file" multiple name="file" class="btn">
+      <span class="btn fileinput-button">
+        <i class="icon-plus icon-white"></i>
+        <span>Add files...</span>
+        <input type="file" multiple name="file" class="hide">
+      </span>
     </div>
+
+
     <div class="modal-footer">
       <button data-dismiss="modal" class="btn">Cancel</button>
       <button class="btn btn-primary" type="submit">Save changes</button>
