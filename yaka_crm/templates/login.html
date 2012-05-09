@@ -79,13 +79,16 @@
     <div class="row">
       <div class="login-form">
         <h2>Login to Yaka</h2>
-        <form action="/login">
+        {% if err_msg %}
+          <p style="color: #B94A48;">{{ err_msg }}</p>
+        {% endif %}
+        <form action="/login" method="POST" name="login">
           <fieldset>
             <div class="clearfix">
-              <input type="text" placeholder="E-Mail">
+              <input type="text" name="email" placeholder="E-Mail">
             </div>
             <div class="clearfix">
-              <input type="password" placeholder="Password">
+              <input type="password" name="password" placeholder="Password">
             </div>
             <div>
               <button class="btn btn-primary" type="submit">Sign in</button>

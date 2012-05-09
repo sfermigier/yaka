@@ -18,7 +18,7 @@ def init_data(db):
   contact1.account = account1
   contact2 = Contact(first_name="Paul", last_name="Dupont", email="paul@example.com")
 
-  user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com")
+  user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
 
   db.session.add(contact1)
   db.session.add(contact2)
@@ -39,6 +39,9 @@ class DataLoader(object):
     self.load_leads()
 
     self.load_files()
+
+    user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
+    self.db.session.add(user1)
 
     self.db.session.commit()
 

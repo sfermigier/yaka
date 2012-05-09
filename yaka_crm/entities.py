@@ -104,8 +104,7 @@ class Document(Entity):
 class User(Person, Entity):
   __tablename__ = 'user'
 
-  #login = Column(UnicodeText, nullable=False)
-  #password = Column(UnicodeText, nullable=False)
+  password = Column(UnicodeText, nullable=False)
 
 
 # TODO: Task
