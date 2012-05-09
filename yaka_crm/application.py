@@ -4,6 +4,7 @@
 from flask import Flask
 from whooshalchemy import IndexService
 
+#noinspection PyUnresolvedReferences
 from .extensions import oid, mail, db, cache
 
 __all__ = ['oid', 'mail', 'db', 'cache', 'app']

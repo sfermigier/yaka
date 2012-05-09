@@ -1,5 +1,3 @@
-from functools import wraps
-
 from flask import render_template, session, request
 from flask.globals import g
 
@@ -37,8 +35,14 @@ def labelize(s):
 #
 # Navigation
 #
+@app.route("/login")
+def login_form():
+  """Login form."""
+  return render_template("login.html")
+
 @app.route("/")
 def home():
+  """Home page."""
   # TODO: dashboard
   return "OK"
 

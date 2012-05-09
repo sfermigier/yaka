@@ -3,9 +3,7 @@ from datetime import datetime
 import sqlalchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase
 from sqlalchemy.orm.util import class_mapper
-from sqlalchemy.orm import relationship
-from sqlalchemy.schema import ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
+from sqlalchemy.types import Integer, DateTime
 from sqlalchemy import event
 
 from ..extensions import db

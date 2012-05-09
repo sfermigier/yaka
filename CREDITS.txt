@@ -1,0 +1,15 @@
+Design, programming
+-------------------
+
+Stefane Fermigier, 2012.
+
+Art (images, icons)
+-------------------
+
+See links for copyright and licences (usually Creative Commons).
+
+- Background image(s) for login:
+  Kevin Dooley <http://www.flickr.com/photos/pagedooley/>
+
+- File types icons:
+  http://www.splitbrain.org/projects/file_icons

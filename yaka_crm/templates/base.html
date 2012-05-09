@@ -23,24 +23,17 @@
   <link rel="apple-touch-icon" sizes="72x72" href="/static/images/apple-touch-icon-72x72.png">
   <link rel="apple-touch-icon" sizes="114x114" href="/static/images/apple-touch-icon-114x114.png">
 
-  <!-- various jQuery plugins -->
-  <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery-1.7.2.min.js"></script>
-
-  <link type="text/css" href="/static/jquery/css/ui-lightness/jquery-ui-1.8.19.custom.css" rel="stylesheet"/>
-  <script type="text/javascript" src="/static/jquery/js/jquery-ui-1.8.19.custom.min.js"></script>
-
+  <!-- CSS for various jQuery plugins -->
+  <link rel="stylesheet" href="/static/jquery/css/ui-lightness/jquery-ui-1.8.19.custom.css"/>
+  <!-- for datatables.net -->
   <style type="text/css" title="currentStyle">
     @import "/static/css/demo_page.css";
     @import "/static/css/header.css";
     @import "/static/css/demo_table.css";
   </style>
-  <script type="text/javascript" language="javascript" src="/static/jquery/plugins/jquery.dataTables.js"></script>
-
-  <link type="text/css" href="/static/chosen/chosen.css" rel="stylesheet"/>
-  <script type="text/javascript" language="javascript" src="/static/chosen/chosen.jquery.min.js"></script>
-
-  <link rel="stylesheet" href="/static/jquery-file-upload/css/jquery.fileupload-ui.css">
-
+  <link rel="stylesheet" href="/static/jquery/plugins/chosen.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/jquery-file-upload/css/jquery.fileupload-ui.css"/>
+  <link rel="stylesheet" href="/static/jquery/plugins/jquery.tagbox.css"/>
 
   <!-- our app -->
   <script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
@@ -103,26 +96,18 @@
 </div>
 <!--/.fluid-container-->
 
-<!-- Le javascript
-================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/jquery/js/jquery-1.7.2.min.js"></script>
+
+<script src="/static/jquery/js/jquery-ui-1.8.19.custom.min.js"></script>
+
+<script src="/static/jquery/plugins/jquery.dataTables.js"></script>
+<script src="/static/jquery/plugins/chosen.jquery.min.js"></script>
+
 <script src="/static/bootstrap/bootstrap.js"></script>
 
-<!--
-<script src="/static/bootstrap/bootstrap-dropdown.js"></script>
-<script src="/static/bootstrap/bootstrap-alert.js"></script>
-<script src="/static/bootstrap/bootstrap-button.js"></script>
-<script src="/static/bootstrap/bootstrap-transition.js"></script>
-<script src="/static/bootstrap/bootstrap-modal.js"></script>
-
-<script src="/static/bootstrap/bootstrap-scrollspy.js"></script>
-<script src="/static/bootstrap/bootstrap-tab.js"></script>
-<script src="/static/bootstrap/bootstrap-tooltip.js"></script>
-<script src="/static/bootstrap/bootstrap-popover.js"></script>
-<script src="/static/bootstrap/bootstrap-collapse.js"></script>
-<script src="/static/bootstrap/bootstrap-carousel.js"></script>
-<script src="/static/bootstrap/bootstrap-typeahead.js"></script>
--->
+<script src="/static/jquery/plugins/jquery.autoGrowInput.js"></script>
+<script src="/static/jquery/plugins/jquery.tagBox.js"></script>
 
 <!-- File Upload -->
 <script src="/static/jquery-file-upload/js/jquery.fileupload.js"></script>
@@ -140,9 +125,11 @@
 <script src="/static/jquery-file-upload/js/tmpl.min.js"></script>
 <script src="/static/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
 
+
 <script type="text/javascript">
   $('.dropdown-toggle').dropdown();
   $(".chzn-select").chosen({allow_single_deselect: true});
+  $('.tagbox').tagBox();
 </script>
 
 <script>

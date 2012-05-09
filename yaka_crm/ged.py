@@ -41,6 +41,8 @@ class File(Entity):
   mime_type = Column(UnicodeText, nullable=False)
   size = Column(Integer)
 
+  tags = Column(UnicodeText, default="")
+
   #: for full-text search
   text = Column(UnicodeText, default=u"", searchable=True)
 
@@ -56,6 +58,7 @@ class File(Entity):
     if not "." in self.name:
       return '/static/fileicons/bin.png'
 
+    #noinspection PyUnresolvedReferences
     suffix = self.name.split(".")[-1]
     if os.path.exists("yaka_crm/static/fileicons/%s.png" % suffix):
       return '/static/fileicons/%s.png' % suffix
