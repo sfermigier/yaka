@@ -6,10 +6,9 @@ from nose.tools import eq_
 from flaskext.testing import TestCase
 
 from yaka_crm import app, db
+from yaka_crm import views # Don't remove
+
 from config import TestConfig
-
-import yaka_crm.views # Don't remove
-
 from util import init_data
 
 

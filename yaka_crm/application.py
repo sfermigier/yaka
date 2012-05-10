@@ -27,8 +27,10 @@ index_service.register_class(Lead)
 index_service.register_class(Document)
 index_service.register_class(File)
 
-from .frontend import CRM
+from audit import AuditService
+audit = AuditService(start=True)
 
+from .frontend import CRM
 crm = CRM(app)
 
 # Register additional blueprints

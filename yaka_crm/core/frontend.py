@@ -394,7 +394,7 @@ class Module(object):
     for label, attr_name, column_names in self.related_views:
       view = TableView(column_names)
       related_entities = getattr(entity, attr_name)
-      obj = dict(label=label, rendered=view.render(related_entities))
+      obj = dict(label=label, rendered=view.render(related_entities), size=len(related_entities))
       rendered.append(obj)
     return rendered
 

@@ -4,7 +4,7 @@ from yaka_crm import app, db
 
 from config import TestConfig
 
-import yaka_crm.views # Don't remove
+from yaka_crm import views # Don't remove
 
 
 class TestViews(TestCase):

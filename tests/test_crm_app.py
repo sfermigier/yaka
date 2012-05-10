@@ -1,4 +1,5 @@
 from flaskext.testing import TestCase
+import re
 
 from yaka_crm import app, db
 from config import TestConfig
@@ -41,14 +42,17 @@ class TestViews(TestCase):
     response = self.client.get("/crm/accounts/")
     self.assert_200(response)
 
-    response = self.client.get("/crm/accounts/1")
+    m = re.search("/crm/accounts/([0-9]+)", response.data)
+    uid = int(m.group(1))
+
+    response = self.client.get("/crm/accounts/%d" % uid)
     self.assert_200(response)
 
-    response = self.client.get("/crm/accounts/1/edit")
+    response = self.client.get("/crm/accounts/%d/edit" % uid)
     self.assert_200(response)
 
     form_data = {'name': "some other name"}
-    response = self.client.post("/crm/accounts/1/edit", data=form_data)
+    response = self.client.post("/crm/accounts/%d/edit" % uid, data=form_data)
     #self.assert_302(response)
     #self.assertEquals('http://localhost/crm/accounts/1', response.location)
     #response = self.client.get("/crm/accounts/1")
@@ -58,10 +62,13 @@ class TestViews(TestCase):
     response = self.client.get("/crm/contacts/")
     self.assert_200(response)
 
-    response = self.client.get("/crm/contacts/1")
+    m = re.search("/crm/accounts/([0-9]+)", response.data)
+    uid = int(m.group(1))
+
+    response = self.client.get("/crm/contacts/%d" % uid)
     self.assert_200(response)
 
-    response = self.client.get("/crm/contacts/1/edit")
+    response = self.client.get("/crm/contacts/%d/edit" % uid)
     self.assert_200(response)
 
   def test_leads(self):

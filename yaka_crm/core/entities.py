@@ -1,4 +1,5 @@
 from datetime import datetime
+from threading import Lock
 
 import sqlalchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase
@@ -14,6 +15,21 @@ __all__ = ['Column', 'Entity']
 # TODO: get rid of flask-sqlalchemy, replace db.Model by Base
 #Base = declarative_base()
 
+
+class IdGenerator(object):
+  """Dummy integer id generator."""
+
+  def __init__(self):
+    self.lock = Lock()
+    self.current = 0
+
+  def new(self):
+    with self.lock:
+      self.current += 1
+    return self.current
+
+
+id_gen = IdGenerator()
 
 #
 # Base Entity classes (TODO: move to framework)
@@ -47,6 +63,7 @@ class Entity(AbstractConcreteBase, db.Model):
 
 
   def __init__(self, **kw):
+    self.uid = id_gen.new()
     self.update(kw)
 
   @property
