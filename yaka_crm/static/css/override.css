@@ -1,3 +1,40 @@
+/* jQuery-collapse - still some tuning to do */
+
+h3 {
+    padding: 5px;
+    cursor: pointer;
+    background: #eee url("/static/images/state.png") no-repeat 100% 5px;
+    text-decoration: none;
+    margin: 10px 0 15px 0;
+    line-height: 1;
+}
+
+/* Doesn't work in Chrome. Works in Safari and FF. */
+h3 .active {
+    background-color: #ddd;
+    background-position: 100% -21px;
+}
+
+h3 a {
+    color: #333;
+    text-decoration:none;
+}
+
+/*
+h3 {
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 2px;
+    padding-left: 25px;
+    margin-bottom: 15px;
+    background: url("/static/img/arrows.png") no-repeat 0 -33px;
+}
+h3 .active {
+    background-position: 0 5px;
+}
+*/
+
+/* Personal tastes */
+
 h2 {
     font-size: 16px;
 }

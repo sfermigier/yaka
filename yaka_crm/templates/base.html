@@ -35,11 +35,10 @@
   <link rel="stylesheet" href="/static/jquery-file-upload/css/jquery.fileupload-ui.css"/>
   <link rel="stylesheet" href="/static/jquery/plugins/jquery.tagbox.css"/>
 
-  <!-- our app -->
-  <script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
-
   <!-- DEBUG -->
   <link type="text/css" href="/static/css/holmes.css" rel="stylesheet"/>
+
+  <script src="/static/jquery/js/jquery-1.7.2.min.js"></script>
 </head>
 
 <body>
@@ -97,8 +96,6 @@
 <!--/.fluid-container-->
 
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="/static/jquery/js/jquery-1.7.2.min.js"></script>
-
 <script src="/static/jquery/js/jquery-ui-1.8.19.custom.min.js"></script>
 
 <script src="/static/jquery/plugins/jquery.dataTables.js"></script>
@@ -108,6 +105,7 @@
 
 <script src="/static/jquery/plugins/jquery.autoGrowInput.js"></script>
 <script src="/static/jquery/plugins/jquery.tagBox.js"></script>
+<script src="/static/jquery/plugins/jquery.collapse.js"></script>
 
 <!-- File Upload -->
 <script src="/static/jquery-file-upload/js/jquery.fileupload.js"></script>
@@ -125,11 +123,30 @@
 <script src="/static/jquery-file-upload/js/tmpl.min.js"></script>
 <script src="/static/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
 
+<!-- our app -->
+<script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
 
 <script type="text/javascript">
-  $('.dropdown-toggle').dropdown();
-  $(".chzn-select").chosen({allow_single_deselect: true});
-  $('.tagbox').tagBox();
+  $(function() {
+    $('.dropdown-toggle').dropdown();
+    $('.chzn-select').chosen({allow_single_deselect: true});
+    $('.tagbox').tagBox();
+    $('.collapsable').collapse({
+      show: function() {
+        this.animate({
+          opacity: 'toggle',
+          height: 'toggle'
+        }, 300);
+      },
+      hide: function() {
+        this.animate({
+          opacity: 'toggle',
+          height: 'toggle'
+        }, 300);
+      }
+
+    });
+  });
 </script>
 
 <script>

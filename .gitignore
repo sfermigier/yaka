@@ -2,8 +2,13 @@
 .tox
 .DS_Store
 .coverage
+
 whoosh*
 yaka.db
+tmp
+
 *.pyc
 *.egg-info
 *.swp
+*.prof
+*.stats
