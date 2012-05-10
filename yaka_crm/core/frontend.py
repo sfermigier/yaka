@@ -294,6 +294,7 @@ class Module(object):
   @expose("/<int:entity_id>")
   def entity_view(self, entity_id):
     entity = self.managed_class.query.get(entity_id)
+    assert entity is not None
     bc = self.bread_crumbs(entity.name)
     add_to_recent_items(entity)
 
@@ -306,6 +307,7 @@ class Module(object):
   @expose("/<int:entity_id>/edit")
   def entity_edit(self, entity_id):
     entity = self.managed_class.query.get(entity_id)
+    assert entity is not None
     bc = self.bread_crumbs(entity.name)
     add_to_recent_items(entity)
 
@@ -318,6 +320,7 @@ class Module(object):
   @expose("/<int:entity_id>/edit", methods=['POST'])
   def entity_edit_post(self, entity_id):
     entity = self.managed_class.query.get(entity_id)
+    assert entity is not None
     form = self.edit_form(obj=entity)
 
     if request.form.get('_action') == 'cancel':
@@ -368,6 +371,7 @@ class Module(object):
   def entity_delete(self, entity_id):
     # TODO: don't really delete, switch state to "deleted"
     entity = self.managed_class.query.get(entity_id)
+    assert entity is not None
     db.session.delete(entity)
     db.session.commit()
     flash("Entity deleted", "success")

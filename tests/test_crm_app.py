@@ -62,7 +62,7 @@ class TestViews(TestCase):
     response = self.client.get("/crm/contacts/")
     self.assert_200(response)
 
-    m = re.search("/crm/accounts/([0-9]+)", response.data)
+    m = re.search("/crm/contacts/([0-9]+)", response.data)
     uid = int(m.group(1))
 
     response = self.client.get("/crm/contacts/%d" % uid)
