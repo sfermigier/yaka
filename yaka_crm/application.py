@@ -27,9 +27,6 @@ index_service.register_class(Lead)
 index_service.register_class(Document)
 index_service.register_class(File)
 
-from audit import AuditService
-audit = AuditService(start=True)
-
 from .frontend import CRM
 crm = CRM(app)
 
@@ -39,3 +36,8 @@ app.register_blueprint(admin)
 
 from ged import ged
 app.register_blueprint(ged)
+
+# Must (currently) come after all entity classes are declared.
+from audit import AuditService
+audit = AuditService(start=True)
+
