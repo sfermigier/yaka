@@ -18,13 +18,15 @@ from .converter import convert
 
 ged = Blueprint("ged", __name__, url_prefix="/ged")
 
+searchable = dict(searchable=True)
+
 #
 # Entities and forms
 #
 class Folder(Entity):
   __tablename__ = 'folder'
 
-  name = Column(UnicodeText, nullable=False, searchable=True)
+  name = Column(UnicodeText, nullable=False, info=searchable)
   parent_id = Column(Integer)
 
 
@@ -33,8 +35,8 @@ class File(Entity):
 
   base_url = "/ged"
 
-  name = Column(UnicodeText, nullable=False, searchable=True)
-  description = Column(UnicodeText, default=u"", searchable=True)
+  name = Column(UnicodeText, nullable=False, info=searchable)
+  description = Column(UnicodeText, default=u"", info=searchable)
   folder_id = Column(Integer)
 
   data = Column(LargeBinary)
@@ -44,7 +46,7 @@ class File(Entity):
   tags = Column(UnicodeText, default=u"")
 
   #: for full-text search
-  text = Column(UnicodeText, default=u"", searchable=True)
+  text = Column(UnicodeText, default=u"", info=searchable)
 
   #: for "view as PDF"
   pdf = Column(LargeBinary)

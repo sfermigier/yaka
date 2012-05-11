@@ -10,6 +10,8 @@ from .entities import *
 #
 # Helper classes
 #
+from yaka_crm.audit import AuditEntry
+
 class BreadCrumbs(object):
 
   def __init__(self, l=()):
@@ -301,8 +303,10 @@ class Module(object):
     rendered_entity = self.single_view.render(entity)
     related_views = self.render_related_views(entity)
 
+    audit_entries = AuditEntry.query.filter(AuditEntry.entity_id == entity.uid).all()
     return render_template('crm/single_view.html', rendered_entity=rendered_entity,
-                           related_views=related_views, breadcrumbs=bc, module=self)
+                           related_views=related_views, audit_entries=audit_entries,
+                           breadcrumbs=bc, module=self)
 
   @expose("/<int:entity_id>/edit")
   def entity_edit(self, entity_id):

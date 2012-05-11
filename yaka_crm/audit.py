@@ -12,7 +12,6 @@ TODO: In the future, we may decide to:
 from datetime import datetime
 from flask.globals import g
 from sqlalchemy import event
-from sqlalchemy.orm.events import InstrumentationEvents
 
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
@@ -20,6 +19,7 @@ from sqlalchemy.orm.session import Session
 
 from .extensions import db
 from yaka_crm.core.entities import Entity
+from yaka_crm.entities import User
 
 CREATION = 0
 UPDATE   = 1
@@ -60,6 +60,12 @@ class AuditEntry(db.Model):
 
     return entry
 
+  def __repr__(self):
+    return "<AuditEntry uid=%s type=%s user=%s>" % (
+      self.uid, {CREATION: "CREATION", DELETION: "DELETION", UPDATE: "UPDATE"}[self.type],
+      User.query.get(self.user_id),
+    )
+
 
 class AuditService(object):
 
@@ -98,18 +104,25 @@ class AuditService(object):
       name = column.name
       attr = getattr(entity_class, name)
 
-      if getattr(column, 'y_auditable', True):
+      info = column.info
+      if info.get('auditable', True):
+        print "I will now audit attribute %s for class %s" % (name, entity_class)
         event.listen(attr, "set", self.set_attribute)
 
-  def set_attribute(self, model, value, oldvalue, initiator):
-    entry = AuditEntry.from_model(model, UPDATE)
+  def set_attribute(self, entity, value, oldvalue, initiator):
+    print "set_atttribute called for", entity
+    if not hasattr(entity, "__changes__"):
+      entity.__changes__ = {}
+    entity.__changes__
+
+    entry = AuditEntry.from_model(entity, UPDATE)
     entry.attribute_name = initiator.key
     entry.old_value = str(oldvalue)
     entry.new_value = str(value)
 
-    if not hasattr(model, "__audit__"):
-      model.__audit__ = []
-    model.__audit__.append(entry)
+    if not hasattr(entity, "__audit__"):
+      entity.__audit__ = []
+    entity.__audit__.append(entry)
 
   def before_commit(self, session):
     if not self.active:

@@ -4,27 +4,30 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.schema import ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date
 
+searchable = dict(searchable=True)
+
 #
 # Mixins
 #
 class Person(object):
   """Mixin class for persons."""
 
-  salutation = Column(UnicodeText)
-  first_name = Column(UnicodeText, searchable=True)
-  last_name = Column(UnicodeText, searchable=True)
 
-  job_title = Column(UnicodeText, searchable=True)
-  department = Column(UnicodeText, searchable=True)
+  salutation = Column(UnicodeText)
+  first_name = Column(UnicodeText, info=searchable)
+  last_name = Column(UnicodeText, info=searchable)
+
+  job_title = Column(UnicodeText, info=searchable)
+  department = Column(UnicodeText, info=searchable)
 
   email = Column(UnicodeText)
-  description = Column(UnicodeText, searchable=True)
+  description = Column(UnicodeText, info=searchable)
 
   photo = Column(LargeBinary)
 
   @property
   def name(self):
-    return self.first_name + " " + self.last_name
+    return "%s %s" % (self.first_name, self.last_name)
 
 
 class Addressable(object):
@@ -51,7 +54,7 @@ class Addressable(object):
 class Account(Addressable, Entity):
   __tablename__ = 'account'
 
-  name = Column(UnicodeText, searchable=True)
+  name = Column(UnicodeText, info=searchable)
   website = Column(UnicodeText)
   office_phone = Column(UnicodeText)
 
@@ -77,8 +80,9 @@ class Contact(Addressable, Person, Entity):
 class Opportunity(Entity):
   __tablename__ = 'opportunity'
 
-  name = Column(UnicodeText, searchable=True)
-  description = Column(UnicodeText, searchable=True)
+  name = Column(UnicodeText, info=searchable)
+  description = Column(UnicodeText, info=searchable)
+
   type = Column(UnicodeText)
   stage = Column(UnicodeText)
   amount = Column(Integer)
@@ -106,10 +110,5 @@ class User(Person, Entity):
 
   password = Column(UnicodeText, nullable=False)
 
-#Account.collect_metadata()
-#Contact.collect_metadata()
-#Lead.collect_metadata()
-#Opportunity.collect_metadata()
-#User.collect_metadata()
-
 # TODO: Task
+# TODO: Activity

@@ -5,13 +5,28 @@
 {{ rendered_entity }}
 
 <div class="collapsable">
-{% for view in related_views %}
+
+  {% for view in related_views %}
   <h3>{{ view.label }} ({{ view.size }})</h3>
 
   <div style="margin-bottom: 25px;">
   {{ view.rendered }}
   </div>
 {% endfor %}
+
+  <h3>Audit Log</h3>
+
+  <div style="margin-bottom: 25px;">
+  {% for entry in audit_entries %}
+    <p>
+    Type: {{ entry.type }}<br>
+    By: {{ entry.user_id }}<br>
+    Old value: {{ entry.old_value }}<br>
+    New value: {{ entry.new_value }}
+    </p>
+  {% endfor %}
+  </div>
+
 </div>
 
 {% endblock %}
