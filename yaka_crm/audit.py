@@ -67,8 +67,11 @@ class AuditService(object):
     self.all_model_classes = set()
     self.active = start
 
-    event.listen(Session, "before_commit", self.before_commit)
+    # We register the events late in the boot process, beacause it doesn't work otherwise
+    event.listen(Session, "after_attach", self.after_attach)
     #event.listen(InstrumentationEvents, "class_instrument", self.class_instrument)
+
+    event.listen(Session, "before_commit", self.before_commit)
 
   def start(self):
     self.active = True
@@ -76,16 +79,27 @@ class AuditService(object):
   def stop(self):
     self.active = False
 
+  def after_attach(self, session, model):
+    model_class = model.__class__
+    if not model_class in self.all_model_classes:
+      self.all_model_classes.add(model_class)
+      if issubclass(model_class, Entity):
+        self.register_class(model_class)
+
   def class_instrument(self, model_class):
+    print "Audit: class_instrument called for", model_class
     if not model_class in self.all_model_classes:
       self.all_model_classes.add(model_class)
       if issubclass(model_class, Entity):
         self.register_class(model_class)
 
   def register_class(self, entity_class):
-    print "Audit registering class", entity_class, "with attrs", entity_class.__auditable__
-    for attr_name in entity_class.__auditable__:
-      event.listen(getattr(entity_class, attr_name), "set", self.set_attribute)
+    for column in entity_class.__table__.columns:
+      name = column.name
+      attr = getattr(entity_class, name)
+
+      if getattr(column, 'y_auditable', True):
+        event.listen(attr, "set", self.set_attribute)
 
   def set_attribute(self, model, value, oldvalue, initiator):
     entry = AuditEntry.from_model(model, UPDATE)
@@ -115,6 +129,7 @@ class AuditService(object):
       return
 
     entry = AuditEntry.from_model(model, type=CREATION)
+    print "logging", entry
     session.add(entry)
 
   def log_deleted(self, session, model):
@@ -122,6 +137,7 @@ class AuditService(object):
       return
 
     entry = AuditEntry.from_model(model, type=DELETION)
+    print "logging", entry
     session.add(entry)
 
   def log_updated(self, session, model):
@@ -130,5 +146,6 @@ class AuditService(object):
     if not hasattr(model, '__audit__'):
       return
     for entry in model.__audit__:
+      print "logging", entry
       session.add(entry)
     del model.__audit__

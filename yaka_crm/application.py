@@ -2,7 +2,6 @@
 """
 
 from flask import Flask
-from whooshalchemy import IndexService
 
 #noinspection PyUnresolvedReferences
 from .extensions import oid, mail, db, cache
@@ -17,15 +16,9 @@ db.init_app(app)
 
 # TODO: autodiscovery of searchable classes
 from .entities import Contact, Account, Opportunity, Lead, Document
-from yaka_crm.ged import File
+from .ged import File, Folder
 
-index_service = IndexService(app.config)
-index_service.register_class(Contact)
-index_service.register_class(Account)
-index_service.register_class(Opportunity)
-index_service.register_class(Lead)
-index_service.register_class(Document)
-index_service.register_class(File)
+all_entity_classes = [Contact, Account, Opportunity, Lead, Document, File, Folder]
 
 from .frontend import CRM
 crm = CRM(app)
@@ -38,6 +31,13 @@ from ged import ged
 app.register_blueprint(ged)
 
 # Must (currently) come after all entity classes are declared.
-from audit import AuditService
-audit = AuditService(start=True)
+from whooshalchemy import IndexService
+index_service = IndexService(app.config)
 
+from audit import AuditService
+audit_service = AuditService(start=True)
+
+# TODO: remove
+for cls in all_entity_classes:
+  index_service.register_class(cls)
+  #audit_service.register_class(cls)

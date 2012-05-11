@@ -24,7 +24,7 @@ ged = Blueprint("ged", __name__, url_prefix="/ged")
 class Folder(Entity):
   __tablename__ = 'folder'
 
-  name = Column(UnicodeText)
+  name = Column(UnicodeText, nullable=False, searchable=True)
   parent_id = Column(Integer)
 
 
@@ -41,7 +41,7 @@ class File(Entity):
   mime_type = Column(UnicodeText, nullable=False)
   size = Column(Integer)
 
-  tags = Column(UnicodeText, default="")
+  tags = Column(UnicodeText, default=u"")
 
   #: for full-text search
   text = Column(UnicodeText, default=u"", searchable=True)

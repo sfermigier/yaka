@@ -106,13 +106,10 @@ class User(Person, Entity):
 
   password = Column(UnicodeText, nullable=False)
 
-
-Account.collect_metadata()
+#Account.collect_metadata()
 #Contact.collect_metadata()
 #Lead.collect_metadata()
 #Opportunity.collect_metadata()
 #User.collect_metadata()
-
-
 
 # TODO: Task

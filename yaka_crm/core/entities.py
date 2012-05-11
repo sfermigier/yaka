@@ -42,9 +42,9 @@ class Column(sqlalchemy.schema.Column):
       pass
 
     m = self.__yaka_metadata__ = YakaMetadata()
-    m.editable = kwargs.pop('editable', True)
-    m.searchable = kwargs.pop('searchable', False)
-    m.auditable = kwargs.pop('auditable', True)
+    self.y_editable = m.editable = kwargs.pop('editable', True)
+    self.y_searchable = m.searchable = kwargs.pop('searchable', False)
+    self.y_auditable = m.auditable = kwargs.pop('auditable', True)
 
     sqlalchemy.schema.Column.__init__(self, *args, **kwargs)
 
@@ -74,6 +74,7 @@ class Entity(AbstractConcreteBase, db.Model):
     self.uid = id_gen.new()
     self.update(kw)
 
+  # XXX Probably buggy.
   @classmethod
   def collect_metadata(cls):
     print "Registering metadata for class", cls
@@ -92,11 +93,6 @@ class Entity(AbstractConcreteBase, db.Model):
       if metadata.auditable:
         cls.__auditable__.add(name)
 
-    print cls.__editable__
-    print cls.__searchable__
-    print cls.__auditable__
-    print
-
   @property
   def column_names(self):
     return [ col.name for col in class_mapper(self.__class__).mapped_table.c ]
@@ -113,9 +109,8 @@ class Entity(AbstractConcreteBase, db.Model):
     return "%s/%s" % (self.base_url, self.uid)
 
 
-# TODO: not sure it really wortks (only called once for Entity class, not for subclasses).
+# TODO: not sure it really works (only called once for Entity class, not for subclasses).
 def register_metadata(cls):
-  print "Registering metadata for class", cls
   cls.__editable__ = set()
   cls.__searchable__ = set()
   cls.__auditable__ = set()

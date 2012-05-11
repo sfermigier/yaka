@@ -3,6 +3,7 @@ from flaskext.testing import TestCase
 
 from yaka_crm import app, db
 from yaka_crm.entities import *
+from yaka_crm.audit import *
 
 from config import TestConfig
 
@@ -56,3 +57,17 @@ class TestModels(TestCase):
 
     contacts = list(Contact.search_query(u"john").all())
     eq_(1, len(contacts))
+
+  def test_audit(self):
+    eq_(0, len(AuditEntry.query.all()))
+
+    account = Account(name="John SARL")
+    self.session.add(account)
+    self.session.commit()
+
+    eq_(1, len(AuditEntry.query.all()))
+
+    account.address_country = u"FR"
+    self.session.commit()
+
+    ok_(len(AuditEntry.query.all()) >= 2)
