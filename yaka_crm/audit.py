@@ -13,10 +13,11 @@ from datetime import datetime
 import json
 from flask.globals import g
 from sqlalchemy import event
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm.attributes import NO_VALUE
 from sqlalchemy.orm.events import InstrumentationEvents
 
-from sqlalchemy.schema import Column
+from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
 from sqlalchemy.orm.session import Session
 
@@ -40,8 +41,11 @@ class AuditEntry(db.Model):
 
   entity_id = Column(Integer)
   entity_class = Column(Text)
-  user_id = Column(Integer)
+  user_id = Column(Integer, ForeignKey(User.uid))
   changes_json = Column(UnicodeText, default="{}", nullable=False)
+
+  user = relationship(User)
+
 
   @staticmethod
   def from_model(model, type):
@@ -61,8 +65,7 @@ class AuditEntry(db.Model):
   def __repr__(self):
     return "<AuditEntry uid=%s type=%s user=%s>" % (
       self.uid, {CREATION: "CREATION", DELETION: "DELETION", UPDATE: "UPDATE"}[self.type],
-      User.query.get(self.user_id),
-    )
+      self.user)
 
   #noinspection PyTypeChecker
   def get_changes(self):

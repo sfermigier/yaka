@@ -31,22 +31,22 @@ class IdGenerator(object):
     return self.current
 
 
+system = dict(editable=False, auditable=False)
+
+
 class Entity(AbstractConcreteBase, db.Model):
   """Base class for Yaka entities."""
 
   base_url = None
 
-  uid = Column(Integer, primary_key=True,
-               info=dict(editable=False, auditable=False))
+  uid = Column(Integer, primary_key=True, info=system)
 
-  created_at = Column(DateTime, default=datetime.utcnow,
-                      info=dict(editable=False, auditable=False))
+  created_at = Column(DateTime, default=datetime.utcnow, info=system)
   updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow,
-                      info=dict(editable=False, auditable=False))
-  deleted_at = Column(DateTime, default=None,
-                      info=dict(editable=False, auditable=False))
+                      info=system)
+  deleted_at = Column(DateTime, default=None, info=system)
 
-  creator_id = Column(Integer, info=dict(editable=False, auditable=False))
+  creator_id = Column(Integer, info=system)
 
   owner_id = Column(Integer)
 

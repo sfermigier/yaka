@@ -1,33 +1,21 @@
 {% extends "crm/base.html" %}
+{% from "macros.html" import audit_log %}
 
 {% block main %}
 
-{{ rendered_entity }}
+  {{ rendered_entity }}
 
-<div class="collapsable">
+  <div class="collapsable">
 
-  {% for view in related_views %}
-  <h3>{{ view.label }} ({{ view.size }})</h3>
+    {% for view in related_views %}
+      <h3>{{ view.label }} ({{ view.size }})</h3>
 
-  <div style="margin-bottom: 25px;">
-  {{ view.rendered }}
-  </div>
-{% endfor %}
-
-  <h3>Audit Log</h3>
-
-  <div style="margin-bottom: 25px;">
-  {% for entry in audit_entries %}
-    <p>
-    Type: {{ entry.type }}<br>
-    By: {{ entry.user_id }}<br>
-    {% for key, (old_value, new_value) in entry.changes.items() %}
-      [{{ key }}] "{{ old_value }}" => "{{ new_value }}"<br>
+      <div style="margin-bottom: 25px;">
+        {{ view.rendered }}
+      </div>
     {% endfor %}
-    </p>
-  {% endfor %}
-  </div>
 
-</div>
+    {{ audit_log(audit_entries) }}
+  </div>
 
 {% endblock %}

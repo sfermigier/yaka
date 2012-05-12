@@ -1,4 +1,5 @@
 {% extends "dm/base.html" %}
+{% from "macros.html" import audit_log %}
 
 {% block main %}
 
@@ -36,19 +37,7 @@
         Tags: <input class="tagbox" value="{{ file.tags }}">
       </p>
 
-      <h3>Audit Log</h3>
-
-      <div style="margin-bottom: 25px;">
-        {% for entry in audit_entries %}
-          <p>
-            Type: {{ entry.type }}<br>
-            By: {{ entry.user_id }}<br>
-            {% for key, (old_value, new_value) in entry.changes.items() %}
-              [{{ key }}] "{{ old_value }}" => "{{ new_value }}"<br>
-            {% endfor %}
-          </p>
-        {% endfor %}
-      </div>
+      {{ audit_log(audit_entries) }}
 
     </div>
 
