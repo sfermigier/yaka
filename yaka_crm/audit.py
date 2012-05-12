@@ -10,8 +10,11 @@ TODO: In the future, we may decide to:
 """
 
 from datetime import datetime
+import json
 from flask.globals import g
 from sqlalchemy import event
+from sqlalchemy.orm.attributes import NO_VALUE
+from sqlalchemy.orm.events import InstrumentationEvents
 
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
@@ -37,13 +40,8 @@ class AuditEntry(db.Model):
 
   entity_id = Column(Integer)
   entity_class = Column(Text)
-
   user_id = Column(Integer)
-
-  attribute_name = Column(Text)
-  attribute_type = Column(Text)
-  old_value = Column(UnicodeText)
-  new_value = Column(UnicodeText)
+  changes_json = Column(UnicodeText)
 
   @staticmethod
   def from_model(model, type):
@@ -66,6 +64,15 @@ class AuditEntry(db.Model):
       User.query.get(self.user_id),
     )
 
+  #noinspection PyTypeChecker
+  @property
+  def changes(self):
+    if self.changes_json:
+      #print json.loads(self.changes_json)
+      return json.loads(self.changes_json)
+    else:
+      return {}
+
 
 class AuditService(object):
 
@@ -73,9 +80,13 @@ class AuditService(object):
     self.all_model_classes = set()
     self.active = start
 
+    # Testing
+    event.listen(InstrumentationEvents, "attribute_instrument", self.attribute_instrument)
+    event.listen(InstrumentationEvents, "class_instrument", self.class_instrument)
+
     # We register the events late in the boot process, beacause it doesn't work otherwise
     event.listen(Session, "after_attach", self.after_attach)
-    #event.listen(InstrumentationEvents, "class_instrument", self.class_instrument)
+    event.listen(Session, "after_attach", self.after_attach)
 
     event.listen(Session, "before_commit", self.before_commit)
 
@@ -85,44 +96,53 @@ class AuditService(object):
   def stop(self):
     self.active = False
 
+  def class_instrument(self, cls):
+    pass
+    #print "class_instrument", cls
+
+  def attribute_instrument(self, cls, key, inst):
+    #print "attribute_instrument", cls, key, inst
+    if issubclass(cls, Entity):
+      self.register_class(cls)
+
   def after_attach(self, session, model):
+    self.register_model(model)
+
+  def register_model(self, model):
     model_class = model.__class__
     if not model_class in self.all_model_classes:
       self.all_model_classes.add(model_class)
       if issubclass(model_class, Entity):
         self.register_class(model_class)
 
-  def class_instrument(self, model_class):
-    print "Audit: class_instrument called for", model_class
-    if not model_class in self.all_model_classes:
-      self.all_model_classes.add(model_class)
-      if issubclass(model_class, Entity):
-        self.register_class(model_class)
-
   def register_class(self, entity_class):
+    if not hasattr(entity_class, "__table__"):
+      return
+    if entity_class in self.all_model_classes:
+      return
+    self.all_model_classes.add(entity_class)
     for column in entity_class.__table__.columns:
       name = column.name
       attr = getattr(entity_class, name)
 
       info = column.info
       if info.get('auditable', True):
-        print "I will now audit attribute %s for class %s" % (name, entity_class)
+        #print "I will now audit attribute %s for class %s" % (name, entity_class)
         event.listen(attr, "set", self.set_attribute)
 
-  def set_attribute(self, entity, value, oldvalue, initiator):
-    print "set_atttribute called for", entity
-    if not hasattr(entity, "__changes__"):
-      entity.__changes__ = {}
-    entity.__changes__
-
-    entry = AuditEntry.from_model(entity, UPDATE)
-    entry.attribute_name = initiator.key
-    entry.old_value = str(oldvalue)
-    entry.new_value = str(value)
-
-    if not hasattr(entity, "__audit__"):
-      entity.__audit__ = []
-    entity.__audit__.append(entry)
+  def set_attribute(self, entity, new_value, old_value, initiator):
+    attr_name = initiator.key
+    if old_value == new_value:
+      return
+    #print "set_atttribute called for", entity, "key", attr_name
+    changes = getattr(entity, "__changes__", None)
+    if not changes:
+      changes = entity.__changes__ = {}
+    if changes.has_key(attr_name):
+      old_value = changes[attr_name][0]
+    if old_value == NO_VALUE:
+      old_value = None
+    changes[attr_name] = (old_value, new_value)
 
   def before_commit(self, session):
     if not self.active:
@@ -142,7 +162,7 @@ class AuditService(object):
       return
 
     entry = AuditEntry.from_model(model, type=CREATION)
-    print "logging", entry
+    #print "logging", entry
     session.add(entry)
 
   def log_deleted(self, session, model):
@@ -150,15 +170,19 @@ class AuditService(object):
       return
 
     entry = AuditEntry.from_model(model, type=DELETION)
-    print "logging", entry
+    #print "logging", entry
     session.add(entry)
 
   def log_updated(self, session, model):
     if not isinstance(model, Entity):
       return
-    if not hasattr(model, '__audit__'):
+    #print "logging", model
+    if not hasattr(model, '__changes__'):
+      print "model has no __changes__, this might be wrong"
       return
-    for entry in model.__audit__:
-      print "logging", entry
-      session.add(entry)
-    del model.__audit__
+    print "changes:", model.__changes__
+    entry = AuditEntry.from_model(model, type=UPDATE)
+    entry.changes_json = json.dumps(model.__changes__)
+    session.add(entry)
+
+    del model.__changes__

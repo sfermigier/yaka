@@ -19,6 +19,8 @@ __all__ = ['Column', 'Entity']
 class IdGenerator(object):
   """Dummy integer id generator."""
 
+  # TODO: one counter and one lock per class ?
+
   def __init__(self):
     self.lock = Lock()
     self.current = 0
@@ -27,37 +29,6 @@ class IdGenerator(object):
     with self.lock:
       self.current += 1
     return self.current
-
-
-id_gen = IdGenerator()
-
-
-##
-## Base Entity classes (TODO: move to framework)
-##
-#class Column(sqlalchemy.schema.Column):
-#
-#  def __init__(self, *args, **kwargs):
-#    class YakaMetadata(object):
-#      def __init__(self, parent_name):
-#        self.__dict__['parent_name'] = parent_name
-#      def __setattr__(self, key, value):
-#        if self.parent_name:
-#          print "Setting", key, "->", value, "for", self.parent_name
-#        self.__dict__[key] = value
-#      def __repr__(self):
-#        return repr(self.__dict__)
-#
-#    # XXX This is probably not needed.
-#    m = self.__yaka_metadata__ = YakaMetadata(kwargs.pop("NAME", ""))
-#    self.inf
-#    self.info['editable'] = self.y_editable = m.editable = kwargs.pop('editable', True)
-#    self.info['searchable'] = self.y_searchable = m.searchable = kwargs.pop('searchable', False)
-#    self.y_auditable = m.auditable = kwargs.pop('auditable', True)
-#
-#    self.info = dict()
-#
-#    sqlalchemy.schema.Column.__init__(self, *args, **kwargs)
 
 
 class Entity(AbstractConcreteBase, db.Model):
@@ -84,8 +55,10 @@ class Entity(AbstractConcreteBase, db.Model):
   __searchable__ = set()
   __auditable__ = set()
 
+  id_gen = IdGenerator()
+
   def __init__(self, **kw):
-    self.uid = id_gen.new()
+    self.uid = self.id_gen.new()
     self.update(kw)
 
   def __repr__(self):
@@ -111,9 +84,9 @@ class Entity(AbstractConcreteBase, db.Model):
     return "%s/%s" % (self.base_url, self.uid)
 
 
-# TODO: not sure it really works (only called once for Entity class, not for subclasses).
+# TODO: make this unecessary
 def register_metadata(cls):
-  print "register_metadata called for class", cls
+  #print "register_metadata called for class", cls
   cls.__editable__ = set()
   cls.__searchable__ = set()
   cls.__auditable__ = set()

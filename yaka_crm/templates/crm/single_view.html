@@ -21,8 +21,9 @@
     <p>
     Type: {{ entry.type }}<br>
     By: {{ entry.user_id }}<br>
-    Old value: {{ entry.old_value }}<br>
-    New value: {{ entry.new_value }}
+    {% for key, (old_value, new_value) in entry.changes.items() %}
+      [{{ key }}] {{ old_value }} => {{ new_value }}
+    {% endfor %}
     </p>
   {% endfor %}
   </div>
