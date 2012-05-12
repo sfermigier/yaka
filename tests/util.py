@@ -4,7 +4,7 @@ import os.path
 import datetime
 
 from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
-from yaka_crm.ged import File, convert
+from yaka_crm.dm import File, convert
 
 
 def init_data(db):

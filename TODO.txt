@@ -1,12 +1,12 @@
-TODO
-====
+TODO for v. 0.1
+===============
 
 - Login
 - Audit
 - Security
 - Graphical cleanup (datatables)
 - Search
-- GED
+- DM
 - Convert leads to account + opportunity
 - Export to csv
 - Reports

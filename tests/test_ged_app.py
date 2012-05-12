@@ -14,6 +14,8 @@ import yaka_crm.views # Don't remove
 
 from util import init_data
 
+ROOT = "/dm/"
+
 
 class TestViews(TestCase):
 
@@ -37,11 +39,11 @@ class TestViews(TestCase):
 
   @staticmethod
   def uid_from_url(url):
-    return int(url[len("http://localhost/ged/"):])
+    return int(url[len("http://localhost" + ROOT):])
 
 
   def test_home(self):
-    response = self.client.get("/ged/")
+    response = self.client.get(ROOT)
     self.assert_200(response)
 
   def test_upload_text(self):
@@ -50,28 +52,28 @@ class TestViews(TestCase):
     data = {
       'file': (StringIO(CONTENT), NAME, 'text/plain'),
     }
-    response = self.client.post("/ged/", data=data)
+    response = self.client.post(ROOT, data=data)
     self.assert_302(response)
 
     uid = self.uid_from_url(response.location)
 
-    response = self.client.get("/ged/%d" % uid)
+    response = self.client.get(ROOT + "%d" % uid)
     self.assert_200(response)
 
-    response = self.client.get("/ged/")
+    response = self.client.get(ROOT)
     self.assert_200(response)
     ok_(NAME in response.data)
-    ok_(("/ged/%d" % uid) in response.data)
+    ok_((ROOT + "%d" % uid) in response.data)
 
-    response = self.client.get("/ged/%d/download" % uid)
+    response = self.client.get(ROOT + "%d/download" % uid)
     self.assert_200(response)
     eq_(response.headers['Content-Type'], 'text/plain')
     eq_(response.data, CONTENT)
 
-    response = self.client.post("/ged/%d/delete" % uid)
+    response = self.client.post(ROOT + "%d/delete" % uid)
     self.assert_302(response)
 
-    response = self.client.get("/ged/%d" % uid)
+    response = self.client.get(ROOT + "%d" % uid)
     self.assert_404(response)
 
   def test_upload_pdf(self):
@@ -79,31 +81,31 @@ class TestViews(TestCase):
     data = {
       'file': (self.open_file(NAME), NAME, 'application/pdf'),
     }
-    response = self.client.post("/ged/", data=data)
+    response = self.client.post(ROOT, data=data)
     self.assert_302(response)
 
     uid = self.uid_from_url(response.location)
-    response = self.client.get("/ged/%d" % uid)
+    response = self.client.get(ROOT + "%d" % uid)
     self.assert_200(response)
 
-    response = self.client.get("/ged/")
+    response = self.client.get(ROOT)
     self.assert_200(response)
     ok_(NAME in response.data)
-    ok_(("/ged/%d" % uid) in response.data)
+    ok_((ROOT + "%d" % uid) in response.data)
 
-    response = self.client.get("/ged/%d/download" % uid)
+    response = self.client.get(ROOT + "%d/download" % uid)
     self.assert_200(response)
     eq_(response.headers['Content-Type'], 'application/pdf')
     ok_(response.data)
 
-    response = self.client.get("/ged/%d/preview" % uid)
+    response = self.client.get(ROOT + "%d/preview" % uid)
     self.assert_200(response)
     eq_(response.headers['Content-Type'], 'image/jpeg')
 
-    response = self.client.post("/ged/%d/delete" % uid)
+    response = self.client.post(ROOT + "%d/delete" % uid)
     self.assert_302(response)
 
-    response = self.client.get("/ged/%d" % uid)
+    response = self.client.get(ROOT + "%d" % uid)
     self.assert_404(response)
 
   @staticmethod

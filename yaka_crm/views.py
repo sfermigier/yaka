@@ -1,12 +1,12 @@
 from flask import render_template, session, request
 from flask.globals import g
-
-from . import app
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import redirect
+
+from . import app
 from .entities import *
 from .frontend import CRM
-from yaka_crm.ged import File
+from .dm import File
 
 
 __all__ = []

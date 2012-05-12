@@ -1,7 +1,8 @@
-"""GED (i.e. document management module) for Yaka.
+"""Document Management module for Yaka.
 
-Don't worry, it's just a prototype. Will be refactored later.
+Don't worry, it's just a prototype. Will be refactored later and included into the ESN.
 """
+
 from flask.helpers import json
 
 import os
@@ -17,7 +18,8 @@ from .converter import convert
 from yaka_crm.audit import AuditEntry
 
 
-ged = Blueprint("ged", __name__, url_prefix="/ged")
+ROOT = "/dm/"
+dm = Blueprint("dm", __name__, url_prefix="/dm")
 
 searchable = dict(searchable=True)
 
@@ -34,7 +36,7 @@ class Folder(Entity):
 class File(Entity):
   __tablename__ = 'file'
 
-  base_url = "/ged"
+  base_url = "/dm"
 
   name = Column(UnicodeText, nullable=False, info=searchable)
   description = Column(UnicodeText, default=u"", info=searchable)
@@ -72,14 +74,14 @@ class File(Entity):
 #
 # Controllers
 #
-@ged.route("/")
+@dm.route("/")
 def home():
-  bc = [dict(path="/ged/", label="GED Home")]
+  bc = [dict(path="/dm/", label="DM Home")]
   files = list(File.query.all())
-  return render_template("ged/home.html", breadcrumbs=bc, files=files)
+  return render_template("dm/home.html", breadcrumbs=bc, files=files)
 
 
-@ged.route("/", methods=['POST'])
+@dm.route("/", methods=['POST'])
 def upload_new():
   fds = request.files.getlist('file')
   if len(fds) > 1:
@@ -93,9 +95,9 @@ def upload_new():
   flash("%d files successfully uploaded" % len(fds), "success")
 
   if len(fds) == 1:
-    return redirect("/ged/%d" % f.uid)
+    return redirect(ROOT + "%d" % f.uid)
   else:
-    return redirect("/ged/")
+    return redirect(ROOT)
 
 
 def create_file(fd):
@@ -112,18 +114,18 @@ def create_file(fd):
   return f
 
 
-@ged.route("/<int:file_id>")
+@dm.route("/<int:file_id>")
 def view(file_id):
   f = get_file(file_id)
 
-  bc = [dict(path="/ged/", label="GED Home")]
+  bc = [dict(path=ROOT, label="DM Home")]
   bc.append(dict(label=f.name))
 
   audit_entries = AuditEntry.query.filter(AuditEntry.entity_id == f.uid).all()
-  return render_template("ged/file.html", file=f, audit_entries=audit_entries, breadcrumbs=bc)
+  return render_template("dm/file.html", file=f, audit_entries=audit_entries, breadcrumbs=bc)
 
 
-@ged.route("/<int:file_id>/delete", methods=['POST'])
+@dm.route("/<int:file_id>/delete", methods=['POST'])
 def delete(file_id):
   f = get_file(file_id)
 
@@ -132,10 +134,10 @@ def delete(file_id):
 
   flash("File successfully deleted.", "success")
 
-  return redirect("/ged/")
+  return redirect(ROOT)
 
 
-@ged.route("/<int:file_id>", methods=['POST'])
+@dm.route("/<int:file_id>", methods=['POST'])
 def upload_new_version(file_id):
   f = get_file(file_id)
 
@@ -147,10 +149,10 @@ def upload_new_version(file_id):
 
   db.session.commit()
 
-  return redirect("/ged/%d" % f.uid)
+  return redirect(ROOT + "%d" % f.uid)
 
 
-@ged.route("/<int:file_id>/download")
+@dm.route("/<int:file_id>/download")
 def download(file_id):
   """Download the file's content."""
 
@@ -165,7 +167,7 @@ def download(file_id):
   return response
 
 
-@ged.route("/<int:file_id>/preview")
+@dm.route("/<int:file_id>/preview")
 def preview(file_id):
   """Returns a preview (image) for the file given by its id."""
 
@@ -176,13 +178,13 @@ def preview(file_id):
   return response
 
 
-@ged.route("/upload")
+@dm.route("/upload")
 def upload_form():
-  bc = [dict(path="/ged/", label="GED Home")]
-  return render_template("ged/upload.html", breadcrumbs=bc)
+  bc = [dict(path=ROOT, label="DM Home")]
+  return render_template("dm/upload.html", breadcrumbs=bc)
 
 
-@ged.route("/upload", methods=['POST'])
+@dm.route("/upload", methods=['POST'])
 def upload_post():
   fds = request.files.getlist('file')
   print fds

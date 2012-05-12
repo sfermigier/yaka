@@ -16,7 +16,7 @@ db.init_app(app)
 
 # TODO: autodiscovery of searchable classes
 from .entities import Contact, Account, Opportunity, Lead, Document
-from .ged import File, Folder
+from .dm import File, Folder
 
 all_entity_classes = [Contact, Account, Opportunity, Lead, Document, File, Folder]
 
@@ -27,8 +27,8 @@ crm = CRM(app)
 from admin import admin
 app.register_blueprint(admin)
 
-from ged import ged
-app.register_blueprint(ged)
+from dm import dm
+app.register_blueprint(dm)
 
 # Must (currently) come after all entity classes are declared.
 from whooshalchemy import IndexService
