@@ -5,7 +5,8 @@ from flaskext.wtf.html5 import DateField, URLField, TelField, IntegerField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextField, TextAreaField
-from wtforms.validators import Length, Email, url
+
+from yaka_crm.core.forms import length, email, url, required
 
 from .entities import *
 from .core.frontend import *
@@ -45,8 +46,8 @@ class AddressForm(object):
 # Accounts
 #
 class AccountEditForm(AddressForm, Form):
-  name = TextField("Name", validators=[Length(min=3, max=50)])
-  website = URLField("Website", validators=[url()])
+  name = TextField("Name", validators=[required()])
+  website = TextField("Website", validators=[url()])
   office_phone = TelField("Office Phone")
 
   type = SelectField("Type", choices=[ (x, x) for x in TYPES ])
@@ -97,13 +98,13 @@ def accounts():
 
 class ContactEditForm(AddressForm, Form):
   first_name = TextField("First Name")
-  last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
+  last_name = TextField("Last Name", validators=[required()])
   description = TextAreaField("Description")
 
   account = QuerySelectField("Account", widget=Chosen(), query_factory=accounts, allow_blank=True)
 
   department = TextField("Department")
-  email = TextField("Email", validators=[Email()])
+  email = TextField("Email", validators=[email()])
 
   _groups = [
     ["Main", ['first_name', 'last_name', 'description', 'account']],
@@ -137,8 +138,9 @@ class Contacts(Module):
 # Opportunities
 #
 class OpportunityEditForm(Form):
-  name = TextField("Name")
+  name = TextField("Name", validators=[required()])
   description = TextAreaField("Description")
+
   type = TextField("Type")
   stage = TextField("Stage")
   amount = IntegerField("Amount")
@@ -173,17 +175,20 @@ class Opportunities(Module):
 #
 class LeadEditForm(AddressForm, Form):
   first_name = TextField("First Name")
-  last_name = TextField("Last Name", validators=[Length(min=3, max=50)])
+  last_name = TextField("Last Name", validators=[required()])
+  email = TextField("Email", validators=[email()])
+  phone = TextField("Phone")
+
   description = TextAreaField("Description")
 
   #account = TextField("Description")
   department = TextField("Department")
-  email = TextField("email", validators=[Email()])
 
   _groups = [
-    ["Main", ['first_name', 'last_name', 'description']],
+    ["Main", ['first_name', 'last_name', 'email', 'phone']],
+    ["Description", ['description']],
     ["Address", ['address_street', 'address_city', 'address_state', 'address_country']],
-    ["Additional information", ['department', 'email']],
+    ["Additional information", ['department']],
   ]
 
 class Leads(Module):
@@ -193,11 +198,14 @@ class Leads(Module):
 
   single_view = SingleView(
     Panel('Overview',
-          Row('first_name', 'last_name')),
+          Row('first_name', 'last_name'),
+          Row('email', 'phone')),
+    Panel('Description',
+          Row('description')),
     Panel('Address',
           Row('address')),
     Panel('More information',
-          Row('department', 'email')),
+          Row('department')),
     )
 
   edit_form = LeadEditForm

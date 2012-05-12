@@ -70,4 +70,9 @@ class TestModels(TestCase):
     account.address_country = u"FR"
     self.session.commit()
 
-    ok_(len(AuditEntry.query.all()) >= 2)
+    eq_(2, len(AuditEntry.query.all()))
+
+    self.session.delete(account)
+    self.session.commit()
+
+    eq_(3, len(AuditEntry.query.all()))

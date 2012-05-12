@@ -22,7 +22,7 @@
     Type: {{ entry.type }}<br>
     By: {{ entry.user_id }}<br>
     {% for key, (old_value, new_value) in entry.changes.items() %}
-      [{{ key }}] {{ old_value }} => {{ new_value }}
+      [{{ key }}] "{{ old_value }}" => "{{ new_value }}"<br>
     {% endfor %}
     </p>
   {% endfor %}

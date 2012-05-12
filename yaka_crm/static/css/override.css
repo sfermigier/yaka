@@ -33,6 +33,24 @@ h3 .active {
 }
 */
 
+/* forms and jquery.validate */
+label.required {
+    font-weight: bold;
+}
+label.valid {
+    width: 24px;
+    height: 24px;
+    background: url(/static/images/valid.png) center center no-repeat;
+    display: inline-block;
+    text-indent: -9999px;
+}
+label.error {
+    font-weight: bold;
+    color: red;
+    padding: 2px 8px;
+    margin-top: 2px;
+}
+
 /* Personal tastes */
 
 h2 {

@@ -21,6 +21,8 @@ class Person(object):
   department = Column(UnicodeText, info=searchable)
 
   email = Column(UnicodeText)
+  phone = Column(UnicodeText)
+
   description = Column(UnicodeText, info=searchable)
 
   photo = Column(LargeBinary)

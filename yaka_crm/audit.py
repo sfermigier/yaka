@@ -41,7 +41,7 @@ class AuditEntry(db.Model):
   entity_id = Column(Integer)
   entity_class = Column(Text)
   user_id = Column(Integer)
-  changes_json = Column(UnicodeText)
+  changes_json = Column(UnicodeText, default="{}", nullable=False)
 
   @staticmethod
   def from_model(model, type):
@@ -65,13 +65,13 @@ class AuditEntry(db.Model):
     )
 
   #noinspection PyTypeChecker
-  @property
-  def changes(self):
-    if self.changes_json:
-      #print json.loads(self.changes_json)
-      return json.loads(self.changes_json)
-    else:
-      return {}
+  def get_changes(self):
+    return json.loads(self.changes_json)
+
+  def set_changes(self, changes):
+    self.changes_json = json.dumps(changes)
+
+  changes = property(get_changes, set_changes)
 
 
 class AuditService(object):
@@ -85,8 +85,8 @@ class AuditService(object):
     event.listen(InstrumentationEvents, "class_instrument", self.class_instrument)
 
     # We register the events late in the boot process, beacause it doesn't work otherwise
-    event.listen(Session, "after_attach", self.after_attach)
-    event.listen(Session, "after_attach", self.after_attach)
+    #event.listen(Session, "after_attach", self.after_attach)
+    #event.listen(Session, "after_attach", self.after_attach)
 
     event.listen(Session, "before_commit", self.before_commit)
 
@@ -182,7 +182,7 @@ class AuditService(object):
       return
     print "changes:", model.__changes__
     entry = AuditEntry.from_model(model, type=UPDATE)
-    entry.changes_json = json.dumps(model.__changes__)
+    entry.changes = model.__changes__
     session.add(entry)
 
     del model.__changes__

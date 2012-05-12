@@ -18,7 +18,7 @@
   {% endif %}
 {% endmacro %}
 
-<form action="{{ request.path }}" method="POST" class="form-horizontal">
+<form action="{{ request.path }}" method="POST" class="form-horizontal" id="edit-form">
   {{ form.csrf }}
 
   {% for label, field_names in form._groups %}
@@ -42,3 +42,31 @@
   </div>
 
 </form>
+
+{% if rules %}
+<script>
+  $(document).ready(function() {
+    var rules = {{ rules }};
+
+    // Make bold labels for required fields
+    $("label").each(function(i, e) {
+      var for_ = $(e).attr("for");
+      if (rules[for_] && rules[for_].required) {
+        $(e).addClass("required");
+      }
+    });
+
+    // Activate valitation plugin
+    $("#edit-form").validate({
+      /* debug: true, */
+      rules: rules,
+      highlight: function(label) {
+        $(label).closest('.control-group').addClass('error');
+      },
+      unhighlight: function(label) {
+        $(label).closest('.control-group').removeClass('error');
+      },
+    });
+  });
+</script>
+{% endif %}

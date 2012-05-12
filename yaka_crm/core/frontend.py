@@ -1,4 +1,5 @@
 import cgi
+import json
 import re
 
 from flask import session, redirect, request, g, render_template, flash, Markup, Blueprint
@@ -122,7 +123,24 @@ class SingleView(object):
     return Markup(render_template('crm/render_single.html', panels=self.panels, get=get))
 
   def render_form(self, form, for_new=False):
-    return Markup(render_template('crm/render_for_edit.html', form=form, for_new=for_new))
+    # Client-side rules for jQuery.validate
+    # See: http://docs.jquery.com/Plugins/Validation/Methods#Validator
+    rules = {}
+    for field in form:
+      rules_for_field = {}
+      for validator in field.validators:
+        rule_for_validator = getattr(validator, "rule", None)
+        if rule_for_validator:
+          rules_for_field.update(rule_for_validator)
+      if rules_for_field:
+        rules[field.name] = rules_for_field
+    if rules:
+      rules = Markup(json.dumps(rules))
+    else:
+      rules = None
+
+    return Markup(render_template('crm/render_for_edit.html',
+                                  form=form, for_new=for_new, rules=rules))
 
   def get(self, model, attr_name):
     value = getattr(model, attr_name)
