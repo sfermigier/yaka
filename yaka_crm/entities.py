@@ -1,3 +1,9 @@
+"""Entity objects for the CRM applications.
+
+"""
+from StringIO import StringIO
+from PIL import Image
+
 from .core.entities import *
 
 from sqlalchemy.orm import relationship
@@ -6,12 +12,12 @@ from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date
 
 searchable = dict(searchable=True)
 
+
 #
 # Mixins
 #
 class Person(object):
   """Mixin class for persons."""
-
 
   salutation = Column(UnicodeText)
   first_name = Column(UnicodeText, info=searchable)
@@ -26,10 +32,16 @@ class Person(object):
   description = Column(UnicodeText, info=searchable)
 
   photo = Column(LargeBinary)
+  photo_48 = Column(LargeBinary)
 
   @property
   def name(self):
     return "%s %s" % (self.first_name, self.last_name)
+
+  def _compute_pictures(self):
+    image = Image.open(StringIO(self.photo))
+    image.thumbnail((48, 48))
+    self.photo_48 = image.tostring("jpeg")
 
 
 class Addressable(object):
@@ -111,6 +123,15 @@ class User(Person, Entity):
   __tablename__ = 'user'
 
   password = Column(UnicodeText, nullable=False)
+
+  def __unicode__(self):
+    return self.name
+
+  # Should entities know about their own URL? I guess yes.
+  @property
+  def _url(self):
+    return "/users/%d" % self.uid
+
 
 # TODO: Task
 # TODO: Activity

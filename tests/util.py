@@ -19,6 +19,8 @@ def init_data(db):
   contact2 = Contact(first_name="Paul", last_name="Dupont", email="paul@example.com")
 
   user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
+  photo_path = os.path.join(os.path.dirname(__file__), "dummy_files", "mugshot.jpg")
+  user1.photo = open(photo_path).read()
 
   db.session.add(contact1)
   db.session.add(contact2)
@@ -33,6 +35,12 @@ class DataLoader(object):
     self.accounts_map = {}
 
   def load_data(self):
+    self.init_users()
+    self.db.session.commit()
+
+    from flask import g
+    g.user = User.query.all()[0]
+
     self.load_accounts()
     self.load_contacts()
     self.load_opportunities()
@@ -40,10 +48,13 @@ class DataLoader(object):
 
     self.load_files()
 
-    user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
-    self.db.session.add(user1)
-
     self.db.session.commit()
+
+  def init_users(self):
+    user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
+    photo_path = os.path.join(os.path.dirname(__file__), "dummy_files", "mugshot.jpg")
+    user1.photo = open(photo_path).read()
+    self.db.session.add(user1)
 
   def load_accounts(self):
     reader = self.get_reader("Accounts.csv")

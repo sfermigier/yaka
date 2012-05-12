@@ -3,13 +3,16 @@
 
 <div style="margin-bottom: 25px;">
   {% for entry in entries %}
+    {% if entry.type == 1 %}
     <p>
-      Type: {{ entry.type }}<br>
-      By: {{ entry.user }}<br>
+      <a href="{{ entry.user._url }}">{{ entry.user.name }}</a>
+      made changes on {{ entry.happened_at }}</p>
+    <p>
       {% for key, (old_value, new_value) in entry.changes.items() %}
         [{{ key }}] "{{ old_value }}" => "{{ new_value }}"<br>
       {% endfor %}
     </p>
+    {% endif %}
   {% endfor %}
 </div>
 {% endmacro %}

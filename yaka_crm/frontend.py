@@ -6,7 +6,8 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextField, TextAreaField
 
-from yaka_crm.core.forms import length, email, url, required
+# Our custom validators
+from yaka_crm.core.forms import email, url, required
 
 from .entities import *
 from .core.frontend import *

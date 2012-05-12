@@ -27,6 +27,11 @@ class BreadCrumbs(object):
   def __getitem__(self, item):
     return self._bc[item]
 
+  def __add__(self, t):
+    bc = BreadCrumbs(self._bc)
+    bc.add(t[0], t[1])
+    return bc
+
 
 def add_to_recent_items(entity=None):
   g.recent_items.insert(0, dict(name=entity.name, url=entity.url))

@@ -23,13 +23,20 @@ all_entity_classes = [Contact, Account, Opportunity, Lead, Document, File, Folde
 from .frontend import CRM
 crm = CRM(app)
 
+
 # Register additional blueprints
 from admin import admin
-app.register_blueprint(admin)
-
 from dm import dm
-app.register_blueprint(dm)
+from reports import reports
+from users import users
 
+app.register_blueprint(admin)
+app.register_blueprint(dm)
+app.register_blueprint(reports)
+app.register_blueprint(users)
+
+
+# Initiate services
 # Must (currently) come after all entity classes are declared.
 from whooshalchemy import IndexService
 index_service = IndexService(app.config)

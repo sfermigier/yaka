@@ -14,7 +14,8 @@ __all__ = []
 
 @app.before_request
 def before_request():
-  g.user = User.query.get(1)
+  # FIXME: temp hack
+  g.user = User.query.all()[0]
   g.modules = CRM.modules
   g.recent_items = session.get('recent_items', [])
 

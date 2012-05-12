@@ -1,0 +1,16 @@
+{% extends "crm/base.html" %}
+
+{% from "macros.html" import audit_log %}
+
+{% macro activity_log(entries) %}
+<h3>Activity Log</h3>
+{% endmacro %}
+
+{% block main %}
+
+  <h2>{{ user.name }}</h2>
+
+  {{ activity_log(activity_entries) }}
+  {{ audit_log(audit_entries) }}
+
+{% endblock %}

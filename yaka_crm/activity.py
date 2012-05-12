@@ -1,12 +1,6 @@
-"""Audit Service.
+"""Activity Service.
 
-Only subclasses of Entity are auditable, at this point.
-
-TODO: In the future, we may decide to:
-
-- Make Models that have the __auditable__ property (set to True) auditable.
-- Make Entities that have the __auditable__ property set to False not auditable.
-
+See http://activitystrea.ms/specs/json/1.0/
 """
 
 from datetime import datetime
@@ -25,61 +19,43 @@ from .extensions import db
 from yaka_crm.core.entities import Entity
 from yaka_crm.entities import User
 
-CREATION = 0
-UPDATE   = 1
-DELETION = 2
 
+class ActivityEntry(db.Model):
+  """Main table for all activities."""
 
-class AuditEntry(db.Model):
-  """Logs modifications to auditable classes."""
-
-  __tablename__ = 'audit_entry'
+  __tablename__ = 'activity_entry'
 
   uid = Column(Integer, primary_key=True)
   happened_at = Column(DateTime, default=datetime.utcnow)
+
+  verb = Column(Text)
+
+  actor_id = Column(Integer, ForeignKey(User.id))
+
+  object_class = Column(Text)
+  object_id = Column(Integer)
+
+  subject = Column(Text)
+  subject_id = Column(Integer)
+
   type = Column(Integer) # CREATION / UPDATE / DELETION
 
   entity_id = Column(Integer)
   entity_class = Column(Text)
-  user_id = Column(Integer, ForeignKey(User.uid))
-  changes_json = Column(UnicodeText, default="{}", nullable=False)
 
-  user = relationship(User)
+  actor = relationship(User)
 
-
-  @staticmethod
-  def from_model(model, type):
-    try:
-      user_id = g.user.uid
-    except:
-      user_id = 0
-
-    entry = AuditEntry()
-    entry.type = type
-    entry.entity_id = model.uid
-    entry.entity_class = model.__class__.__name__
-    entry.user_id = user_id
-
-    return entry
 
   def __repr__(self):
     return "<AuditEntry uid=%s type=%s user=%s>" % (
       self.uid, {CREATION: "CREATION", DELETION: "DELETION", UPDATE: "UPDATE"}[self.type],
       self.user)
 
-  #noinspection PyTypeChecker
-  def get_changes(self):
-    return json.loads(self.changes_json)
 
-  def set_changes(self, changes):
-    self.changes_json = json.dumps(changes)
+class ActivityService(object):
 
-  changes = property(get_changes, set_changes)
+  def __init__(self):
 
-
-class AuditService(object):
-
-  def __init__(self, start=False):
     self.all_model_classes = set()
     self.active = start
 
