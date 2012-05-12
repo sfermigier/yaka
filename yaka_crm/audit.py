@@ -186,3 +186,7 @@ class AuditService(object):
     session.add(entry)
 
     del model.__changes__
+
+  def entries_for(self, entity):
+    return AuditEntry.query.filter(AuditEntry.entity_id == entity.uid).all()
+

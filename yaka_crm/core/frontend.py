@@ -11,8 +11,6 @@ from .entities import *
 #
 # Helper classes
 #
-from yaka_crm.audit import AuditEntry
-
 class BreadCrumbs(object):
 
   def __init__(self, l=()):
@@ -268,6 +266,7 @@ class Module(object):
     """
     # Store admin instance
     self.crud_app = crud_app
+    self.app = crud_app.app
 
     # If url is not provided, generate it from endpoint name
     if self.url is None:
@@ -321,7 +320,7 @@ class Module(object):
     rendered_entity = self.single_view.render(entity)
     related_views = self.render_related_views(entity)
 
-    audit_entries = AuditEntry.query.filter(AuditEntry.entity_id == entity.uid).all()
+    audit_entries = self.app.extensions['audit'].entries_for(entity)
     return render_template('crm/single_view.html', rendered_entity=rendered_entity,
                            related_views=related_views, audit_entries=audit_entries,
                            breadcrumbs=bc, module=self)

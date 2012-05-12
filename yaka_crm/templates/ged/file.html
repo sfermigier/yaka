@@ -2,124 +2,147 @@
 
 {% block main %}
 
-<div style="width: 70%; position: relative; float: left;">
+  <div style="width: 70%; position: relative; float: left;">
 
-  <h2>{{ file.name }}</h2>
+    <h2>{{ file.name }}</h2>
 
-  <img src="{{ file.url }}/preview" width="450px">
+    <img src="{{ file.url }}/preview" width="450px">
 
-  <h2>Properties</h2>
+    <div class="collapsable">
 
-  <p>
-    Size: {{ file.size }}
-  </p>
-  <p>
-    MIME Type: {{ file.mime_type }}
-  </p>
-  <p>
-    Creator: {{ file.creator }}
-  </p>
-  <p>
-    Created on: {{ file.created_at }}
-  </p>
-  <p>
-    Last modified on: {{ file.modified_at }}
-  </p>
+      <h3>Properties</h3>
 
-  <p>
-    Tags: <input class="tagbox" value="{{ file.tags }}">
-  </p>
+      <p>
+        Size: {{ file.size }}
+      </p>
 
-</div>
+      <p>
+        MIME Type: {{ file.mime_type }}
+      </p>
 
-<div style="width: 30%; position: relative; float: right;">
+      <p>
+        Creator: {{ file.creator }}
+      </p>
 
-<div class="well" style="padding: 8px 0;">
+      <p>
+        Created on: {{ file.created_at }}
+      </p>
 
-  <ul class="nav nav-list">
-    <li class="nav-header">Actions</li>
-    <li><a href="{{ file.url }}/download"><i class="icon-eye-open"></i> View in browser</a></li>
+      <p>
+        Last modified on: {{ file.modified_at }}
+      </p>
 
-    <li><a href="{{ file.url }}/download?attach=true"><i class="icon-download"></i> Download</a></li>
-    <li><a href="#upload-new-version" data-toggle="modal"><i class="icon-upload"></i> Upload new version</a></li>
-    <li><a href="#send-by-email" data-toggle="modal"><i class="icon-envelope"></i> Email</a></li>
-    <li><a href="#delete" data-toggle="modal"><i class="icon-trash"></i> Delete</a></li>
-  </ul>
-</div>
+      <p>
+        Tags: <input class="tagbox" value="{{ file.tags }}">
+      </p>
 
-</div>
+      <h3>Audit Log</h3>
 
+      <div style="margin-bottom: 25px;">
+        {% for entry in audit_entries %}
+          <p>
+            Type: {{ entry.type }}<br>
+            By: {{ entry.user_id }}<br>
+            {% for key, (old_value, new_value) in entry.changes.items() %}
+              [{{ key }}] "{{ old_value }}" => "{{ new_value }}"<br>
+            {% endfor %}
+          </p>
+        {% endfor %}
+      </div>
 
-<!-- modal stuff -->
-
-<div class="modal fade" id="upload-new-version">
-  <form id="fileupload" action="{{ file.url }}" method="POST" enctype="multipart/form-data" style="margin-bottom: 0;">
-    <div class="modal-header">
-      <button class="close" data-dismiss="modal">&times;</button>
-      <h3>Upload new version</h3>
     </div>
-    <div class="modal-body">
-      <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-      <div class="row fileupload-buttonbar">
-        <div class="span7">
-          <!-- The fileinput-button span is used to style the file input field as button -->
+
+  </div>
+
+
+  <div style="width: 30%; position: relative; float: right;">
+
+    <div class="well" style="padding: 8px 0;">
+
+      <ul class="nav nav-list">
+        <li class="nav-header">Actions</li>
+        <li><a href="{{ file.url }}/download"><i class="icon-eye-open"></i> View in browser</a></li>
+
+        <li><a href="{{ file.url }}/download?attach=true"><i class="icon-download"></i> Download</a></li>
+        <li><a href="#upload-new-version" data-toggle="modal"><i class="icon-upload"></i> Upload new version</a></li>
+        <li><a href="#send-by-email" data-toggle="modal"><i class="icon-envelope"></i> Email</a></li>
+        <li><a href="#delete" data-toggle="modal"><i class="icon-trash"></i> Delete</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <!-- modal stuff -->
+
+  <div class="modal fade" id="upload-new-version">
+    <form id="fileupload" action="{{ file.url }}" method="POST" enctype="multipart/form-data" style="margin-bottom: 0;">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+        <h3>Upload new version</h3>
+      </div>
+      <div class="modal-body">
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="row fileupload-buttonbar">
+          <div class="span7">
+            <!-- The fileinput-button span is used to style the file input field as button -->
         <span class="btn btn-success fileinput-button">
           <i class="icon-plus icon-white"></i>
           <span>Add files...</span>
           <input type="file" name="file" class="hide">
         </span>
-          <button type="submit" class="btn btn-primary start">
-            <i class="icon-upload icon-white"></i>
-            <span>Start upload</span>
-          </button>
-          <button type="reset" class="btn btn-warning cancel">
-            <i class="icon-ban-circle icon-white"></i>
-            <span>Cancel upload</span>
-          </button>
+            <button type="submit" class="btn btn-primary start">
+              <i class="icon-upload icon-white"></i>
+              <span>Start upload</span>
+            </button>
+            <button type="reset" class="btn btn-warning cancel">
+              <i class="icon-ban-circle icon-white"></i>
+              <span>Cancel upload</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button data-dismiss="modal" class="btn">Cancel</button>
-      <button class="btn btn-primary" type="submit">Save changes</button>
-    </div>
-  </form>
-</div>
-
-<div class="modal fade" id="send-by-email">
-  <form action="{{ file.url }}/send" method="POST" style="margin-bottom: 0;">
-    <div class="modal-header">
-      <button class="close" data-dismiss="modal">&times;</button>
-      <h3>Send by email</h3>
-    </div>
-    <div class="modal-body">
-      <div class="input-prepend">
-        <label>Recipient</label>
-        <span class="add-on">@</span>
-        <input class="span3" id="prependedInput" type="text" name="feedEmail">
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save changes</button>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button data-dismiss="modal" class="btn">Cancel</button>
-      <button class="btn btn-primary" type="submit">Send</button>
-    </div>
-  </form>
-</div>
+    </form>
+  </div>
 
-<div class="modal fade" id="delete">
-  <form action="{{ file.url }}/delete" method="POST" style="margin-bottom: 0;">
-    <div class="modal-header">
-      <button class="close" data-dismiss="modal">&times;</button>
-      <h3>Delete File</h3>
-    </div>
-    <div class="modal-body">
-      Are you sure you want to delete the file {{ file.name }} ?
-    </div>
-    <div class="modal-footer">
-      <button data-dismiss="modal" class="btn">Cancel</button>
-      <button type="submit" class="btn btn-primary">Really Delete</button>
-    </div>
-  </form>
-</div>
+  <div class="modal fade" id="send-by-email">
+    <form action="{{ file.url }}/send" method="POST" style="margin-bottom: 0;">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+        <h3>Send by email</h3>
+      </div>
+      <div class="modal-body">
+        <div class="input-prepend">
+          <label>Recipient</label>
+          <span class="add-on">@</span>
+          <input class="span3" id="prependedInput" type="text" name="feedEmail">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn">Cancel</button>
+        <button class="btn btn-primary" type="submit">Send</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal fade" id="delete">
+    <form action="{{ file.url }}/delete" method="POST" style="margin-bottom: 0;">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+        <h3>Delete File</h3>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete the file {{ file.name }} ?
+      </div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Really Delete</button>
+      </div>
+    </form>
+  </div>
 
 {% endblock %}

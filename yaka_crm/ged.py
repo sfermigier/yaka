@@ -14,6 +14,7 @@ from sqlalchemy.types import UnicodeText, LargeBinary, Integer
 from .core.entities import Entity, Column
 from .extensions import db
 from .converter import convert
+from yaka_crm.audit import AuditEntry
 
 
 ged = Blueprint("ged", __name__, url_prefix="/ged")
@@ -118,7 +119,8 @@ def view(file_id):
   bc = [dict(path="/ged/", label="GED Home")]
   bc.append(dict(label=f.name))
 
-  return render_template("ged/file.html", file=f, breadcrumbs=bc)
+  audit_entries = AuditEntry.query.filter(AuditEntry.entity_id == f.uid).all()
+  return render_template("ged/file.html", file=f, audit_entries=audit_entries, breadcrumbs=bc)
 
 
 @ged.route("/<int:file_id>/delete", methods=['POST'])

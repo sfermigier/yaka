@@ -36,6 +36,7 @@ index_service = IndexService(app.config)
 
 from audit import AuditService
 audit_service = AuditService(start=True)
+app.extensions['audit'] = audit_service
 
 # TODO: remove
 for cls in all_entity_classes:
