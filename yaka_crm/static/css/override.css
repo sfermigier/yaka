@@ -61,6 +61,26 @@ h2 {
     margin-bottom: 5px;
 }
 
+/* Grid table */
+table.grid, table.grid tbody {
+    width: 100%;
+    margin-bottom: 1.5em;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.grid th.first {
+    padding-left: 6px;
+}
+.grid td, .grid th {
+    border-bottom: 1px solid #EBEBEB;
+    text-align: left;
+    vertical-align: top;
+    line-height: 16px;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 6px 10px 6px 0;
+}
+
 /* fix for datatables + bootstrap, cf. http://datatables.net/blog/Twitter_Bootstrap */
 /* TODO: doesn't work */
 
