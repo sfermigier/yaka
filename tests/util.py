@@ -51,7 +51,9 @@ class DataLoader(object):
     self.db.session.commit()
 
   def init_users(self):
-    user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
+    user1 = User(first_name="Stefane", last_name="Fermigier",
+                 email="sf@example.com", password="admin",
+                 job_title="Founder")
     photo_path = os.path.join(os.path.dirname(__file__), "dummy_files", "mugshot.jpg")
     user1.photo = open(photo_path).read()
     self.db.session.add(user1)

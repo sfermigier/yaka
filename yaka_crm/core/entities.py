@@ -1,10 +1,12 @@
 from datetime import datetime
 from threading import Lock
+from flask.globals import g
 
-from sqlalchemy.ext.declarative import AbstractConcreteBase
+from sqlalchemy.ext.declarative import AbstractConcreteBase, declared_attr
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm.util import class_mapper
-from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, DateTime
+from sqlalchemy.schema import Column, ForeignKey
+from sqlalchemy.types import Integer, DateTime, UnicodeText
 from sqlalchemy import event
 
 from ..extensions import db
@@ -46,9 +48,26 @@ class Entity(AbstractConcreteBase, db.Model):
                       info=system)
   deleted_at = Column(DateTime, default=None, info=system)
 
-  creator_id = Column(Integer, info=system)
 
-  owner_id = Column(Integer)
+  @declared_attr
+  def creator_id(self):
+    return Column(Integer, info=system)
+    #return Column(Integer, ForeignKey("UserBase.id"), info=system)
+
+  @declared_attr
+  def owner_id(self):
+    return Column(Integer)
+    #return Column(Integer, ForeignKey("UserBase.id"))
+
+  #@declared_attr
+  #def creator(self):
+  #  return relationship("User")
+
+  #@declared_attr
+  #def owner(self):
+  #  return relationship("User")
+
+  #owner = relationship("User")
 
   # Should not be necessary
   __editable__ = set()
@@ -59,6 +78,8 @@ class Entity(AbstractConcreteBase, db.Model):
 
   def __init__(self, **kw):
     self.uid = self.id_gen.new()
+    if hasattr(g, 'user'):
+      self.creator_id = self.owner_id = g.user.uid
     self.update(kw)
 
   def __repr__(self):

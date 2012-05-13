@@ -113,6 +113,27 @@ table {
     clear: both;
 }
 
+/* user single view */
+.avatar {
+    position: relative;
+    z-index: 1;
+    margin-right: 30px;
+    margin: 0 18px 9px 0;
+}
+.avatar, .avatar a {
+    display: inline;
+    float: left;
+}
+.info {
+    display: block;
+}
+.profile-nav {
+    clear: both;
+    border-width: 2px 0;
+    border-color: #E5E5E5;
+    border-style: solid;
+}
+
 /* ------------------------------------------------------------------------- */
 
 body {

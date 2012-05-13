@@ -1,16 +1,41 @@
-{% extends "crm/base.html" %}
+{% extends "base.html" %}
 
-{% from "macros.html" import audit_log %}
+{% from "macros.html" import m_audit_log, m_breadcrumbs, m_files_table %}
 
-{% macro activity_log(entries) %}
-<h3>Activity Log</h3>
+{% macro m_activity(entries) %}
 {% endmacro %}
 
-{% block main %}
+{% macro m_images(images) %}
+{% endmacro %}
 
-  <h2>{{ user.name }}</h2>
+{% block container %}
+  {{ m_breadcrumbs(breadcrumbs) }}
 
-  {{ activity_log(activity_entries) }}
-  {{ audit_log(audit_entries) }}
+  <div class="header">
+    <img class="avatar" src="{{ user._url }}/mugshot?s=140">
+
+    <div class="info">
+      <h2 class="title">{{ user.name }}</h2>
+      <div class="job-title">{{ user.job_title }}</div>
+    </div>
+  </div>
+
+  <ul class="nav nav-pills profile-nav">
+    {% for tab in tabs %}
+      {% if tab.id == active_tab_id %}
+      <li class="active"><a href="{{ tab.link }}">{{ tab.label }}</a></li>
+      {% else %}
+      <li><a href="{{ tab.link }}">{{ tab.label }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+
+  {% if active_tab_id == 'activity' %}
+    {{ m_activity(activity_entries) }}
+  {% elif active_tab_id == 'documents' %}
+    {{ m_files_table(documents) }}
+  {% elif active_tab_id == 'images' %}
+    {{ m_files_table(images) }}
+  {% endif %}
 
 {% endblock %}

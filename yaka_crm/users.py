@@ -1,14 +1,13 @@
-from StringIO import StringIO
-from PIL import Image
 from flask import Blueprint
 from flask import render_template
 from flask.globals import request
 from flask.helpers import make_response
+from sqlalchemy.sql.expression import not_
 
 from .entities import User
 from .core.frontend import BreadCrumbs
-from .services.audit import AuditEntry
 from .services.image import resize
+from .dm import File
 
 
 users = Blueprint("users", __name__, url_prefix="/users")
@@ -21,8 +20,15 @@ def make_bread_crumbs(path=None, label=None):
   else:
     return bread_crumbs
 
+def make_tabs(user):
+  return [
+    dict(id='activity', label='Activity', link=user._url, is_active=True),
+    dict(id='profile', label='Profile', link=user._url + '?tab=profile'),
+    dict(id='documents', label='Documents', link=user._url + '?tab=documents'),
+    dict(id='images', label='Images', link=user._url + '?tab=images'),
+  ]
 
-# Not a great idea (can't be used a a ** argument).
+# Not a great idea (can't be used as a ** argument).
 class Env(object):
   _d = {}
 
@@ -54,16 +60,33 @@ def home():
 @users.route("/<int:user_id>")
 def user_view(user_id):
   user = User.query.get(user_id)
+  tab = request.args.get("tab", "activity")
+
   e = Env(label=user.name, user=user)
-  e.audit_entries = AuditEntry.query.filter(AuditEntry.user_id==user_id).all()
-  # TODO
-  e.activity_entries = []
+  e.active_tab_id = tab
+  e.tabs = make_tabs(user)
+
+  if tab == "activity":
+    # TODO
+    e.activity_entries = []
+
+  elif tab in ("documents", "images"):
+    files = File.query.filter(File.owner_id == user_id)
+    if tab == "documents":
+      files = files.filter(not_(File.mime_type.like("image/%")))
+      e.documents = files.all()
+    elif tab == "images":
+      files = files.filter(File.mime_type.like("image/%"))
+      e.images = files.all()
+
   return render_template("users/user.html", **e._d)
 
 
 @users.route("/<int:user_id>/mugshot")
 def mugshot(user_id):
   size = int(request.args.get('s', 0))
+  if size > 500:
+    raise Exception("Error, size = %d" % size)
   user = User.query.get(user_id)
 
   if size == 0:

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import m_breadcrumbs, m_recent_items %}
 
 {% block container %}
 
@@ -28,32 +29,12 @@
 
     <div>&nbsp;</div>
 
-    {% if g.recent_items %}
-      <div class="well" style="padding: 8px 0;">
-        <ul class="nav nav-list">
-          <li class="nav-header">
-            Recent items
-          </li>
-          {% for item in g.recent_items %}
-            <li>
-              <a href="{{ item.url }}">{{ item.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-
+    {{ m_recent_items(g.recent_items) }}
   </div><!-- /span2 -->
 
   <div class="span9">
 
-    <ul class="breadcrumb">
-      {% for obj in breadcrumbs[0:-1] %}
-        <li><a href="{{ obj.path }}">{{ obj.label }}</a>
-          <span class="divider">/</span></li>
-      {% endfor %}
-      <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
-    </ul>
+    {{ m_breadcrumbs(breadcrumbs) }}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}

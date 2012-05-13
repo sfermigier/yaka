@@ -19,38 +19,32 @@ searchable = dict(searchable=True)
 class Person(object):
   """Mixin class for persons."""
 
-  salutation = Column(UnicodeText)
-  first_name = Column(UnicodeText, info=searchable)
-  last_name = Column(UnicodeText, info=searchable)
+  salutation = Column(UnicodeText, default=u"")
+  first_name = Column(UnicodeText, default=u"", info=searchable)
+  last_name = Column(UnicodeText, default=u"", info=searchable)
 
-  job_title = Column(UnicodeText, info=searchable)
-  department = Column(UnicodeText, info=searchable)
+  job_title = Column(UnicodeText, default=u"", info=searchable)
+  department = Column(UnicodeText, default=u"", info=searchable)
 
-  email = Column(UnicodeText)
-  phone = Column(UnicodeText)
+  email = Column(UnicodeText, default=u"")
+  phone = Column(UnicodeText, default=u"")
 
-  description = Column(UnicodeText, info=searchable)
+  description = Column(UnicodeText, default=u"", info=searchable)
 
   photo = Column(LargeBinary)
-  photo_48 = Column(LargeBinary)
 
   @property
   def name(self):
     return "%s %s" % (self.first_name, self.last_name)
 
-  def _compute_pictures(self):
-    image = Image.open(StringIO(self.photo))
-    image.thumbnail((48, 48))
-    self.photo_48 = image.tostring("jpeg")
-
 
 class Addressable(object):
   """Mixin class for entities with an address."""
 
-  address_street = Column(UnicodeText)
-  address_city = Column(UnicodeText)
-  address_state = Column(UnicodeText)
-  address_country = Column(UnicodeText)
+  address_street = Column(UnicodeText, default=u"")
+  address_city = Column(UnicodeText, default=u"")
+  address_state = Column(UnicodeText, default=u"")
+  address_country = Column(UnicodeText, default=u"")
 
   @property
   def address(self):
@@ -68,12 +62,12 @@ class Addressable(object):
 class Account(Addressable, Entity):
   __tablename__ = 'account'
 
-  name = Column(UnicodeText, info=searchable)
-  website = Column(UnicodeText)
-  office_phone = Column(UnicodeText)
+  name = Column(UnicodeText, default=u"", info=searchable)
+  website = Column(UnicodeText, default=u"")
+  office_phone = Column(UnicodeText, default=u"")
 
-  type = Column(UnicodeText)
-  industry = Column(UnicodeText)
+  type = Column(UnicodeText, default=u"")
+  industry = Column(UnicodeText, default=u"")
 
   logo = Column(LargeBinary)
 
@@ -94,11 +88,11 @@ class Contact(Addressable, Person, Entity):
 class Opportunity(Entity):
   __tablename__ = 'opportunity'
 
-  name = Column(UnicodeText, info=searchable)
-  description = Column(UnicodeText, info=searchable)
+  name = Column(UnicodeText, nullable=False, info=searchable)
+  description = Column(UnicodeText, default=u"", info=searchable)
 
-  type = Column(UnicodeText)
-  stage = Column(UnicodeText)
+  type = Column(UnicodeText, default=u"")
+  stage = Column(UnicodeText, default=u"")
   amount = Column(Integer)
   probability = Column(Integer)
   close_date = Column(Date)
@@ -109,8 +103,8 @@ class Opportunity(Entity):
 class Lead(Addressable, Person, Entity):
   __tablename__ = 'lead'
 
-  account_name = Column(UnicodeText)
-  lead_status = Column(UnicodeText)
+  account_name = Column(UnicodeText, default=u"")
+  lead_status = Column(UnicodeText, default=u"")
 
 
 class Document(Entity):

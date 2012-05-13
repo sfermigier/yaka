@@ -178,7 +178,6 @@ class AuditService(object):
   def log_updated(self, session, model):
     if not isinstance(model, Entity):
       return
-    #print "logging", model
     if not hasattr(model, '__changes__'):
       print "model has no __changes__, this might be wrong"
       return

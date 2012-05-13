@@ -1,5 +1,5 @@
 {% extends "crm/base.html" %}
-{% from "macros.html" import audit_log %}
+{% from "macros.html" import m_audit_log %}
 
 {% block main %}
 
@@ -15,7 +15,7 @@
       </div>
     {% endfor %}
 
-    {{ audit_log(audit_entries) }}
+    {{ m_audit_log(audit_entries) }}
   </div>
 
 {% endblock %}
