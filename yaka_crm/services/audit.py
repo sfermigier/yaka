@@ -42,7 +42,7 @@ class AuditEntry(db.Model):
   entity_id = Column(Integer)
   entity_class = Column(Text)
   user_id = Column(Integer, ForeignKey(User.uid))
-  changes_json = Column(UnicodeText, default="{}", nullable=False)
+  changes_json = Column(Text, default="{}", nullable=False)
 
   user = relationship(User)
 

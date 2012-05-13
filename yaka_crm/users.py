@@ -5,9 +5,10 @@ from flask import render_template
 from flask.globals import request
 from flask.helpers import make_response
 
+from .entities import User
 from .core.frontend import BreadCrumbs
 from .services.audit import AuditEntry
-from .entities import User
+from .services.image import resize
 
 
 users = Blueprint("users", __name__, url_prefix="/users")
@@ -68,12 +69,7 @@ def mugshot(user_id):
   if size == 0:
     data = user.photo
   else:
-    image = Image.open(StringIO(user.photo))
-    image.thumbnail((size, size), Image.ANTIALIAS)
-    output = StringIO()
-    image.save(output, "JPEG")
-    data = output.getvalue()
-    print len(data)
+    data = resize(user.photo, size)
 
   response = make_response(data)
   response.headers['content-type'] = 'image/jpeg'

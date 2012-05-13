@@ -22,5 +22,6 @@ requests
 iso8601
 passlib
 py-bcrypt
+pillow
 
 coverage==3.5.1
