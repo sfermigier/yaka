@@ -1,3 +1,4 @@
+import glob
 import os
 import tempfile
 import subprocess
@@ -19,8 +20,8 @@ def convert(f):
     f.text = unicode(text, 'utf8', errors='ignore')
     os.unlink(tmp_out_fn)
 
-    subprocess.check_call(['pdftoppm', '-singlefile', '-jpeg', '-l', '1', tmp_in_fn, tmp_out_fn])
-    preview = open(tmp_out_fn + '.jpg').read()
+    subprocess.check_call(['pdftoppm', '-jpeg', '-l', '1', tmp_in_fn, tmp_out_fn])
+    preview = open(glob.glob(tmp_out_fn + '-*.jpg')[0]).read()
     f.preview = preview
 
   elif f.mime_type == 'image/jpeg':
