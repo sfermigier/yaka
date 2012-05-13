@@ -3,7 +3,7 @@ from flaskext.testing import TestCase
 
 from yaka_crm import app, db
 from yaka_crm.entities import *
-from yaka_crm.audit import *
+from yaka_crm.services.audit import *
 
 from config import TestConfig
 

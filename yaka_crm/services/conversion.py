@@ -14,7 +14,7 @@ def convert(f):
   if f.mime_type == 'application/pdf':
     print subprocess.__file__
     print 'pdftotext', tmp_in_fn, tmp_out_fn
-    subprocess.check_output(['pdftotext', tmp_in_fn, tmp_out_fn])
+    subprocess.check_output(['/usr/local/bin/pdftotext', tmp_in_fn, tmp_out_fn])
     text = open(tmp_out_fn).read()
     f.text = unicode(text, 'utf8', errors='ignore')
     os.unlink(tmp_out_fn)

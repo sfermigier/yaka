@@ -41,7 +41,7 @@ app.register_blueprint(users)
 from whooshalchemy import IndexService
 index_service = IndexService(app.config)
 
-from audit import AuditService
+from .services.audit import AuditService
 audit_service = AuditService(start=True)
 app.extensions['audit'] = audit_service
 

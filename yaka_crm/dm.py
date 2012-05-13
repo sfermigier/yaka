@@ -12,10 +12,12 @@ from flask import Blueprint, render_template, redirect, request,\
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer
 
-from .core.entities import Entity, Column
 from .extensions import db
-from .converter import convert
-from yaka_crm.audit import AuditEntry
+
+from .core.entities import Entity, Column
+
+from .services.conversion import convert
+from .services.audit import AuditEntry
 
 
 ROOT = "/dm/"

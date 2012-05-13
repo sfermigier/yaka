@@ -21,9 +21,9 @@ from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
 from sqlalchemy.orm.session import Session
 
-from .extensions import db
-from yaka_crm.core.entities import Entity
-from yaka_crm.entities import User
+from ..extensions import db
+from ..core.entities import Entity
+from ..entities import User
 
 CREATION = 0
 UPDATE   = 1

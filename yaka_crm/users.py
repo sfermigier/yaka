@@ -6,8 +6,8 @@ from flask.globals import request
 from flask.helpers import make_response
 
 from .core.frontend import BreadCrumbs
-from yaka_crm.audit import AuditEntry
-from yaka_crm.entities import User
+from .services.audit import AuditEntry
+from .entities import User
 
 
 users = Blueprint("users", __name__, url_prefix="/users")
@@ -67,8 +67,6 @@ def mugshot(user_id):
 
   if size == 0:
     data = user.photo
-  #elif size == 48:
-  #  data = user.photo_48
   else:
     image = Image.open(StringIO(user.photo))
     image.thumbnail((size, size), Image.ANTIALIAS)
