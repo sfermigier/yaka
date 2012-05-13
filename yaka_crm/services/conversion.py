@@ -23,4 +23,7 @@ def convert(f):
     preview = open(tmp_out_fn + '.jpg').read()
     f.preview = preview
 
+  elif f.mime_type == 'image/jpeg':
+    f.preview = f.data
+
   os.unlink(tmp_in_fn)

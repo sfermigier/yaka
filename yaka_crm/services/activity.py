@@ -4,20 +4,12 @@ See http://activitystrea.ms/specs/json/1.0/
 """
 
 from datetime import datetime
-import json
 from blinker import signal
-from flask.globals import g
-from sqlalchemy import event
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm.attributes import NO_VALUE
-from sqlalchemy.orm.events import InstrumentationEvents
-
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
-from sqlalchemy.orm.session import Session
 
 from ..extensions import db
-from ..core.entities import Entity
 from ..entities import User
 
 

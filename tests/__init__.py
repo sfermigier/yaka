@@ -1,9 +1,7 @@
-# Hack around the fact that twill (a requirement for Flask-Testing) embeds
-# an older version of subprocess.
-
+# Fix for when running from an IDE (ex: PyCharm under MacOS)
 import os
-
-print os.environ['PATH']
 os.environ['PATH'] = "/usr/local/bin:" + os.environ['PATH']
 
+# Hack around the fact that twill (a requirement for Flask-Testing) embeds
+# an older version of subprocess.
 import subprocess

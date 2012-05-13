@@ -13,7 +13,7 @@ from .dm import File
 users = Blueprint("users", __name__, url_prefix="/users")
 
 
-def make_bread_crumbs(path=None, label=None):
+def make_bread_crumbs(path="", label=None):
   bread_crumbs = BreadCrumbs([("/", "Home"), ("/users", "Users")])
   if label:
     return bread_crumbs + (path, label)
@@ -35,7 +35,7 @@ class Env(object):
   def __init__(self, label=None, **kw):
     self.__dict__['_d'] = {}
 
-    self.bread_crumbs = self.breadcrumbs = make_bread_crumbs()
+    self.bread_crumbs = self.breadcrumbs = make_bread_crumbs(label=label)
     for key, value in kw.items():
       self._d[key] = value
 
@@ -89,10 +89,9 @@ def mugshot(user_id):
     raise Exception("Error, size = %d" % size)
   user = User.query.get(user_id)
 
-  if size == 0:
-    data = user.photo
-  else:
-    data = resize(user.photo, size)
+  data = user.photo
+  if size:
+    data = resize(data, size)
 
   response = make_response(data)
   response.headers['content-type'] = 'image/jpeg'

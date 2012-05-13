@@ -18,6 +18,7 @@ from .core.entities import Entity, Column
 
 from .services.conversion import convert
 from .services.audit import AuditEntry
+from yaka_crm.services.image import resize
 
 
 ROOT = "/dm/"
@@ -58,6 +59,10 @@ class File(Entity):
 
   #: preview image
   preview = Column(LargeBinary)
+
+  @property
+  def _url(self):
+    return self.base_url + "/%d" % self.uid
 
   @property
   def icon(self):
@@ -174,7 +179,12 @@ def preview(file_id):
   """Returns a preview (image) for the file given by its id."""
 
   f = get_file(file_id)
-  response = make_response(f.preview)
+  size = int(request.args.get("s", 0))
+  data = f.preview
+  if size:
+    data = resize(data, size)
+
+  response = make_response(data)
   response.headers['content-type'] = "image/jpeg"
 
   return response

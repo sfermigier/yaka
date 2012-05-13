@@ -1,3 +1,13 @@
+/* image-gallery in user.html */
+ul.image-gallery {
+    list-style: none;
+}
+ul.image-gallery li {
+    float: left;
+    position: relative;
+    margin: 10px;
+}
+
 /* jQuery-collapse - still some tuning to do */
 
 h3 {

@@ -18,6 +18,7 @@ __all__ = ['Column', 'Entity']
 #Base = declarative_base()
 
 
+# FIXME: this is completely broken (breaks after a server restart).
 class IdGenerator(object):
   """Dummy integer id generator."""
 
@@ -59,6 +60,7 @@ class Entity(AbstractConcreteBase, db.Model):
     return Column(Integer)
     #return Column(Integer, ForeignKey("UserBase.id"))
 
+  # TODO: doesn't work.
   #@declared_attr
   #def creator(self):
   #  return relationship("User")

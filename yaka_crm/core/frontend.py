@@ -1,4 +1,5 @@
 import cgi
+import copy
 import json
 import re
 
@@ -19,7 +20,7 @@ class BreadCrumbs(object):
       self.add(path, label)
 
   def add(self, path="", label=""):
-    if path != "" and not path.startswith("/"):
+    if path and not path.startswith("/"):
       previous = self._bc[-1]
       path = previous['path'] + "/" + path
     self._bc.append(dict(path=path, label=label))
@@ -28,9 +29,14 @@ class BreadCrumbs(object):
     return self._bc[item]
 
   def __add__(self, t):
-    bc = BreadCrumbs(self._bc)
+    bc = self.clone()
     bc.add(t[0], t[1])
     return bc
+
+  def clone(self):
+    new = BreadCrumbs()
+    new._bc = copy.copy(self._bc)
+    return new
 
 
 def add_to_recent_items(entity=None):

@@ -6,6 +6,8 @@ from io import StringIO
 from nose.tools import eq_, ok_
 import os
 from flaskext.testing import TestCase
+import re
+from tests.util import DataLoader
 
 from yaka_crm import app, db
 from config import TestConfig
@@ -45,6 +47,22 @@ class TestViews(TestCase):
   def test_home(self):
     response = self.client.get(ROOT)
     self.assert_200(response)
+
+  def test_preview(self):
+    loader = DataLoader(db)
+    loader.load_files()
+    db.session.commit()
+
+    response = self.client.get(ROOT)
+    self.assert_200(response)
+
+    data = response.data
+    for m in re.findall(ROOT + "([0-9]+)", data):
+      uid = int(m)
+
+      response = self.client.get(ROOT + "%d/preview" % uid)
+      self.assert_200(response)
+
 
   def test_upload_text(self):
     CONTENT = u'my file contents'
