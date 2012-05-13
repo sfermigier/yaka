@@ -10,7 +10,7 @@ ul.image-gallery li {
 
 /* jQuery-collapse - still some tuning to do */
 
-h3 {
+.collapsable h3 {
     padding: 5px;
     cursor: pointer;
     background: #eee url("/static/images/state.png") no-repeat 100% 5px;
@@ -20,7 +20,7 @@ h3 {
 }
 
 /* Doesn't work in Chrome. Works in Safari and FF. */
-h3 .active {
+h3.active {
     background-color: #ddd;
     background-position: 100% -21px;
 }
