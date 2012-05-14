@@ -30,9 +30,9 @@ def search_main():
 @search.route("/live")
 def search_live():
   q = request.args.get("q")
-  res = [ list(cls.search_query(q).all()) for cls in ALL_CLASSES ]
+  res = reduce(lambda x, y: x+y, [list(cls.search_query(q).all()) for cls in ALL_CLASSES])
 
-  if not sum(len(x) for x in res):
+  if not res:
     return ""
   else:
     return render_template('search/live_search.html', res=res)
