@@ -4,9 +4,9 @@ from flask.globals import request
 from flask.helpers import make_response
 from sqlalchemy.sql.expression import not_
 
-from .entities import User
-from .core.frontend import BreadCrumbs
-from .services.image import resize
+from ..entities import User
+from ..core.frontend import BreadCrumbs
+from ..services.image import resize
 from .dm import File
 
 

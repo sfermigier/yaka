@@ -6,7 +6,7 @@ from werkzeug.utils import redirect
 from . import app
 from .entities import *
 from .frontend import CRM
-from .dm import File
+from .apps.dm import File
 
 
 __all__ = []
@@ -73,7 +73,6 @@ def login():
 @app.route("/test")
 def test():
   return "BAD", 401
-
 
 
 @app.route("/")

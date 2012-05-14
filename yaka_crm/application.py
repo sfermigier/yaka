@@ -16,7 +16,7 @@ db.init_app(app)
 
 # TODO: autodiscovery of searchable classes
 from .entities import Contact, Account, Opportunity, Lead, Document
-from .dm import File, Folder
+from .apps.dm import File, Folder
 
 all_entity_classes = [Contact, Account, Opportunity, Lead, Document, File, Folder]
 
@@ -25,10 +25,10 @@ crm = CRM(app)
 
 
 # Register additional blueprints
-from admin import admin
-from dm import dm
-from reports import reports
-from users import users
+from .apps.admin import admin
+from .apps.dm import dm
+from .apps.reports import reports
+from .apps.users import users
 
 app.register_blueprint(admin)
 app.register_blueprint(dm)

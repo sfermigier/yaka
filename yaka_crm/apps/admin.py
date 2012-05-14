@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from .core.frontend import BreadCrumbs
+from ..core.frontend import BreadCrumbs
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 

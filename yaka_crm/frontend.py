@@ -1,7 +1,7 @@
 from flaskext.uploads import UploadSet, IMAGES
 from flaskext.wtf.file import FileField, file_allowed
 from flaskext.wtf.form import Form
-from flaskext.wtf.html5 import DateField, URLField, TelField, IntegerField
+from flaskext.wtf.html5 import DateField, TelField, IntegerField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextField, TextAreaField

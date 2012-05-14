@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask import render_template
 
-from .core.frontend import BreadCrumbs
+from ..core.frontend import BreadCrumbs
 
 reports = Blueprint("reports", __name__, url_prefix="/reports")
 
