@@ -84,5 +84,5 @@ class TestViews(TestCase):
     self.assert_200(response)
 
   def test_search(self):
-    response = self.client.get("/search?q=john")
+    response = self.client.get("/search/?q=john")
     self.assert_200(response)

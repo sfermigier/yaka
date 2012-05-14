@@ -6,7 +6,6 @@ from werkzeug.utils import redirect
 from . import app
 from .entities import *
 from .frontend import CRM
-from .apps.dm import File
 
 
 __all__ = []
@@ -86,33 +85,6 @@ def home():
 def help():
   # TODO: help
   return "HELP"
-
-
-@app.route("/search")
-def search():
-  q = request.args.get("q")
-  live = request.args.get("live")
-  breadcrumbs = [
-    dict(path="/", label="Home"),
-    dict(path="", label="Search for '%s'" % q),
-  ]
-
-  res = []
-  for klass in [Contact, Account, Lead, Opportunity, File]:
-    plural = klass.__name__ + 's'
-    if plural == 'Opportunitys':
-      plural = 'Opportunities'
-    res.append((plural, list(klass.search_query(q).all())))
-
-  num_results = sum([len(x) for x in res])
-
-  if live:
-    if not num_results:
-      return ""
-    return render_template('search/live_search.html', res=res)
-  else:
-    return render_template('search/search.html', res=res,
-                           breadcrumbs=breadcrumbs)
 
 
 @app.errorhandler(404)

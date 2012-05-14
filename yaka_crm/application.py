@@ -29,11 +29,13 @@ from .apps.admin import admin
 from .apps.dm import dm
 from .apps.reports import reports
 from .apps.users import users
+from .apps.search import search
 
 app.register_blueprint(admin)
 app.register_blueprint(dm)
 app.register_blueprint(reports)
 app.register_blueprint(users)
+app.register_blueprint(search)
 
 
 # Initiate services
