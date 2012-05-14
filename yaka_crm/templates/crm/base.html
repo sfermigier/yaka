@@ -5,8 +5,10 @@
 
 <ul class="nav nav-tabs">
   {% for module in g.modules %}
-    <li {% if module.is_current() %}class="active"{% endif %}><a
-            href="{{ module.url }}/">{{ module.label }}</a></li>
+    <li {% if module.is_current() %}class="active"{% endif %}>
+      <a href="{{ module.url }}/"><img src="/static/icons/{{ module.id }}-12.png">
+        {{ module.label }}</a>
+    </li>
   {% endfor %}
 </ul>
 

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import m_recent_items %}
 
 {% block container %}
 
@@ -10,20 +11,7 @@
 
     <div>&nbsp;</div>
 
-    {% if g.recent_items %}
-      <div class="well" style="padding: 8px 0;">
-        <ul class="nav nav-list">
-          <li class="nav-header">
-            Recent items
-          </li>
-          {% for item in g.recent_items %}
-            <li>
-              <a href="{{ item.url }}">{{ item.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+    {{ m_recent_items(g.recent_items) }}
 
   </div><!-- /span2 -->
 

@@ -213,23 +213,9 @@ class Leads(Module):
 
 
 #
-# Documents
-#
-class Documents(Module):
-  managed_class = Document
-
-  list_view_columns = ('name', 'owner')
-
-  single_view = SingleView(
-    Panel('Overview',
-          Row('name', 'owner')),
-    )
-
-
-#
 # Main App
 #
 class CRM(CRUDApp):
-  modules = [Accounts(), Contacts(), Opportunities(), Leads(), Documents()]
+  modules = [Accounts(), Contacts(), Opportunities(), Leads()]
 
   url = "/crm"

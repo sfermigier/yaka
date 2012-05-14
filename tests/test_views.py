@@ -1,8 +1,9 @@
 import re
 
+
 from flaskext.testing import TestCase
 from nose.tools import eq_
-from tests.util import init_data
+from .util import init_data
 
 from yaka_crm import app, db
 

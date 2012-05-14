@@ -39,8 +39,10 @@ class BreadCrumbs(object):
     return new
 
 
-def add_to_recent_items(entity=None):
-  g.recent_items.insert(0, dict(name=entity.name, url=entity.url))
+def add_to_recent_items(entity, type=None):
+  if not type:
+    type = entity.__class__.__name__.lower()
+  g.recent_items.insert(0, dict(type=type, name=entity.name, url=entity.url))
   s = set()
   l = []
   for item in g.recent_items:
@@ -248,6 +250,7 @@ class Module(object):
 
   __metaclass__ = ModuleMeta
 
+  id = None
   endpoint = None
   label = None
   managed_class = None
@@ -270,6 +273,9 @@ class Module(object):
 
     if self.label is None:
       self.label = labelize(self.endpoint)
+
+    if self.id is None:
+      self.id = self.managed_class.__name__.lower()
 
   def create_blueprint(self, crud_app):
     """

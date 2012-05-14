@@ -14,6 +14,7 @@ from sqlalchemy.types import UnicodeText, LargeBinary, Integer
 
 from ..extensions import db
 from ..core.entities import Entity, Column
+from ..core.frontend import add_to_recent_items
 from ..services.conversion import convert
 from ..services.audit import AuditEntry
 from ..services.image import resize
@@ -122,6 +123,11 @@ def create_file(fd):
 @dm.route("/<int:file_id>")
 def view(file_id):
   f = get_file(file_id)
+
+  if f.mime_type.startswith("image/"):
+    add_to_recent_items(f, "image")
+  else:
+    add_to_recent_items(f, "document")
 
   bc = [dict(path=ROOT, label="DM Home")]
   bc.append(dict(label=f.name))

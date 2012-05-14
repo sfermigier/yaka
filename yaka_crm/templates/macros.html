@@ -50,7 +50,7 @@
         </li>
         {% for item in recent_items %}
           <li>
-            <a href="{{ item.url }}">{{ item.name }}</a>
+            <a href="{{ item.url }}"><img src="/static/icons/{{ item.type }}-12.png"> {{ item.name }}</a>
           </li>
         {% endfor %}
       </ul>
