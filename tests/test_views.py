@@ -45,6 +45,8 @@ class TestViews(TestCase):
     response = self.client.get("/search/?q=john")
     self.assert_200(response)
 
+    response = self.client.get("/search/live?q=john")
+    self.assert_200(response)
 
   # Test additional blueprints (TODO: move to a distinct test case).
   def test_users(self):

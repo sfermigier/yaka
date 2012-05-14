@@ -1,11 +1,21 @@
-"""Indexing service, based on Whoosh.
-
-Based on Flask-whooshalchemy by Karl Gyllstrom, but simplified.
-
-:copyright: (c) 2012 by Stefane Fermigier
-:copyright: (c) 2012 by Karl Gyllstrom
-:license: BSD (see LICENSE.txt)
 """
+
+    WhooshAlchemy
+    ~~~~~~~~~~~~~
+
+    Adds Whoosh indexing capabilities to SQLAlchemy models.
+
+    Based on Flask-whooshalchemy by Karl Gyllstrom (Flask is still supported, but not mandatory).
+
+    :copyright: (c) 2012 by Stefane Fermigier
+    :copyright: (c) 2012 by Karl Gyllstrom
+    :license: BSD (see LICENSE.txt)
+"""
+
+# TODO: not sure that one index per class is the way to go.
+# TODO: speed issue
+# TODO:
+
 
 from __future__ import absolute_import
 
@@ -17,8 +27,6 @@ import whoosh.index
 from whoosh.qparser import MultifieldParser
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.fields import Schema
-
-from .core.entities import all_entity_classes
 
 import os
 
@@ -32,13 +40,10 @@ class IndexService(object):
     if not whoosh_base:
       whoosh_base = "whoosh_indexes"  # Default value
     self.whoosh_base = whoosh_base
-    self.writers = {}
+    self.indexes = {}
 
     event.listen(Session, "before_commit", self.before_commit)
     event.listen(Session, "after_commit", self.after_commit)
-
-    for cls in all_entity_classes:
-      self.register_class(cls)
 
   def register_class(self, model_class):
     """
@@ -56,9 +61,21 @@ class IndexService(object):
         os.makedirs(index_path)
       index = whoosh.index.create_in(index_path, schema)
 
-    self.writers[model_class.__name__] = index.writer()
-
+    self.indexes[model_class.__name__] = index
     model_class.search_query = Searcher(model_class, primary, index, self.session)
+    return index
+
+  def index_for_model_class(self, model_class):
+    """
+    Gets the whoosh index for this model, creating one if it does not exist.
+    in creating one, a schema is created based on the fields of the model.
+    Currently we only support primary key -> whoosh.ID, and sqlalchemy.TEXT
+    -> whoosh.TEXT, but can add more later. A dict of model -> whoosh index
+    is added to the ``app`` variable.
+    """
+    index = self.indexes.get(model_class.__name__)
+    if index is None:
+      index = self.register_class(model_class)
     return index
 
   def _get_whoosh_schema_and_primary(self, model_class):
@@ -103,23 +120,22 @@ class IndexService(object):
 
     for typ, values in self.to_update.iteritems():
       model_class = values[0][1].__class__
-      writer = self.writers.get(model_class.__name__)
-      if not writer:
-        continue
-      primary_field = model_class.search_query.primary
-      searchable = model_class.__searchable__
+      index = self.index_for_model_class(model_class)
+      with index.writer() as writer:
+        primary_field = model_class.search_query.primary
+        searchable = model_class.__searchable__
 
-      for change_type, model in values:
-        # delete everything. stuff that's updated or inserted will get
-        # added as a new doc. Could probably replace this with a whoosh
-        # update.
+        for change_type, model in values:
+          # delete everything. stuff that's updated or inserted will get
+          # added as a new doc. Could probably replace this with a whoosh
+          # update.
 
-        writer.delete_by_term(primary_field, unicode(getattr(model, primary_field)))
+          writer.delete_by_term(primary_field, unicode(getattr(model, primary_field)))
 
-        if change_type in ("new", "changed"):
-          attrs = dict((key, getattr(model, key)) for key in searchable)
-          attrs[primary_field] = unicode(getattr(model, primary_field))
-          writer.add_document(**attrs)
+          if change_type in ("new", "changed"):
+            attrs = dict((key, getattr(model, key)) for key in searchable)
+            attrs[primary_field] = unicode(getattr(model, primary_field))
+            writer.add_document(**attrs)
 
     self.to_update = {}
 
@@ -138,6 +154,9 @@ class Searcher(object):
     fields = set(index.schema._fields.keys()) - set([self.primary])
     self.parser = MultifieldParser(list(fields), index.schema)
 
+  def search(self, query, limit=None):
+    return self.index.searcher().search(self.parser.parse(query), limit=limit)
+
   def __call__(self, query, limit=None):
     session = self.session
     # When using Flask, get the session from the query attached to the model class.
@@ -146,5 +165,9 @@ class Searcher(object):
 
     results = self.index.searcher().search(self.parser.parse(query), limit=limit)
     keys = [x[self.primary] for x in results]
-    primary_column = getattr(self.model_class, self.primary)
-    return session.query(self.model_class).filter(primary_column.in_(keys))
+    if not keys:
+      # Dummy request...
+      return session.query(self.model_class).filter("uid = -1")
+    else:
+      primary_column = getattr(self.model_class, self.primary)
+      return session.query(self.model_class).filter(primary_column.in_(keys))

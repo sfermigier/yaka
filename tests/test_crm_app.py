@@ -1,4 +1,5 @@
 from flaskext.testing import TestCase
+from nose.tools import ok_
 import re
 
 from yaka_crm import app, db
@@ -86,3 +87,17 @@ class TestViews(TestCase):
   def test_search(self):
     response = self.client.get("/search/?q=john")
     self.assert_200(response)
+
+    response = self.client.get("/search/live?q=john")
+    self.assert_200(response)
+
+    # Note: there a guy named "Paul Dupont" in the test data
+    response = self.client.get("/search/?q=dupont")
+    self.assert_200(response)
+    ok_("Paul" in response.data)
+
+    response = self.client.get("/search/live?q=dupont")
+    self.assert_200(response)
+    ok_("Paul" in response.data)
+
+

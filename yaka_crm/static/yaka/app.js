@@ -2,13 +2,12 @@
 $(document).ready(function() {
   $("#search-box").keyup(function() {
     var q = $(this).val();
-    var dataString = 'q=' + q;
     if (q == '') {
       $("#live-search-results").html("").hide();
     } else {
       $.ajax({
         type: "GET",
-        url: "/search?live=1&q=" + q,
+        url: "/search/live?q=" + q,
         cache: false,
         success: function(html) {
           if (html) {

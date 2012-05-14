@@ -40,7 +40,7 @@ app.register_blueprint(search)
 
 # Initiate services
 # Must (currently) come after all entity classes are declared.
-from whooshalchemy import IndexService
+from .services.indexing import IndexService
 index_service = IndexService(app.config)
 
 from .services.audit import AuditService
