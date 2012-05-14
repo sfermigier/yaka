@@ -80,10 +80,6 @@ class TestViews(TestCase):
     response = self.client.get("/crm/opportunities/")
     self.assert_200(response)
 
-  def test_documents(self):
-    response = self.client.get("/crm/documents/")
-    self.assert_200(response)
-
   def test_search(self):
     response = self.client.get("/search/?q=john")
     self.assert_200(response)
