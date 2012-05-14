@@ -3,21 +3,40 @@
 {% macro render(list, plural) %}
   {% if list %}
     {% if list|count > 1 %}
-      <h2>{{ plural }} ({{list|count}} matches)</h2>
+      <h2>{{ plural }} ({{ list|count }} matches)</h2>
     {% else %}
       <h2>{{ plural }} (1 match)</h2>
     {% endif %}
 
     {% for obj in list %}
       <p>
-        <strong><a href="{{obj.url}}">{{obj.name}}</a></strong>
+        <strong><a href="{{obj.url}}">{{ obj.name }}</a></strong>
       </p>
     {% endfor %}
   {% endif %}
 {% endmacro %}
 
 {% block container %}
+
+  {% if documents %}
+    {% if documents|count > 1 %}
+      <h2>Documents ({{ documents|count }} matches)</h2>
+    {% else %}
+      <h2>Documents (1 match)</h2>
+    {% endif %}
+
+    {% for obj, hit, snippet in documents %}
+      <p>
+        <strong><a href="{{obj.url}}">{{ obj.name }}</a></strong><br>
+        {{ snippet }}<br>
+        Created by <a href="{{ obj.creator._url }}">{{ obj.creator }}</a>.
+      </p>
+    {% endfor %}
+
+  {% endif %}
+
   {% for k, l in res %}
     {{ render(l, k) }}
-  {%  endfor %}
-{%  endblock %}
+  {% endfor %}
+
+{% endblock %}

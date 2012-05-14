@@ -64,12 +64,20 @@ class Entity(AbstractConcreteBase, db.Model):
   #@declared_attr
   #def creator(self):
   #  return relationship("User")
-
   #@declared_attr
   #def owner(self):
   #  return relationship("User")
 
-  #owner = relationship("User")
+  # FIXME: extremely suboptimal
+  @property
+  def creator(self):
+    from ..entities import User
+    return User.query.get(self.creator_id)
+
+  @property
+  def owner(self):
+    from ..entities import User
+    return User.query.get(self.owner_id)
 
   # Should not be necessary
   __editable__ = set()

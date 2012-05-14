@@ -154,10 +154,9 @@ class Searcher(object):
     fields = set(index.schema._fields.keys()) - set([self.primary])
     self.parser = MultifieldParser(list(fields), index.schema)
 
-  def search(self, query, limit=None):
-    return self.index.searcher().search(self.parser.parse(query), limit=limit)
-
   def __call__(self, query, limit=None):
+    """API similar to SQLAlchemy's queries.
+    """
     session = self.session
     # When using Flask, get the session from the query attached to the model class.
     if not session:
@@ -171,3 +170,12 @@ class Searcher(object):
     else:
       primary_column = getattr(self.model_class, self.primary)
       return session.query(self.model_class).filter(primary_column.in_(keys))
+
+  def search(self, query, limit=None):
+    """New API: returns both whoosh records and SA models."""
+    # TODO: highly suboptimal
+
+    session = self.model_class.query.session
+    hits = self.index.searcher().search(self.parser.parse(query), limit=limit)
+    for hit in hits:
+      yield (hit, session.query(self.model_class).get(hit[self.primary]))

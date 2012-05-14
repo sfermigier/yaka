@@ -1,11 +1,14 @@
 from flask import render_template, request, Blueprint
+from jinja2._markupsafe import Markup
 
 from ..entities import *
 from .dm import File
 
+
 search = Blueprint("search", __name__, url_prefix="/search")
 
-ALL_CLASSES = [Contact, Account, Lead, Opportunity, File]
+# File must be first
+ALL_CLASSES = [File, Contact, Account, Lead, Opportunity]
 
 
 @search.route("/")
@@ -16,21 +19,25 @@ def search_main():
     dict(path="", label="Search for '%s'" % q),
     ]
 
+  hits = list(File.search_query.search(q))
+  documents = [(obj, hit, Markup(hit.highlights("text", text=obj.text)))
+               for hit, obj in hits if obj]
+
   res = []
-  for klass in ALL_CLASSES:
-    plural = klass.__name__ + 's'
+  for cls in ALL_CLASSES[1:]:
+    plural = cls.__name__ + 's'
     if plural == 'Opportunitys':
       plural = 'Opportunities'
-    res.append((plural, list(klass.search_query(q).all())))
+    res.append((plural, list(cls.search_query(q).all())))
 
-  return render_template('search/search.html', res=res,
+  return render_template('search/search.html', res=res, documents=documents,
                          breadcrumbs=breadcrumbs)
 
 
 @search.route("/live")
 def search_live():
   q = request.args.get("q")
-  res = reduce(lambda x, y: x+y, [list(cls.search_query(q).all()) for cls in ALL_CLASSES])
+  res = reduce(lambda x, y: x + y, [list(cls.search_query(q).all()) for cls in ALL_CLASSES])
 
   if not res:
     return ""
