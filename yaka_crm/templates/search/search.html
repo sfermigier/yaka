@@ -1,42 +1,81 @@
 {% extends "base.html" %}
 
-{% macro render(list, plural) %}
-  {% if list %}
-    {% if list|count > 1 %}
-      <h2>{{ plural }} ({{ list|count }} matches)</h2>
+{% macro m_table(objects, columns) %}
+  {% set table_id = objects[0].uid %}
+  <script>
+    $(document).ready(function() {
+      var id = "#{{ table_id }}"; // Should be unique enough
+      $(id).dataTable({
+        aoColumns:     [
+          {% for i in range(0, columns|count) %}
+            { asSorting: [ "asc", "desc" ] },
+          {% endfor %}
+        ],
+        bFilter:       false,
+        bLengthChange: false
+      });
+    });
+  </script>
+
+  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped" id="{{ table_id }}">
+    <thead>
+    <tr>
+      {% for col in columns %}
+        <th width="{{ col.width }}%">{{ col.name|labelize }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for object in objects %}
+      <tr>
+        {% for col in columns %}
+          <td>{{ object[col.name] }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div style="clear: both;"></div>
+{% endmacro %}
+
+{% macro render(plural, objects, columns) %}
+  {% if objects %}
+    {% if objects|count > 1 %}
+      <h3 style="margin-top: 20px;">{{ plural }} ({{ objects|count }} matches)</h3>
     {% else %}
-      <h2>{{ plural }} (1 match)</h2>
+      <h3 style="margin-top: 20px;">{{ plural }} (1 match)</h3>
     {% endif %}
 
-    {% for obj in list %}
-      <p>
-        <strong><a href="{{obj.url}}">{{ obj.name }}</a></strong>
-      </p>
-    {% endfor %}
+    {{ m_table(objects, columns) }}
   {% endif %}
 {% endmacro %}
 
+
 {% block container %}
+  <h2>Search results for query "{{ query_string }}"</h2>
+
+  {% if not documents and not res %}
+    Your query didn't find any results.
+  {% endif %}
 
   {% if documents %}
     {% if documents|count > 1 %}
-      <h2>Documents ({{ documents|count }} matches)</h2>
+      <h3 style="margin-top: 20px;">Documents ({{ documents|count }} matches)</h3>
     {% else %}
-      <h2>Documents (1 match)</h2>
+      <h3 style="margin-top: 20px;">Documents (1 match)</h3>
     {% endif %}
 
     {% for obj, hit, snippet in documents %}
       <p>
         <strong><a href="{{obj.url}}">{{ obj.name }}</a></strong><br>
         {{ snippet }}<br>
-        Created by <a href="{{ obj.creator._url }}">{{ obj.creator }}</a>.
-      </p>
+        Created by <a href="{{ obj.creator._url }}">{{ obj.creator }}</a>. </p>
     {% endfor %}
 
   {% endif %}
 
-  {% for k, l in res %}
-    {{ render(l, k) }}
+  {% for plural, objects, columns in res %}
+    {{ render(plural, objects, columns) }}
   {% endfor %}
 
 {% endblock %}

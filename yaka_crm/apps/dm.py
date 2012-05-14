@@ -60,10 +60,6 @@ class File(Entity):
   preview = Column(LargeBinary)
 
   @property
-  def _url(self):
-    return self.base_url + "/%d" % self.uid
-
-  @property
   def icon(self):
     # XXX Hack for now
     if not "." in self.name:

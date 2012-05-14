@@ -1,7 +1,8 @@
 {% if table %}
 <script>
 $(document).ready(function() {
-  $('#{{ table_name }}').dataTable( {
+  var id = "#{{ table_name }}";
+  $(id).dataTable( {
     aoColumns: [
       { asSorting: [] },
       {% for i in range(0, columns|count) %}

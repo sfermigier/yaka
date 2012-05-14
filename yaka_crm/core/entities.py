@@ -110,9 +110,17 @@ class Entity(AbstractConcreteBase, db.Model):
         v = unicode(v)
       setattr(self, k, v)
 
+  # TODO: only one of these two
   @property
   def url(self):
     return "%s/%s" % (self.base_url, self.uid)
+
+  @property
+  def _url(self):
+    return self.base_url + "/%d" % self.uid
+
+  def _icon(self, size=12):
+    return "/static/icons/%s-%d.png" % (self.__class__.__name__.lower(), size)
 
 
 # TODO: make this unecessary
