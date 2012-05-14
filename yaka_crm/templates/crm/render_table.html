@@ -9,7 +9,10 @@ $(document).ready(function() {
       { asSorting: [ "asc", "desc" ] },
       {% endfor %}
     ],
-    bFilter: false,
+    oLanguage: {
+      sSearch: "Filter records:"
+    },
+    sPaginationType: "bootstrap",
     bLengthChange: false
   });
 } );
@@ -29,7 +32,7 @@ $(document).ready(function() {
   </ul>
 </div>
 
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped"
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered"
        id="{{ table_name }}">
   <thead>
   <tr>

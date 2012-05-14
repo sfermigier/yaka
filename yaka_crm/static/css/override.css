@@ -1,4 +1,5 @@
 /* image-gallery in user.html */
+
 ul.image-gallery {
     list-style: none;
 }
@@ -44,6 +45,7 @@ h3 .active {
 */
 
 /* forms and jquery.validate */
+
 label.required {
     font-weight: bold;
 }
@@ -71,11 +73,16 @@ h3 {
     font-size: 16px;
 }
 
+.table th, .table td {
+    padding: 6px;
+}
+
 .form-horizontal .control-group {
     margin-bottom: 5px;
 }
 
-/* Grid table */
+/* Grid table (TODO: replace with Bootstrap tables) */
+
 table.grid, table.grid tbody {
     width: 100%;
     margin-bottom: 1.5em;
@@ -95,11 +102,39 @@ table.grid, table.grid tbody {
     padding: 6px 10px 6px 0;
 }
 
-/* fix for datatables + bootstrap, cf. http://datatables.net/blog/Twitter_Bootstrap */
-/* TODO: doesn't work */
+/* fix for datatables + bootstrap, cf. http://datatables.net/blog/Twitter_Bootstrap and
+http://datatables.net/blog/Twitter_Bootstrap_2 */
+
+table.table thead .sorting,
+table.table thead .sorting_asc,
+table.table thead .sorting_desc,
+table.table thead .sorting_asc_disabled,
+table.table thead .sorting_desc_disabled {
+    cursor: pointer;
+    *cursor: hand;
+}
+
+table.table thead .sorting {
+    background: url('/static/images/sort_both.png') no-repeat center right;
+}
+
+table.table thead .sorting_asc {
+    background: url('/static/images/sort_asc.png') no-repeat center right;
+}
+
+table.table thead .sorting_desc {
+    background: url('/static/images/sort_desc.png') no-repeat center right;
+}
+
+table.table thead .sorting_asc_disabled {
+    background: url('/static/images/sort_asc_disabled.png') no-repeat center right;
+}
+
+table.table thead .sorting_desc_disabled {
+    background: url('/static/images/sort_desc_disabled.png') no-repeat center right;
+}
 
 div.dataTables_length label {
-    width: 460px;
     float: left;
     text-align: left;
 }
@@ -110,7 +145,6 @@ div.dataTables_length select {
 
 div.dataTables_filter label {
     float: right;
-    width: 460px;
 }
 
 div.dataTables_info {
@@ -122,10 +156,11 @@ div.dataTables_paginate {
     margin: 0;
 }
 
-table {
-    margin: 1em 0;
+table.table {
     clear: both;
+    margin-bottom: 6px !important;
 }
+
 
 /* user single view */
 .avatar {

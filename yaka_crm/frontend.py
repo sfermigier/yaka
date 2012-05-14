@@ -117,7 +117,7 @@ class ContactEditForm(AddressForm, Form):
 class Contacts(Module):
   managed_class = Contact
 
-  list_view_columns = ('name', 'account', 'job_title', 'department', 'email')
+  list_view_columns = ('name', 'account', 'job_title', 'email')
 
   single_view = SingleView(
     Panel('Overview',
