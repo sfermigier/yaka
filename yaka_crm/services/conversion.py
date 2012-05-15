@@ -242,7 +242,9 @@ class PdfToPpmHandler(Handler):
     in_fn = "data/%s.blob" % key
     tmp_out_fn = "data/%s-%s.tmp" % (time.time(), random.randint(0, 1000000))
 
-    subprocess.check_call(['pdftoppm', '-scale-to', str(size), '-jpeg', in_fn, tmp_out_fn])
+    subprocess.check_call(['pdftoppm', '-jpeg', in_fn, tmp_out_fn])
+
+    # TODO: resize images
 
     new_keys = []
     for fn in glob.glob("%s-*.jpg" % tmp_out_fn):
