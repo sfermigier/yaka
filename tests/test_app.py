@@ -1,6 +1,6 @@
 
 # Don't remove
-import subprocess
+import fix_path
 
 from nose.tools import eq_
 from flaskext.testing import TestCase

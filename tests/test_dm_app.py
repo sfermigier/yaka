@@ -1,6 +1,6 @@
 
 # Don't remove
-import subprocess
+import fix_path
 
 import os
 import re
@@ -8,7 +8,7 @@ from io import StringIO
 
 from nose.tools import eq_, ok_
 from flaskext.testing import TestCase
-from .util import DataLoader
+from util import DataLoader
 
 from yaka_crm import app, db
 from config import TestConfig

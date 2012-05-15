@@ -1,3 +1,6 @@
+# Don't remove
+import fix_path
+
 from nose.tools import eq_, ok_
 from flaskext.testing import TestCase
 

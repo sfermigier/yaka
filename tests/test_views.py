@@ -1,13 +1,15 @@
-import re
+# Don't remove
+import fix_path
 
 
 from flaskext.testing import TestCase
 from nose.tools import eq_
-from .util import init_data
+from util import init_data
+from config import TestConfig
 
 from yaka_crm import app, db
 
-from config import TestConfig
+import re
 
 from yaka_crm import views # Don't remove
 
@@ -81,6 +83,3 @@ class TestViews(TestCase):
   @staticmethod
   def uid_from_url(url):
     return int(url[len("http://localhost/users/"):])
-
-
-

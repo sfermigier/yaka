@@ -15,9 +15,10 @@ from sqlalchemy.types import UnicodeText, LargeBinary, Integer
 from ..extensions import db
 from ..core.entities import Entity, Column
 from ..core.frontend import add_to_recent_items
-from ..services.conversion import convert
+from ..services.conversion import converter
 from ..services.audit import AuditEntry
 from ..services.image import resize
+from yaka_crm.services.conversion import ConversionError
 
 
 ROOT = "/dm/"
@@ -111,8 +112,21 @@ def create_file(fd):
   f.data = fd.read()
   f.mime_type = fd.content_type
   f.size = fd.content_length
+
+  # TODO: refactor?
+  key = converter.put(f.data, f.mime_type)
+  try:
+    f.text = converter.get(converter.to_text(key))
+  except ConversionError, e:
+    f.text = u""
+    print e
+  try:
+    f.preview = converter.get(converter.to_images(key)[0])
+  except ConversionError, e:
+    f.preview = ""
+    print e
+
   db.session.add(f)
-  convert(f)
   return f
 
 

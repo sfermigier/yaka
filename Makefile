@@ -23,6 +23,7 @@ pep8:
 clean:
 	find . -name "*.pyc" | xargs rm -f
 	find . -name yaka.db | xargs rm -f
+	rm -rf data tests/data
 	rm -rf *.egg-info *.egg .coverage
 	rm -rf whoosh whoosh_indexes tests/whoosh tests/whoosh_indexes
 	rm -rf doc/_build

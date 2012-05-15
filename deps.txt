@@ -23,5 +23,6 @@ iso8601
 passlib
 py-bcrypt
 pillow
+python-magic
 
 coverage==3.5.1
