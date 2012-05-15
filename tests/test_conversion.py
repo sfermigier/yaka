@@ -23,6 +23,7 @@ class Test(TestCase):
   @classmethod
   def tearDownClass(cls):
     shutil.rmtree("data")
+    converter.clear_cache()
 
   def read_file(self, fn):
     try:

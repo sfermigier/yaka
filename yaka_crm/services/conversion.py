@@ -3,6 +3,8 @@ Conversion service.
 
 Hardcoded to manage only conversion to PDF, to text and to image series.
 
+Includes result caching (on filesystem).
+
 Assumes poppler-utils is installed and CloudOOo is running (needs LibreOffice too).
 """
 
@@ -37,6 +39,9 @@ class Converter(object):
     if not os.path.exists("data"):
       os.mkdir("data")
 
+  def clear_cache(self):
+    self.cache.clear()
+
   def register_handler(self, handler):
     self.handlers.append(handler)
 
@@ -46,9 +51,11 @@ class Converter(object):
     """
     if not os.path.exists("data"):
       os.mkdir("data")
+
     if not mime_type:
       mime_type = mime_sniffer.from_buffer(file)
     key = hashlib.md5(file + "::" + mime_type).hexdigest()
+
     fd = open("data/%s.blob" % key, "wcb")
     fd.write(file)
     fd.flush()
@@ -79,14 +86,17 @@ class Converter(object):
 
   def to_pdf(self, key):
     """Converts a file to a PDF document."""
-    if key+":pdf" in self.cache and os.path.exists(key+":pdf"):
-      return self.cache[key+":pdf"]
+
+    cache_key = key + ":pdf"
+    result_key = self.cache.get(cache_key)
+    if result_key and os.path.exists("data/%s.blob" % result_key):
+      return result_key
 
     mime_type = open("data/%s.mime" % key).read()
     for handler in self.handlers:
       if handler.accept(mime_type, "application/pdf"):
         new_key = handler.convert(key)
-        self.cache[key+":pdf"] = new_key
+        self.cache[cache_key] = new_key
         return new_key
     raise ConversionError("No handler found to convert from %s to PDF" % mime_type)
 
@@ -95,8 +105,10 @@ class Converter(object):
 
     Useful for full text indexing. Returns an unicode string.
     """
-    if key+":txt" in self.cache and os.path.exists(key+":txt"):
-      return self.cache[key+":txt"]
+    cache_key = key + ":txt"
+    result_key = self.cache.get(cache_key)
+    if result_key and os.path.exists("data/%s.blob" % result_key):
+      return result_key
 
     mime_type = open("data/%s.mime" % key).read()
 
@@ -108,7 +120,7 @@ class Converter(object):
     for handler in self.handlers:
       if handler.accept(mime_type, "text/plain"):
         new_key = handler.convert(key)
-        self.cache[key+":txt"] = new_key
+        self.cache[cache_key] = new_key
         return new_key
 
     # Use PDF as a pivot format
@@ -116,7 +128,7 @@ class Converter(object):
     for handler in self.handlers:
       if handler.accept("application/pdf", "text/plain"):
         new_key = handler.convert(key)
-        self.cache[key+":txt"] = new_key
+        self.cache[cache_key] = new_key
         return new_key
 
     raise ConversionError()
@@ -125,8 +137,16 @@ class Converter(object):
     """Converts a file to a list of images.
     Returns a list of tokens.
     """
-    if key+":img" in self.cache and os.path.exists(key+":img"):
-      return self.cache[key+":img"]
+    cache_key = key+":img:" + str(size)
+    result_keys = self.cache.get(cache_key)
+    if result_keys:
+      found = True
+      for key in result_keys:
+        if not os.path.exists("data/%s.blob" % key):
+          found = False
+          break
+      if found:
+        return result_keys
 
     mime_type = open("data/%s.mime" % key).read()
 
@@ -134,7 +154,7 @@ class Converter(object):
     for handler in self.handlers:
       if handler.accept(mime_type, "image/jpeg"):
         new_keys = handler.convert(key, size=size)
-        self.cache[key+":img"] = new_keys
+        self.cache[cache_key] = new_keys
         return new_keys
 
     ## Indirect conversion via PDF
@@ -142,7 +162,7 @@ class Converter(object):
     for handler in self.handlers:
       if handler.accept("application/pdf", "image/jpeg"):
         new_keys = handler.convert(key, size=size)
-        self.cache[key+":img"] = new_keys
+        self.cache[cache_key] = new_keys
         return new_keys
 
     # Fail
