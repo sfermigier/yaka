@@ -14,4 +14,4 @@ install:
   - pip install nose --use-mirrors
 
 # Run tests
-script: nosetests tests
+script: nosetests -e '_(word|excel|odt|wordx)_' tests
