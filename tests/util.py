@@ -128,6 +128,8 @@ class DataLoader(object):
     dir_path = os.path.join(os.path.dirname(__file__), "dummy_files")
     file_names = os.listdir(dir_path)
     for fn in file_names:
+      if fn.startswith("."):
+        continue
       path = os.path.join(dir_path, fn)
       f = File()
       f.data = open(path).read()

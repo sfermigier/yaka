@@ -1,6 +1,7 @@
 """Document Management module for Yaka.
 
-Don't worry, it's just a prototype. Will be refactored later and included into the ESN.
+Don't worry, it's just a prototype to test the architecture.
+Will be refactored later and included in the ESN.
 """
 
 from flask.helpers import json
@@ -10,15 +11,15 @@ import os
 from flask import Blueprint, render_template, redirect, request,\
   make_response, flash, abort
 
-from sqlalchemy.types import UnicodeText, LargeBinary, Integer
+from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
 
 from ..extensions import db
 from ..core.entities import Entity, Column
 from ..core.frontend import add_to_recent_items
-from ..services.conversion import converter
+
+from ..services.conversion import converter, ConversionError
 from ..services.audit import AuditEntry
 from ..services.image import resize
-from yaka_crm.services.conversion import ConversionError
 
 
 ROOT = "/dm/"
@@ -46,6 +47,8 @@ class File(Entity):
   folder_id = Column(Integer)
 
   data = Column(LargeBinary)
+  digest = Column(Text)
+  # TODO: normalize mime type?
   mime_type = Column(UnicodeText, nullable=False)
   size = Column(Integer)
 
@@ -63,6 +66,7 @@ class File(Entity):
   @property
   def icon(self):
     # XXX Hack for now
+    # TODO: use the mimetypes Python library to map mime type to icon
     if not "." in self.name:
       return '/static/fileicons/bin.png'
 
@@ -142,6 +146,7 @@ def view(file_id):
   bc = [dict(path=ROOT, label="DM Home")]
   bc.append(dict(label=f.name))
 
+  # FIXME: too intimate
   audit_entries = AuditEntry.query.filter(AuditEntry.entity_id == f.uid).all()
   return render_template("dm/file.html", file=f, audit_entries=audit_entries, breadcrumbs=bc)
 

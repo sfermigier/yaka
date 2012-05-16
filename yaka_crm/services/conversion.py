@@ -255,10 +255,38 @@ class PdfToPpmHandler(Handler):
     return new_keys
 
 
+class UnoconvPdfHandler(Handler):
+  """Handles conversion from office documents (MS-Office, OOo) to PDF.
+
+  Uses unoconv.
+  """
+
+  accepts_mime_types = [r'application/.*']
+  produces_mime_types = ['application/pdf']
+
+  def convert(self, key):
+    in_fn = "data/%s.blob" % key
+    tmp_out_fn = "data/%s-%s.pdf" % (time.time(), random.randint(0, 1000000))
+
+    # Hack for my Mac, FIXME later
+    if os.path.exists("/Applications/LibreOffice.app/Contents/program/python"):
+      cmd = ['/Applications/LibreOffice.app/Contents/program/python',
+             '/usr/local/bin/unoconv', '-f', 'pdf', '-o', tmp_out_fn, in_fn]
+    else:
+      cmd = ['unoconv', '-f', 'pdf', '-o', tmp_out_fn, in_fn]
+    subprocess.check_call(cmd)
+
+    new_key = hashlib.md5(open(tmp_out_fn).read()).hexdigest()
+    os.rename(tmp_out_fn, "data/%s.blob" % new_key)
+    return new_key
+
+
 class CloudoooPdfHandler(Handler):
   """Handles conversion from OOo to PDF.
 
   Highly inefficient since file are serialized in base64 over HTTP.
+
+  Deactivated because it's so hard to set up.
   """
 
   accepts_mime_types = [r'application/.*']
@@ -303,6 +331,7 @@ class CloudoooPdfHandler(Handler):
 converter = Converter()
 converter.register_handler(PdfToTextHandler())
 converter.register_handler(PdfToPpmHandler())
-converter.register_handler(CloudoooPdfHandler())
 converter.register_handler(ImageMagickHandler())
+converter.register_handler(UnoconvPdfHandler())
+#converter.register_handler(CloudoooPdfHandler())
 

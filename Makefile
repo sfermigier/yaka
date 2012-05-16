@@ -8,7 +8,7 @@ test-with-coverage:
 	   	--cover-package=yaka_crm tests
 
 run: yaka_crm/yaka.db
-	$(PYTHON) manage.py runserver
+	$(PYTHON) manage.py runserver --host 0.0.0.0
 
 yaka_crm/yaka.db:
 	$(PYTHON) manage.py initdb
@@ -31,3 +31,6 @@ clean:
 tidy: clean
 	rm -rf .tox
 
+start-vagrant:
+	vagrant up
+	fab vagrant upgrade setup deploy

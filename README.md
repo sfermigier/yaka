@@ -43,6 +43,22 @@ Full test suite
 
 Install [tox](http://pypi.python.org/pypi/tox). Run `tox`.
 
+On a VM
+-------
+
+1. Install [vagrant](http://vagrantup.com/) and Fabric (`pip install fabric`).
+
+2. Download a box:
+
+    vagrant box add precise64 http://files.vagrantup.com/precise64.box
+
+3. Use `fabric` and `vagrant` to run tests:
+
+    vagrant up
+    fabric vagrant upgrade
+    fabric vagrant setup
+    fabric vagrant deploy
+
 
 Deploy
 ======
