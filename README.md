@@ -1,7 +1,7 @@
 About
 =====
 
-Yaka: when CRM meets enterprise social networking.
+"Yaka: when CRM meets enterprise social networking."
 
 
 Install
@@ -12,16 +12,17 @@ Prerequisites (native dependencies)
 
 - Python 2.7
 - A few image manipulation libraries (`libpng`, `libjpeg`...)
-  [TODO: give the exact list.]
-- `poppler-utils`
+- `poppler-utils`, `unoconv`, `LibreOffice`, `ImageMagick`.
 - `pip`
+
+Look at the `fabfile.py` for the exact list.
 
 Python modules
 --------------
 
 Create a virtualenv (ex: `mkvirtualenv yaka`, assuming you have mkvirtualenv installed).
 
-Then run `pip install -r deps.txt`.
+Then run `pip install -r deps.txt` or `python setup.py develop`.
 
 
 Testing
@@ -55,21 +56,22 @@ On a VM
 3. Use `fabric` and `vagrant` to run tests:
 
     vagrant up
-    fabric vagrant upgrade
-    fabric vagrant setup
-    fabric vagrant deploy
+    fab vagrant upgrade
+    fab vagrant setup
+    fab vagrant deploy
 
 
 Deploy
 ======
 
-(NOT WORKING YET).
+Assuming you deploying to an Ubuntu Precise Pangolin (12.04 LTS) server:
 
-1. Install `fabric` (`pip install fabric`).
+1. Edit the `fabfile.py` and set the address of your server.
 
-2. Edit `fabfile.py` and change the configuration params.
+2. Run `fab upgrade setup deploy` from you development machine.
 
-3. Run `fab deploy`.
+3. On the server, start the server manually (run `. env/bin/activate` then `make run`).
+   (This will be automated later.)
 
 
 Build Status

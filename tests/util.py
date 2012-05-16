@@ -130,17 +130,16 @@ class DataLoader(object):
     for fn in file_names:
       if fn.startswith("."):
         continue
-      path = os.path.join(dir_path, fn)
-      f = File()
-      f.data = open(path).read()
-      f.name = unicode(fn)
-      f.mime_type = mimetypes.guess_type(fn)[0]
-      f.size = len(f.data)
 
-      # TODO: refactor?
-      key = converter.put(f.data, f.mime_type)
-      f.text = converter.get(converter.to_text(key))
-      f.preview = converter.get(converter.to_images(key)[0])
+      path = os.path.join(dir_path, fn)
+      name = unicode(fn)
+      data = open(path).read()
+      mime_type = mimetypes.guess_type(fn)[0]
+
+      f = File(name, data, mime_type)
+
+      f.text = converter.to_text(f.digest, f.data, f.mime_type)
+      # TODO: f.preview = converter.to_images(f.hash_key, f.data, f.mime_type, 0)
       self.db.session.add(f)
 
   # Utilities

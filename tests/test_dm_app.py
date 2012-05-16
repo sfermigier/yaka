@@ -44,7 +44,7 @@ class TestViews(TestCase):
   def uid_from_url(url):
     return int(url[len("http://localhost" + ROOT):])
 
-
+  # Actual tests start here
   def test_home(self):
     response = self.client.get(ROOT)
     self.assert_200(response)
@@ -63,7 +63,6 @@ class TestViews(TestCase):
 
       response = self.client.get(ROOT + "%d/preview" % uid)
       self.assert_200(response)
-
 
   def test_upload_text(self):
     CONTENT = u'my file contents'

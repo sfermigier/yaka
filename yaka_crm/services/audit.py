@@ -179,9 +179,7 @@ class AuditService(object):
     if not isinstance(model, Entity):
       return
     if not hasattr(model, '__changes__'):
-      print "model has no __changes__, this might be wrong"
       return
-    print "changes:", model.__changes__
     entry = AuditEntry.from_model(model, type=UPDATE)
     entry.changes = model.__changes__
     session.add(entry)

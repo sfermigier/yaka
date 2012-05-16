@@ -5,7 +5,7 @@ Hardcoded to manage only conversion to PDF, to text and to image series.
 
 Includes result caching (on filesystem).
 
-Assumes poppler-utils is installed and CloudOOo is running (needs LibreOffice too).
+Assumes poppler-utils and LibreOffice are installed.
 """
 
 # Yay, no dependencies on Yaka!
@@ -13,6 +13,8 @@ Assumes poppler-utils is installed and CloudOOo is running (needs LibreOffice to
 import glob
 import hashlib
 import random
+import shutil
+from tempfile import mktemp
 from abc import ABCMeta, abstractmethod
 from magic import Magic
 import os
@@ -24,6 +26,9 @@ import mimetypes
 import re
 
 
+TMP_DIR = "tmp"
+CACHE_DIR = "cache"
+
 mime_sniffer = Magic(mime=True)
 encoding_sniffer = Magic(mime_encoding=True)
 
@@ -32,141 +37,120 @@ class ConversionError(Exception):
   pass
 
 
+class Cache(object):
+
+  def get(self, key):
+    return None
+
+  def set(self, key, value):
+    pass
+
+  __setitem__ = set
+
+  def clear(self):
+    pass
+
+
 class Converter(object):
   def __init__(self):
     self.handlers = []
-    self.cache = {}
-    if not os.path.exists("data"):
-      os.mkdir("data")
+    self.cache = Cache()
+    if not os.path.exists(TMP_DIR):
+      os.mkdir(TMP_DIR)
+    if not os.path.exists(CACHE_DIR):
+      os.mkdir(CACHE_DIR)
 
-  def clear_cache(self):
+  def clear(self):
     self.cache.clear()
+    shutil.rmtree(TMP_DIR)
+    shutil.rmtree(CACHE_DIR)
 
   def register_handler(self, handler):
     self.handlers.append(handler)
 
-  def put(self, file, mime_type=""):
-    """
-    Assume file is a string for now.
-    """
-    if not os.path.exists("data"):
-      os.mkdir("data")
+  def to_pdf(self, digest, blob, mime_type):
+    cache_key = "pdf:" + digest
 
-    if not mime_type:
-      mime_type = mime_sniffer.from_buffer(file)
-    key = hashlib.md5(file + "::" + mime_type).hexdigest()
+    pdf = self.cache.get(cache_key)
+    if pdf:
+      return pdf
 
-    fd = open("data/%s.blob" % key, "wcb")
-    fd.write(file)
-    fd.flush()
-
-    fd = open("data/%s.mime" % key, "wcb")
-    fd.write(mime_type)
-    fd.flush()
-
-    return key
-
-  def get(self, key):
-    """Gets the result of a conversion given a token."""
-
-    # Special case
-    if key == "empty":
-      return u""
-
-    fn = "data/%s.blob" % key
-    mime_type = mime_sniffer.from_file(fn)
-    encoding = encoding_sniffer.from_file(fn)
-
-    data = open(fn).read()
-    if mime_type != "text/plain":
-      return data
-    else:
-      return unicode(data, encoding)
-      #return unicode(data, encoding, errors='ignore')
-
-  def to_pdf(self, key):
-    """Converts a file to a PDF document."""
-
-    cache_key = key + ":pdf"
-    result_key = self.cache.get(cache_key)
-    if result_key and os.path.exists("data/%s.blob" % result_key):
-      return result_key
-
-    mime_type = open("data/%s.mime" % key).read()
     for handler in self.handlers:
       if handler.accept(mime_type, "application/pdf"):
-        new_key = handler.convert(key)
-        self.cache[cache_key] = new_key
-        return new_key
+        pdf = handler.convert(blob)
+        self.cache[cache_key] = pdf
+        return pdf
     raise ConversionError("No handler found to convert from %s to PDF" % mime_type)
 
-  def to_text(self, key):
+  def to_text(self, digest, blob, mime_type):
     """Converts a file to plain text.
 
-    Useful for full text indexing. Returns an unicode string.
+    Useful for full-text indexing. Returns an unicode string.
     """
-    cache_key = key + ":txt"
-    result_key = self.cache.get(cache_key)
-    if result_key and os.path.exists("data/%s.blob" % result_key):
-      return result_key
-
-    mime_type = open("data/%s.mime" % key).read()
-
     # Special case, for now (XXX).
     if mime_type.startswith("image/"):
-      return "empty"
+      return u""
+
+    cache_key = "txt:" + digest
+
+    text = self.cache.get(cache_key)
+    if text:
+      return text
 
     # Direct conversion possible
     for handler in self.handlers:
       if handler.accept(mime_type, "text/plain"):
-        new_key = handler.convert(key)
-        self.cache[cache_key] = new_key
-        return new_key
+        text = handler.convert(blob)
+        self.cache[cache_key] = self.digest(text)
+        return text
 
     # Use PDF as a pivot format
-    key = self.to_pdf(key)
+    pdf = self.to_pdf(digest, blob, mime_type)
     for handler in self.handlers:
       if handler.accept("application/pdf", "text/plain"):
-        new_key = handler.convert(key)
-        self.cache[cache_key] = new_key
-        return new_key
+        text = handler.convert(pdf)
+        self.cache[cache_key] = text
+        return text
 
     raise ConversionError()
 
-  def to_images(self, key, size=500):
-    """Converts a file to a list of images.
-    Returns a list of tokens.
+  def to_image(self, digest, blob, mime_type, index, size=500):
+    """Converts a file to a list of images. Returns image at the given index.
     """
-    cache_key = key+":img:" + str(size)
-    result_keys = self.cache.get(cache_key)
-    if result_keys:
-      found = True
-      for key in result_keys:
-        if not os.path.exists("data/%s.blob" % key):
-          found = False
-          break
-      if found:
-        return result_keys
+    # Special case, for now (XXX).
+    if mime_type.startswith("image/"):
+      return ""
 
-    mime_type = open("data/%s.mime" % key).read()
+    cache_key = "img:%s:%s:%s" % (index, size, digest)
+    converted = self.cache.get(cache_key)
+    if converted:
+      return converted
 
-    # Is there a handler for direct conversion?
+    # Direct conversion possible
     for handler in self.handlers:
       if handler.accept(mime_type, "image/jpeg"):
-        new_keys = handler.convert(key, size=size)
-        self.cache[cache_key] = new_keys
-        return new_keys
+        converted = handler.convert(blob, index=index, size=size)
+        self.cache[cache_key] = converted
+        return converted
 
-    ## Indirect conversion via PDF
-    key = self.to_pdf(key)
+    # Use PDF as a pivot format
+    pdf = self.to_pdf(digest, blob, mime_type)
     for handler in self.handlers:
       if handler.accept("application/pdf", "image/jpeg"):
-        new_keys = handler.convert(key, size=size)
-        self.cache[cache_key] = new_keys
-        return new_keys
+        converted = handler.convert(pdf)
+        self.cache[cache_key] = converted
+        return converted
 
-    # Fail
     raise ConversionError()
+
+  @staticmethod
+  def digest(blob):
+    assert type(blob) in (str, unicode)
+    if type(blob) == str:
+      digest = hashlib.md5(blob).hexdigest()
+    else:
+      digest = hashlib.md5(blob.encode("utf8")).hexdigest()
+    return digest
 
   def get_metadata(self, file, mime_type):
     """Gets a dictionary representing the metadata embedded in the given file."""
@@ -201,58 +185,63 @@ class Handler(object):
   def convert(self, key, **kw):
     pass
 
+  @staticmethod
+  def make_temp_file(blob):
+    if not os.path.exists(TMP_DIR):
+      os.mkdir(TMP_DIR)
+    in_fn = mktemp(dir=TMP_DIR)
+    fd = open(in_fn, "wcb")
+    fd.write(blob)
+    fd.close()
+    return in_fn
+
 
 class PdfToTextHandler(Handler):
   accepts_mime_types = ['application/pdf']
   produces_mime_types = ['text/plain']
 
-  # TODO: add Unicode encoding sniffing
-  def convert(self, key):
-    in_fn = "data/%s.blob" % key
-    tmp_out_fn = "data/%s-%s.blob" % (time.time(), random.randint(0, 1000000))
+  def convert(self, blob):
+    in_fn = self.make_temp_file(blob)
+    out_fn = mktemp(dir=TMP_DIR)
 
-    assert os.path.exists(in_fn)
-    subprocess.check_call(['pdftotext', in_fn, tmp_out_fn])
+    subprocess.check_call(['pdftotext', in_fn, out_fn])
 
-    new_key = hashlib.md5(open(tmp_out_fn).read()).hexdigest()
-    os.rename(tmp_out_fn, "data/%s.blob" % new_key)
-    return new_key
+    encoding = encoding_sniffer.from_file(out_fn)
+    converted = open(out_fn).read()
+    converted_unicode = unicode(converted, encoding, errors="ignore")
+
+    return converted_unicode
 
 
 class ImageMagickHandler(Handler):
   accepts_mime_types = ['image/.*']
   produces_mime_types = ['application/pdf']
 
-  def convert(self, key):
-    in_fn = "data/%s.blob" % key
-    tmp_out_fn = "data/%s-%s.blob" % (time.time(), random.randint(0, 1000000))
+  def convert(self, blob):
+    in_fn = self.make_temp_file(blob)
+    out_fn = mktemp(dir=TMP_DIR)
 
-    assert os.path.exists(in_fn)
-    subprocess.check_call(['convert', in_fn, "pdf:" + tmp_out_fn])
-    new_key = hashlib.md5(open(tmp_out_fn).read()).hexdigest()
-    os.rename(tmp_out_fn, "data/%s.blob" % new_key)
-    return new_key
+    subprocess.check_call(['convert', in_fn, "pdf:" + out_fn])
+
+    converted = open(out_fn).read()
+    return converted
 
 
 class PdfToPpmHandler(Handler):
   accepts_mime_types = ['application/pdf']
   produces_mime_types = ['image/jpeg']
 
-  def convert(self, key, size=500):
-    in_fn = "data/%s.blob" % key
-    tmp_out_fn = "data/%s-%s.tmp" % (time.time(), random.randint(0, 1000000))
+  def convert(self, blob, index=0, size=500):
+    in_fn = self.make_temp_file(blob)
+    out_fn = mktemp(dir=TMP_DIR)
 
-    subprocess.check_call(['pdftoppm', '-jpeg', in_fn, tmp_out_fn])
+    subprocess.check_call(['pdftoppm', '-jpeg', in_fn, out_fn])
 
     # TODO: resize images
-
-    new_keys = []
-    for fn in glob.glob("%s-*.jpg" % tmp_out_fn):
-      new_key = hashlib.md5(open(fn).read()).hexdigest()
-      os.rename(fn, "data/%s.blob" % new_key)
-      new_keys.append(new_key)
-
-    return new_keys
+    # TODO: cache
+    l = glob.glob("%s-*.jpg" % out_fn)
+    print l
+    return open(l[index]).read()
 
 
 class UnoconvPdfHandler(Handler):
@@ -264,21 +253,20 @@ class UnoconvPdfHandler(Handler):
   accepts_mime_types = [r'application/.*']
   produces_mime_types = ['application/pdf']
 
-  def convert(self, key):
-    in_fn = "data/%s.blob" % key
-    tmp_out_fn = "data/%s-%s.pdf" % (time.time(), random.randint(0, 1000000))
+  def convert(self, blob):
+    in_fn = self.make_temp_file(blob)
+    out_fn = mktemp(suffix=".pdf", dir=TMP_DIR)
 
     # Hack for my Mac, FIXME later
     if os.path.exists("/Applications/LibreOffice.app/Contents/program/python"):
       cmd = ['/Applications/LibreOffice.app/Contents/program/python',
-             '/usr/local/bin/unoconv', '-f', 'pdf', '-o', tmp_out_fn, in_fn]
+             '/usr/local/bin/unoconv', '-f', 'pdf', '-o', out_fn, in_fn]
     else:
-      cmd = ['unoconv', '-f', 'pdf', '-o', tmp_out_fn, in_fn]
+      cmd = ['unoconv', '-f', 'pdf', '-o', out_fn, in_fn]
     subprocess.check_call(cmd)
 
-    new_key = hashlib.md5(open(tmp_out_fn).read()).hexdigest()
-    os.rename(tmp_out_fn, "data/%s.blob" % new_key)
-    return new_key
+    converted = open(out_fn).read()
+    return converted
 
 
 class CloudoooPdfHandler(Handler):
@@ -334,4 +322,3 @@ converter.register_handler(PdfToPpmHandler())
 converter.register_handler(ImageMagickHandler())
 converter.register_handler(UnoconvPdfHandler())
 #converter.register_handler(CloudoooPdfHandler())
-
