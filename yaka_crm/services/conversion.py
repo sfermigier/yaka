@@ -12,14 +12,12 @@ Assumes poppler-utils and LibreOffice are installed.
 
 import glob
 import hashlib
-import random
 import shutil
 from tempfile import mktemp
 from abc import ABCMeta, abstractmethod
 from magic import Magic
 import os
 import subprocess
-import time
 from base64 import encodestring, decodestring
 from xmlrpclib import ServerProxy
 import mimetypes
@@ -40,10 +38,23 @@ class ConversionError(Exception):
 class Cache(object):
 
   def get(self, key):
-    return None
+    if os.path.exists("cache/%s.blob" % key):
+      value = open("cache/%s.blob" % key).read()
+      if key.startswith("txt:"):
+        value = unicode(value, encoding="utf8")
+      return value
+    else:
+      return None
 
   def set(self, key, value):
-    pass
+    if not os.path.exists(CACHE_DIR):
+      os.mkdir(CACHE_DIR)
+    fd = open("cache/%s.blob" % key, "wbc")
+    if key.startswith("txt:"):
+      fd.write(value.encode("utf8"))
+    else:
+      fd.write(value)
+    fd.close()
 
   __setitem__ = set
 
@@ -101,7 +112,7 @@ class Converter(object):
     for handler in self.handlers:
       if handler.accept(mime_type, "text/plain"):
         text = handler.convert(blob)
-        self.cache[cache_key] = self.digest(text)
+        self.cache[cache_key] = text
         return text
 
     # Use PDF as a pivot format
