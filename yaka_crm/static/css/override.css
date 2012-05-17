@@ -11,7 +11,7 @@ ul.image-gallery li {
 
 /* jQuery-collapse */
 
-h3 {
+h3.main {
     padding: 5px 0px 5px 5px;
     text-decoration: none;
     margin: 10px 0 10px 0;
@@ -19,7 +19,7 @@ h3 {
     background: #eee;
 }
 
-h3 a {
+h3.main a {
     color: #333;
     text-decoration:none;
 }

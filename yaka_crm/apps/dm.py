@@ -65,6 +65,9 @@ class File(Entity):
   #: preview image
   preview = Column(LargeBinary)
 
+  extra_metadata_json = Column(Text)
+
+
   def __init__(self, name, data, mime_type):
     Entity.__init__(self)
 
@@ -86,6 +89,24 @@ class File(Entity):
     except ConversionError:
       self.text = u""
       traceback.print_exc()
+
+    try:
+      self.extra_metadata = converter.get_metadata(self.digest, self.data, self.mime_type)
+    except ConversionError:
+      self.extra_metadata = {}
+      traceback.print_exc()
+
+  def get_extra_metadata(self):
+    if not hasattr(self, '_extra_metadata'):
+      self._extra_metadata = json.loads(self.extra_metadata_json)
+    return self._extra_metadata
+
+  def set_extra_metadata(self, extra_metadata):
+    self._extra_metadata = extra_metadata
+    self.extra_metadata_json = json.dumps(extra_metadata)
+
+  extra_metadata = property(get_extra_metadata, set_extra_metadata)
+
 
   @property
   def icon(self):

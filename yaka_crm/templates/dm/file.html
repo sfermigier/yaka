@@ -9,7 +9,7 @@
     <h2>{{ file.name }}</h2>
 
 
-    <h3>Preview</h3>
+    <h3 class="main">Preview</h3>
 
     <div class="preview">
       <img src="{{ file.url }}/preview" class="preview" data-page="0">
@@ -21,15 +21,15 @@
     </div>
 
     <div class="collapsable">
-      <h3>Properties</h3>
+      <h3 class="main">Properties</h3>
 
-      <div style>
+      <div>
         <p>
           File name: {{ file.name }}
         </p>
 
         <p>
-          Size: {{ file.size }}
+          Size: {{ file.size|filesizeformat }}
         </p>
 
         <p>
@@ -37,16 +37,25 @@
         </p>
       </div>
 
-      <h3>Tags</h3>
+      {% if file.extra_metadata %}
+        <h3 class="main">Extra Metadata</h3>
+        <div>
+          {% for k, v in file.extra_metadata|dictsort %}
+            <p>
+              {{ k }}: {{ v }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
 
+      <h3 class="main">Tags</h3>
       <div>
         <p>
           <input class="tagbox" value="{{ file.tags }}">
         </p>
       </div>
 
-      <h3>Dates</h3>
-
+      <h3 class="main">Dates</h3>
       <div>
         <p>
           Created on: {{ file.created_at|date_age }}
@@ -57,7 +66,7 @@
         </p>
       </div>
 
-      <h3>People</h3>
+      <h3 class="main">People</h3>
 
       <div>
         <p>
@@ -215,12 +224,12 @@
         // Note: we prevent default keyboard action
         if (code == 39) {
           loadNext();
-          return true;
+          return false;
         } else if (code == 37) {
           loadPrev();
-          return true;
+          return false;
         }
-        return false;
+        return true;
       }
     });
   </script>

@@ -9,6 +9,7 @@ Assumes poppler-utils and LibreOffice are installed.
 """
 
 # Yay, no dependencies on Yaka!
+import StringIO
 
 import glob
 import hashlib
@@ -79,6 +80,7 @@ class Converter(object):
   def register_handler(self, handler):
     self.handlers.append(handler)
 
+  # TODO: refactor, pass a "File" or "Document" or "Blob" object
   def to_pdf(self, digest, blob, mime_type):
     cache_key = "pdf:" + digest
 
@@ -154,6 +156,34 @@ class Converter(object):
 
     raise ConversionError()
 
+  def get_metadata(self, digest, file, mime_type):
+    """Gets a dictionary representing the metadata embedded in the given file."""
+
+    # XXX: ad-hoc for now, refactor later
+    if mime_type.startswith("image/"):
+      from PIL import Image
+      from PIL.ExifTags import TAGS
+
+      img = Image.open(StringIO.StringIO(file))
+      ret = {}
+      info = img._getexif()
+      for tag, value in info.items():
+        decoded = TAGS.get(tag, tag)
+        ret["EXIF:" + str(decoded)] = value
+      return ret
+
+    if mime_type == "application/pdf":
+      in_fn = make_temp_file(file)
+      output = subprocess.check_output(['pdfinfo', in_fn])
+      ret = {}
+      for line in output.split("\n"):
+        if ":" in line:
+          key, value = line.strip().split(":", 1)
+          ret["PDF:" + key] = value.strip()
+      return ret
+
+    return {}
+
   @staticmethod
   def digest(blob):
     assert type(blob) in (str, unicode)
@@ -162,10 +192,6 @@ class Converter(object):
     else:
       digest = hashlib.md5(blob.encode("utf8")).hexdigest()
     return digest
-
-  def get_metadata(self, file, mime_type):
-    """Gets a dictionary representing the metadata embedded in the given file."""
-    pass
 
 
 class Handler(object):
@@ -196,23 +222,13 @@ class Handler(object):
   def convert(self, key, **kw):
     pass
 
-  @staticmethod
-  def make_temp_file(blob):
-    if not os.path.exists(TMP_DIR):
-      os.mkdir(TMP_DIR)
-    in_fn = mktemp(dir=TMP_DIR)
-    fd = open(in_fn, "wcb")
-    fd.write(blob)
-    fd.close()
-    return in_fn
-
 
 class PdfToTextHandler(Handler):
   accepts_mime_types = ['application/pdf']
   produces_mime_types = ['text/plain']
 
   def convert(self, blob):
-    in_fn = self.make_temp_file(blob)
+    in_fn = make_temp_file(blob)
     out_fn = mktemp(dir=TMP_DIR)
 
     subprocess.check_call(['pdftotext', in_fn, out_fn])
@@ -229,7 +245,7 @@ class ImageMagickHandler(Handler):
   produces_mime_types = ['application/pdf']
 
   def convert(self, blob):
-    in_fn = self.make_temp_file(blob)
+    in_fn = make_temp_file(blob)
     out_fn = mktemp(dir=TMP_DIR)
 
     subprocess.check_call(['convert', in_fn, "pdf:" + out_fn])
@@ -243,7 +259,7 @@ class PdfToPpmHandler(Handler):
   produces_mime_types = ['image/jpeg']
 
   def convert(self, blob, index=0, size=500):
-    in_fn = self.make_temp_file(blob)
+    in_fn = make_temp_file(blob)
     out_fn = mktemp(dir=TMP_DIR)
 
     subprocess.check_call(['pdftoppm', '-jpeg', in_fn, out_fn])
@@ -265,7 +281,8 @@ class UnoconvPdfHandler(Handler):
   produces_mime_types = ['application/pdf']
 
   def convert(self, blob):
-    in_fn = self.make_temp_file(blob)
+    "Unoconv converter called"
+    in_fn = make_temp_file(blob)
     out_fn = mktemp(suffix=".pdf", dir=TMP_DIR)
 
     # Hack for my Mac, FIXME later
@@ -326,10 +343,26 @@ class CloudoooPdfHandler(Handler):
     return new_key
 
 
+# Utils
+def make_temp_file(blob):
+  if not os.path.exists(TMP_DIR):
+    os.mkdir(TMP_DIR)
+  in_fn = mktemp(dir=TMP_DIR)
+  fd = open(in_fn, "wcb")
+  fd.write(blob)
+  fd.close()
+  return in_fn
+
+
+
 # Singleton, yuck!
 converter = Converter()
 converter.register_handler(PdfToTextHandler())
 converter.register_handler(PdfToPpmHandler())
 converter.register_handler(ImageMagickHandler())
-converter.register_handler(UnoconvPdfHandler())
+
+# Deactivated for now
+#converter.register_handler(UnoconvPdfHandler())
+
+# Needs to be rewriten
 #converter.register_handler(CloudoooPdfHandler())
