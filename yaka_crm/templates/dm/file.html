@@ -1,45 +1,64 @@
 {% extends "dm/base.html" %}
+
 {% from "macros.html" import m_audit_log %}
 
 {% block main %}
 
-  <div style="width: 70%; position: relative; float: left;">
+  <div style="width: 74%; position: relative; float: left;">
 
     <h2>{{ file.name }}</h2>
+
 
     <h3>Preview</h3>
 
     <img src="{{ file.url }}/preview" width="500">
 
-    <div class="collapsable">
 
+    <div class="collapsable">
       <h3>Properties</h3>
 
-      <p>
-        Size: {{ file.size }}
-      </p>
+      <div style>
+        <p>
+          File name: {{ file.name }}
+        </p>
 
-      <p>
-        MIME Type: {{ file.mime_type }}
-      </p>
+        <p>
+          Size: {{ file.size }}
+        </p>
+
+        <p>
+          MIME Type: {{ file.mime_type }}
+        </p>
+      </div>
+
 
       <h3>Dates</h3>
-      <p>
-        Created on: {{ file.created_at }}
-      </p>
+      <div>
+        <p>
+          Created on: {{ file.created_at }}
+        </p>
 
-      <p>
-        Last modified on: {{ file.modified_at }}
-      </p>
+        <p>
+          Last modified on: {{ file.modified_at }}
+        </p>
+      </div>
 
       <h3>People</h3>
-      <p>
-        Creator: {{ file.creator }}
-      </p>
+      <div>
+        <p>
+          Creator: <a href="{{ file.creator._url }}"><img src="{{ file.creator._url }}/mugshot?s=16">
+          {{ file.creator }}</a>
+        </p>
 
-      <p>
-        Tags: <input class="tagbox" value="{{ file.tags }}">
-      </p>
+        <p>
+          Owner: <a href="{{ file.owner._url }}"><img src="{{ file.owner._url }}/mugshot?s=16">
+          {{ file.owner }}</a>
+        </p>
+
+        <p>
+          Tags: <input class="tagbox" value="{{ file.tags }}">
+        </p>
+      </div>
 
       {{ m_audit_log(audit_entries) }}
 
@@ -47,8 +66,7 @@
 
   </div>
 
-
-  <div style="width: 30%; position: relative; float: right;">
+  <div style="width: 24%; position: relative; float: right;">
 
     <div class="well" style="padding: 8px 0;">
 
@@ -64,7 +82,6 @@
     </div>
 
   </div>
-
 
   <!-- modal stuff -->
 

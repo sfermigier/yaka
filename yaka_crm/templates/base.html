@@ -127,47 +127,6 @@
 <!-- our app -->
 <script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
 
-<script type="text/javascript">
-  $(function() {
-    $('.dropdown-toggle').dropdown();
-    $('.chzn-select').chosen({allow_single_deselect: true});
-    $('.tagbox').tagBox();
-    $('.collapsable').collapse({
-      show: function() {
-        this.animate({
-          opacity: 'toggle',
-          height: 'toggle'
-        }, 150);
-      },
-      hide: function() {
-        this.animate({
-          opacity: 'toggle',
-          height: 'toggle'
-        }, 150);
-      }
-
-    });
-  });
-</script>
-
-<script>
-  $(function () {
-    $('#fileupload').fileupload({
-      dataType: 'json',
-      done: function (e, data) {
-        $.each(data.result, function (index, file) {
-          $('<p/>').text(file.name).appendTo(document.body);
-        });
-      },
-      add: function (e, data) {
-        $.each(data.result, function (index, file) {
-          $('<p/>').text(file.name).appendTo(document.body);
-        });
-      }
-    });
-  });
-</script>
-
 </body>
 </html>
 

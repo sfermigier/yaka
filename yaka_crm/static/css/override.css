@@ -9,26 +9,37 @@ ul.image-gallery li {
     margin: 10px;
 }
 
-/* jQuery-collapse - still some tuning to do */
+/* jQuery-collapse */
 
-.collapsable h3 {
-    padding: 5px;
-    cursor: pointer;
-    background: #eee url("/static/images/state.png") no-repeat 100% 5px;
+h3 {
+    padding: 5px 0px 5px 5px;
     text-decoration: none;
-    margin: 10px 0 15px 0;
+    margin: 10px 0 10px 0;
     line-height: 1;
-}
-
-/* Doesn't work in Chrome. Works in Safari and FF. */
-h3.active {
-    background-color: #ddd;
-    background-position: 100% -21px;
+    background: #eee;
 }
 
 h3 a {
     color: #333;
     text-decoration:none;
+}
+
+div.collapsable h3 {
+    padding: 5px 0px 5px 25px;
+    text-decoration: none;
+    margin: 10px 0 10px 0;
+    line-height: 1;
+
+    cursor: pointer;
+    background: #eee url("/static/icons/round-plus-16.png") no-repeat 4px center;
+}
+
+div.collapsable div {
+    margin-bottom: 1em;
+}
+
+div.collapsable h3.active {
+    background: #eee url("/static/icons/round-minus-16.png") no-repeat 4px center;
 }
 
 /*

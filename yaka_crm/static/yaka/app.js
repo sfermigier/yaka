@@ -1,28 +1,3 @@
-<!-- live search -->
-$(document).ready(function() {
-  $("#search-box").keyup(function() {
-    var q = $(this).val();
-    if (q == '') {
-      $("#live-search-results").html("").hide();
-    } else {
-      $.ajax({
-        type:    "GET",
-        url:     "/search/live?q=" + q,
-        cache:   false,
-        success: function(html) {
-          if (html) {
-            $("#live-search-results").html(html).show();
-          } else {
-            $("#live-search-results").html("").hide();
-          }
-        }
-      });
-    }
-    return false;
-  });
-
-});
-
 // Tweaks for integrating datatables + bootstrap
 
 /* Default class modification */
@@ -130,3 +105,75 @@ $(document).ready(function() {
     }
   });
 });
+
+
+// live search
+$(document).ready(function() {
+  $("#search-box").keyup(function() {
+    var q = $(this).val();
+    if (q == '') {
+      $("#live-search-results").html("").hide();
+    } else {
+      $.ajax({
+        type:    "GET",
+        url:     "/search/live?q=" + q,
+        cache:   false,
+        success: function(html) {
+          if (html) {
+            $("#live-search-results").html(html).show();
+          } else {
+            $("#live-search-results").html("").hide();
+          }
+        }
+      });
+    }
+    return false;
+  });
+
+});
+
+
+// Various widgets
+$(function() {
+
+  $('.dropdown-toggle').dropdown();
+
+  $('.chzn-select').chosen({allow_single_deselect: true});
+
+  $('.tagbox').tagBox();
+
+  $('.collapsable').collapse({
+    show: function() {
+      this.animate({
+        opacity: 'toggle',
+        height:  'toggle'
+      }, 150);
+    },
+
+    hide: function() {
+      this.animate({
+        opacity: 'toggle',
+        height:  'toggle'
+      }, 150);
+    }
+  });
+});
+
+$(function() {
+  $('#fileupload').fileupload({
+    dataType: 'json',
+
+    done: function(e, data) {
+      $.each(data.result, function(index, file) {
+        $('<p/>').text(file.name).appendTo(document.body);
+      });
+    },
+
+    add: function(e, data) {
+      $.each(data.result, function(index, file) {
+        $('<p/>').text(file.name).appendTo(document.body);
+      });
+    }
+  });
+});
+
