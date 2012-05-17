@@ -1,5 +1,6 @@
 
 # Don't remove
+import unittest
 import fix_path
 
 import os
@@ -12,6 +13,7 @@ from util import DataLoader
 
 from yaka_crm import app, db
 from config import TestConfig
+from yaka_crm.apps.dm import match
 
 import yaka_crm.views # Don't remove
 
@@ -130,3 +132,13 @@ class TestViews(TestCase):
   def open_file(filename):
     path = os.path.join(os.path.dirname(__file__), "dummy_files", filename)
     return open(path)
+
+
+class TestUtils(unittest.TestCase):
+
+  def test_match(self):
+    ok_(match("text/plain", ["text/*"]))
+    ok_(not match("text/plain", ["text/html"]))
+
+    ok_(match("text/plain", ["application/pdf", "text/plain"]))
+    ok_(not match("text/plain", ["application/pdf", "application/msword"]))

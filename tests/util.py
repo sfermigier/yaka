@@ -4,7 +4,7 @@ import os.path
 import datetime
 
 from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
-from yaka_crm.apps.dm import File, converter
+from yaka_crm.apps.dm import File
 
 
 def init_data(db):
@@ -137,9 +137,6 @@ class DataLoader(object):
       mime_type = mimetypes.guess_type(fn)[0]
 
       f = File(name, data, mime_type)
-
-      f.text = converter.to_text(f.digest, f.data, f.mime_type)
-      # TODO: f.preview = converter.to_images(f.hash_key, f.data, f.mime_type, 0)
       self.db.session.add(f)
 
   # Utilities

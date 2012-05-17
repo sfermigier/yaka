@@ -3,12 +3,14 @@
 Don't worry, it's just a prototype to test the architecture.
 Will be refactored later and included in the ESN.
 """
+import traceback
 
 import os
 import hashlib
 
 from flask import Blueprint, render_template, redirect, request,\
   make_response, flash, abort, json
+import re
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
 
@@ -36,6 +38,7 @@ class Folder(Entity):
   parent_id = Column(Integer)
 
 
+# TODO: rename to "Document" ? Only one class or several?
 class File(Entity):
   __tablename__ = 'file'
 
@@ -63,13 +66,26 @@ class File(Entity):
   preview = Column(LargeBinary)
 
   def __init__(self, name, data, mime_type):
+    Entity.__init__(self)
+
     self.data = data
     self.digest = hashlib.md5(data).hexdigest()
     self.size = len(data)
     self.name = name
     self.mime_type = mime_type
 
-    Entity.__init__(self)
+    # TODO: This should be asynchronous
+    try:
+      self.pdf = converter.to_pdf(self.digest, self.data, self.mime_type)
+    except ConversionError:
+      self.text = u""
+      traceback.print_exc()
+
+    try:
+      self.text = converter.to_text(self.digest, self.data, self.mime_type)
+    except ConversionError:
+      self.text = u""
+      traceback.print_exc()
 
   @property
   def icon(self):
@@ -121,17 +137,6 @@ def create_file(fd):
   else:
     name = unicode(fd.filename, errors='ignore')
   f = File(name, fd.read(), fd.content_type)
-
-  try:
-    f.text = converter.to_text(f.digest, f.data, f.mime_type)
-  except ConversionError, e:
-    f.text = u""
-    print e
-  #try:
-  #  f.preview = converter.to_image(f.digest, f.data, f.mime_type)
-  #except ConversionError, e:
-  #  f.preview = ""
-  #  print e
 
   db.session.add(f)
   return f
@@ -185,13 +190,22 @@ def upload_new_version(file_id):
 def download(file_id):
   """Download the file's content."""
 
+  attach = request.args.get('attach')
   f = get_file(file_id)
 
-  attach = request.args.get('attach')
-  response = make_response(f.data)
-  response.headers['content-type'] = f.mime_type
   if attach:
+    response = make_response(f.data)
+    response.headers['content-type'] = f.mime_type
     response.headers['content-disposition'] = "attachment"
+
+  else:
+    # Note: we omit text/html for security reasons.
+    if match(f.mime_type, ("text/plain", "application/pdf", "image/*")):
+      response = make_response(f.data)
+      response.headers['content-type'] = f.mime_type
+    else:
+      response = make_response(f.data)
+      response.headers['content-type'] = f.mime_type
 
   return response
 
@@ -240,3 +254,10 @@ def get_file(uid):
   if not f:
     abort(404)
   return f
+
+def match(mime_type, patterns):
+  for pat in patterns:
+    pat = pat.replace("*", r"\w*")
+    if re.match(pat, mime_type):
+      return True
+  return False
