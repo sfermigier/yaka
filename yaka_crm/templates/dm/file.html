@@ -175,23 +175,27 @@
       var previewNext = $('.preview-next');
 
       function showNav() {
+        $(document).bind("keydown", keyDown);
         previewNav.stop().fadeTo(150, 1);
       }
+
       function hideNav() {
+        $(document).unbind("keydown", keyDown);
         previewNav.stop().fadeTo(150, 0);
       }
+
       $("div.preview").hover(showNav, hideNav);
 
       // TODO: what if we want to go past the last page?
-      previewNext.click(function() {
+      function loadNext() {
         var img = $("img.preview");
         var page = img.data("page") + 1;
         img.attr("src", imgSrc + "?page=" + page);
         img.data("page", page);
         return true;
-      });
+      }
 
-      previewPrev.click(function() {
+      function loadPrev() {
         var img = $("img.preview");
         var page = img.data("page") - 1;
         if (page < 0) {
@@ -200,7 +204,24 @@
         img.attr("src", imgSrc + "?page=" + page);
         img.data("page", page);
         return true;
-      });
+      }
+
+      previewNext.click(loadNext);
+
+      previewPrev.click(loadPrev);
+
+      function keyDown(e) {
+        var code = e.keyCode;
+        // Note: we prevent default keyboard action
+        if (code == 39) {
+          loadNext();
+          return true;
+        } else if (code == 37) {
+          loadPrev();
+          return true;
+        }
+        return false;
+      }
     });
   </script>
 
