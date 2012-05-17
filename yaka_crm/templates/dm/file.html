@@ -31,15 +31,21 @@
         </p>
       </div>
 
+      <h3>Tags</h3>
+      <div>
+        <p>
+          <input class="tagbox" value="{{ file.tags }}">
+        </p>
+      </div>
 
       <h3>Dates</h3>
       <div>
         <p>
-          Created on: {{ file.created_at }}
+          Created on: {{ file.created_at|date_age }}
         </p>
 
         <p>
-          Last modified on: {{ file.modified_at }}
+          Last modified on: {{ file.modified_at|date_age }}
         </p>
       </div>
 
@@ -53,10 +59,6 @@
         <p>
           Owner: <a href="{{ file.owner._url }}"><img src="{{ file.owner._url }}/mugshot?s=16">
           {{ file.owner }}</a>
-        </p>
-
-        <p>
-          Tags: <input class="tagbox" value="{{ file.tags }}">
         </p>
       </div>
 

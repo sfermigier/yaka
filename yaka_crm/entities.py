@@ -1,8 +1,6 @@
 """Entity objects for the CRM applications.
 
 """
-from StringIO import StringIO
-from PIL import Image
 
 from .core.entities import *
 

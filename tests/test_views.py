@@ -1,9 +1,12 @@
 # Don't remove
+import datetime
 import fix_path
 
 
+import unittest
 from flaskext.testing import TestCase
 from nose.tools import eq_
+
 from util import init_data
 from config import TestConfig
 
@@ -12,6 +15,7 @@ from yaka_crm import app, db
 import re
 
 from yaka_crm import views # Don't remove
+from yaka_crm.views import filesize, date_age
 
 
 class TestViews(TestCase):
@@ -83,3 +87,24 @@ class TestViews(TestCase):
   @staticmethod
   def uid_from_url(url):
     return int(url[len("http://localhost/users/"):])
+
+
+class TestFilters(unittest.TestCase):
+
+  def test_bytes(self):
+    eq_("100 B", filesize(100))
+    eq_("1.0 kB", filesize(1000))
+    eq_("1.1 kB", filesize(1100))
+    eq_("10 kB", filesize(10000))
+
+  def test_date_age(self):
+    now = datetime.datetime(2012, 6, 10, 10, 10, 10)
+
+    dt = datetime.datetime(2012, 6, 10, 10, 10, 0)
+    eq_("2012-06-10 10:10 (a few seconds ago)", date_age(dt, now))
+
+    dt = datetime.datetime(2012, 6, 10, 10, 8, 10)
+    eq_("2012-06-10 10:08 (2 minutes ago)", date_age(dt, now))
+
+    dt = datetime.datetime(2012, 6, 10, 8, 10, 10)
+    eq_("2012-06-10 08:10 (2 hours ago)", date_age(dt, now))
