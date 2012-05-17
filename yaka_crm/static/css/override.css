@@ -55,6 +55,58 @@ h3 .active {
 }
 */
 
+/* Document preview */
+
+img.preview {
+    width: 550px;
+    border-width: 1px;
+    border-color: black;
+    padding: 2px;
+    margin: 2px;
+}
+
+.preview-nav {
+    display: none;
+    background: #0c3b3d;
+    width: 64px;
+    height: 32px;
+    padding: 5px;
+    position: absolute;
+    top: 200px;
+    left: 236px;
+    border-radius: 5px 5px;
+    -moz-border-radius: 5px 5px;
+    -webkit-border-radius: 5px 5px;
+}
+
+.preview-nav a {
+    display: block;
+    overflow: hidden;
+    text-indent: -900em;
+    height: 22px;
+    float: left;
+    padding: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.preview-nav a:hover {
+    background-color: #a1c436;
+    cursor: pointer;
+}
+
+.preview-prev {
+    width: 22px;
+    background: url(/static/images/prev.png) no-repeat center;
+}
+
+.preview-next {
+    width: 22px;
+    background: url(/static/images/next.png) no-repeat center;
+}
+
 /* forms and jquery.validate */
 
 label.required {

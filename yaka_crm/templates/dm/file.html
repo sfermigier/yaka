@@ -11,8 +11,14 @@
 
     <h3>Preview</h3>
 
-    <img src="{{ file.url }}/preview" width="500">
+    <div class="preview">
+      <img src="{{ file.url }}/preview" class="preview" data-page="0">
 
+      <div class="preview-nav">
+        <a class="preview-prev" title="Previous image">Previous image</a>
+        <a class="preview-next" title="Next image">Next image</a>
+      </div>
+    </div>
 
     <div class="collapsable">
       <h3>Properties</h3>
@@ -32,6 +38,7 @@
       </div>
 
       <h3>Tags</h3>
+
       <div>
         <p>
           <input class="tagbox" value="{{ file.tags }}">
@@ -39,6 +46,7 @@
       </div>
 
       <h3>Dates</h3>
+
       <div>
         <p>
           Created on: {{ file.created_at|date_age }}
@@ -50,6 +58,7 @@
       </div>
 
       <h3>People</h3>
+
       <div>
         <p>
           Creator: <a href="{{ file.creator._url }}"><img src="{{ file.creator._url }}/mugshot?s=16">
@@ -156,5 +165,43 @@
       </div>
     </form>
   </div>
+
+  <script>
+    $(document).ready(function() {
+      var imgSrc = $("img.preview").attr("src");
+
+      var previewNav = $(".preview-nav");
+      var previewPrev = $('.preview-prev');
+      var previewNext = $('.preview-next');
+
+      function showNav() {
+        previewNav.stop().fadeTo(150, 1);
+      }
+      function hideNav() {
+        previewNav.stop().fadeTo(150, 0);
+      }
+      $("div.preview").hover(showNav, hideNav);
+
+      // TODO: what if we want to go past the last page?
+      previewNext.click(function() {
+        var img = $("img.preview");
+        var page = img.data("page") + 1;
+        img.attr("src", imgSrc + "?page=" + page);
+        img.data("page", page);
+        return true;
+      });
+
+      previewPrev.click(function() {
+        var img = $("img.preview");
+        var page = img.data("page") - 1;
+        if (page < 0) {
+          page = 0;
+        }
+        img.attr("src", imgSrc + "?page=" + page);
+        img.data("page", page);
+        return true;
+      });
+    });
+  </script>
 
 {% endblock %}
