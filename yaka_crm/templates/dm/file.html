@@ -29,7 +29,7 @@
         </p>
 
         <p>
-          Size: {{ file.size|filesizeformat }}
+          Size: {{ file.size|filesize }}
         </p>
 
         <p>
@@ -62,7 +62,7 @@
         </p>
 
         <p>
-          Last modified on: {{ file.modified_at|date_age }}
+          Last modified on: {{ file.updated_at|date_age }}
         </p>
       </div>
 
@@ -149,7 +149,7 @@
         <div class="input-prepend">
           <label>Recipient</label>
           <span class="add-on">@</span>
-          <input class="span3" id="prependedInput" type="text" name="feedEmail">
+          <input class="span3" id="prependedInput" type="text" name="recipient">
         </div>
       </div>
       <div class="modal-footer">

@@ -13,6 +13,7 @@ app = Flask(__name__)
 
 # Initialise helpers and services
 db.init_app(app)
+mail.init_app(app)
 
 # TODO: autodiscovery of searchable classes
 from .entities import Contact, Account, Opportunity, Lead, Document

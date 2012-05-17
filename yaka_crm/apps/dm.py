@@ -4,6 +4,8 @@ Don't worry, it's just a prototype to test the architecture.
 Will be refactored later and included in the ESN.
 """
 import traceback
+from urllib import quote
+from flask.globals import g
 
 import os
 import hashlib
@@ -12,9 +14,12 @@ from flask import Blueprint, render_template, redirect, request,\
   make_response, flash, abort, json
 import re
 
+from flaskext.mail import Message
+
+
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
 
-from ..extensions import db
+from ..extensions import db, mail
 from ..core.entities import Entity, Column
 from ..core.frontend import add_to_recent_items
 
@@ -81,7 +86,6 @@ class File(Entity):
     try:
       self.pdf = converter.to_pdf(self.digest, self.data, self.mime_type)
     except ConversionError:
-      self.text = u""
       traceback.print_exc()
 
     try:
@@ -217,7 +221,8 @@ def download(file_id):
   if attach:
     response = make_response(f.data)
     response.headers['content-type'] = f.mime_type
-    response.headers['content-disposition'] = "attachment"
+    enc_fn = quote(f.name)
+    response.headers['content-disposition'] = 'attachment;filename="%s"' % enc_fn
 
   else:
     # Note: we omit text/html for security reasons.
@@ -265,6 +270,26 @@ def upload_post():
   resp = make_response(json.dumps(result))
   resp.headers['Content-Type'] = "application/json"
   return resp
+
+
+@dm.route("/<int:file_id>/send", methods=['POST'])
+def send(file_id):
+  recipient = request.form.get("recipient")
+  f = get_file(file_id)
+
+  msg = Message("File sent from Yaka")
+  msg.sender = g.user.email
+  msg.recipients = [recipient]
+  msg.body = """The following file (%s) might be interesting to you.
+
+  """ % f.name
+
+  msg.attach(f.name, f.mime_type, f.data)
+
+  mail.send(msg)
+  flash("Email successfully sent", "success")
+
+  return redirect(ROOT + "%d" % f.uid)
 
 
 #

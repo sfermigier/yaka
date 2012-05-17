@@ -122,8 +122,10 @@
         {% for file in files %}
           <tr>
             <td><input type="checkbox"></td>
-            <td><img src="{{ file.icon }}" style="vertical-align: middle;">
-              <a href="{{ file.url }}">{{ file.name }}</a></td>
+            <td>
+              <img src="{{ file.icon }}" style="vertical-align: middle;">
+              <a href="{{ file.url }}">{{ file.name }}</a>
+            </td>
             <td>Stefane Fermigier</td>
             <td>0</td>
           </tr>
