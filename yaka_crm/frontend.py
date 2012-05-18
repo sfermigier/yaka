@@ -7,10 +7,10 @@ from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextField, TextAreaField
 
 # Our custom validators
-from yaka_crm.core.forms import email, url, required
+from .core.forms import email, url, required
 
-from .entities import *
 from .core.frontend import *
+from .entities import *
 
 
 #
@@ -23,6 +23,7 @@ from yaka_crm.core.forms import Chosen
 #
 TYPES = ['', 'Analyst', 'Competitor', 'Customer', 'Integrator', 'Investor',
          'Press', 'Partner', 'Prospect', 'Reseller', 'Other']
+
 INDUSTRIES = ['', "Apparel", "Banking", "Biotechnology", "Chemicals", "Communications",
               "Construction", "Consulting", "Education", "Electronics", "Energy",
               "Engineering", "Entertainment", "Environmental", "Finance", "Government",

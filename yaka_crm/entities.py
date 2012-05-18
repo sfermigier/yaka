@@ -8,8 +8,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.schema import ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date
 
-searchable = dict(searchable=True)
 
+searchable = dict(searchable=True)
 
 #
 # Mixins
