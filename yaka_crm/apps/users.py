@@ -8,6 +8,7 @@ from ..entities import User
 from ..core.frontend import BreadCrumbs
 from ..services.image import resize
 from .dm import File
+from yaka_crm.services.image import crop_and_resize
 
 
 users = Blueprint("users", __name__, url_prefix="/users")
@@ -91,7 +92,7 @@ def mugshot(user_id):
 
   data = user.photo
   if size:
-    data = resize(data, size)
+    data = crop_and_resize(data, size)
 
   response = make_response(data)
   response.headers['content-type'] = 'image/jpeg'

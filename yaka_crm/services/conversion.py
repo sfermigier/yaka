@@ -9,8 +9,6 @@ Assumes poppler-utils and LibreOffice are installed.
 """
 
 # Yay, no dependencies on Yaka!
-import StringIO
-
 import glob
 import hashlib
 import shutil
@@ -23,6 +21,11 @@ from base64 import encodestring, decodestring
 from xmlrpclib import ServerProxy
 import mimetypes
 import re
+import StringIO
+
+from PIL import Image
+from PIL.ExifTags import TAGS
+from yaka_crm.services.image import resize
 
 
 TMP_DIR = "tmp"
@@ -142,17 +145,21 @@ class Converter(object):
     # Direct conversion possible
     for handler in self.handlers:
       if handler.accept(mime_type, "image/jpeg"):
-        converted = handler.convert(blob, index=index, size=size)
-        self.cache[cache_key] = converted
-        return converted
+        converted_images = handler.convert(blob, size=size)
+        for i in range(0, len(converted_images)):
+          converted = converted_images[i]
+          self.cache["img:%s:%s:%s" % (i, size, digest)] = converted
+        return converted_images[index]
 
     # Use PDF as a pivot format
     pdf = self.to_pdf(digest, blob, mime_type)
     for handler in self.handlers:
       if handler.accept("application/pdf", "image/jpeg"):
-        converted = handler.convert(pdf)
-        self.cache[cache_key] = converted
-        return converted
+        converted_images = handler.convert(pdf, size=size)
+        for i in range(0, len(converted_images)):
+          converted = converted_images[i]
+          self.cache["img:%s:%s:%s" % (i, size, digest)] = converted
+        return converted_images[index]
 
     raise ConversionError()
 
@@ -161,12 +168,13 @@ class Converter(object):
 
     # XXX: ad-hoc for now, refactor later
     if mime_type.startswith("image/"):
-      from PIL import Image
-      from PIL.ExifTags import TAGS
-
       img = Image.open(StringIO.StringIO(file))
       ret = {}
+      if not hasattr(img, '_getexif'):
+        return {}
       info = img._getexif()
+      if not info:
+        return {}
       for tag, value in info.items():
         decoded = TAGS.get(tag, tag)
         ret["EXIF:" + str(decoded)] = value
@@ -258,7 +266,9 @@ class PdfToPpmHandler(Handler):
   accepts_mime_types = ['application/pdf']
   produces_mime_types = ['image/jpeg']
 
-  def convert(self, blob, index=0, size=500):
+  def convert(self, blob, size=500):
+    """Size is the maximum horizontal size."""
+
     in_fn = make_temp_file(blob)
     out_fn = mktemp(dir=TMP_DIR)
 
@@ -267,8 +277,12 @@ class PdfToPpmHandler(Handler):
     # TODO: resize images
     # TODO: cache
     l = glob.glob("%s-*.jpg" % out_fn)
-    print l
-    return open(l[index]).read()
+    converted_images = []
+    for fn in l:
+      converted = resize(open(fn).read(), size)
+      converted_images.append(converted)
+
+    return converted_images
 
 
 class UnoconvPdfHandler(Handler):

@@ -25,7 +25,7 @@ from ..core.frontend import add_to_recent_items
 
 from ..services.conversion import converter, ConversionError
 from ..services.audit import AuditEntry
-from ..services.image import resize
+from ..services.image import resize, crop_and_resize
 
 
 ROOT = "/dm/"
@@ -58,6 +58,7 @@ class File(Entity):
   # TODO: normalize mime type?
   mime_type = Column(Text, nullable=False)
   size = Column(Integer)
+  page_num = Column(Integer, default=1)
 
   tags = Column(UnicodeText, default=u"")
 
@@ -70,7 +71,7 @@ class File(Entity):
   #: preview image
   preview = Column(LargeBinary, info=dict(auditable=False))
 
-  extra_metadata_json = Column(Text, info=dict(auditable=False))
+  extra_metadata_json = Column(UnicodeText, info=dict(auditable=False))
 
   def __init__(self, name, data, mime_type):
     Entity.__init__(self)
@@ -249,7 +250,11 @@ def preview(file_id):
   """Returns a preview (image) for the file given by its id."""
 
   f = get_file(file_id)
-  size = int(request.args.get("s", 0))
+  size = int(request.args.get("size", 0))
+
+  # Just in case
+  if size > 1000:
+    size = 1000
 
   if f.mime_type.startswith("image/"):
     image = f.data

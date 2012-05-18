@@ -59,7 +59,6 @@ h3 .active {
 /* Document preview */
 
 img.preview {
-    width: 550px;
     border-width: 1px;
     border-color: black;
     padding: 2px;

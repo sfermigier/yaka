@@ -63,7 +63,7 @@ class TestViews(TestCase):
     for m in re.findall(ROOT + "([0-9]+)", data):
       uid = int(m)
 
-      response = self.client.get(ROOT + "%d/preview" % uid)
+      response = self.client.get(ROOT + "%d/preview?size=500" % uid)
       self.assert_200(response)
 
   def test_upload_text(self):
@@ -118,7 +118,7 @@ class TestViews(TestCase):
     eq_(response.headers['Content-Type'], 'application/pdf')
     ok_(response.data)
 
-    response = self.client.get(ROOT + "%d/preview" % uid)
+    response = self.client.get(ROOT + "%d/preview?size=500" % uid)
     self.assert_200(response)
     eq_(response.headers['Content-Type'], 'image/jpeg')
 

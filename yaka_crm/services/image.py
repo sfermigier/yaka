@@ -3,12 +3,37 @@ from PIL import Image
 
 import hashlib
 
-__all__ = ['resize']
+__all__ = ['resize', 'crop_and_resize']
 
+# TODO: cache to file
 cache = {}
 
-def resize(orig, size):
-  cache_key = (hashlib.md5(orig).digest(), size)
+
+def resize(orig, hsize):
+  cache_key = (hashlib.md5(orig).digest(), hsize, hsize)
+  if cache_key in cache:
+    return cache[cache_key]
+
+  image = Image.open(StringIO(orig))
+  x, y = image.size
+
+  if x <= hsize:
+    return orig
+
+  x1 = hsize
+  y1 = int(1.0 * y * hsize / x)
+  image.thumbnail((x1, y1), Image.ANTIALIAS)
+  output = StringIO()
+  image.save(output, "JPEG")
+  converted = output.getvalue()
+  cache[cache_key] = converted
+  return converted
+
+
+def crop_and_resize(orig, hsize, vsize=0):
+  if not vsize:
+    vsize = hsize
+  cache_key = (hashlib.md5(orig).digest(), hsize, vsize)
   if cache_key in cache:
     return cache[cache_key]
 
@@ -17,20 +42,20 @@ def resize(orig, size):
   # Compute cropping coordinates
   x1 = y1 = 0
   x2, y2 = image.size
-  w_ratio = 1.0 * x2 / size
-  h_ratio = 1.0 * y2 / size
+  w_ratio = 1.0 * x2 / hsize
+  h_ratio = 1.0 * y2 / vsize
   if h_ratio > w_ratio:
-    y1 = int(y2 / 2 - size * w_ratio / 2)
-    y2 = int(y2 / 2 + size * w_ratio / 2)
+    y1 = int(y2 / 2 - hsize * w_ratio / 2)
+    y2 = int(y2 / 2 + vsize * w_ratio / 2)
   else:
-    x1 = int(x2 / 2 - size * h_ratio / 2)
-    x2 = int(x2 / 2 + size * h_ratio / 2)
+    x1 = int(x2 / 2 - hsize * h_ratio / 2)
+    x2 = int(x2 / 2 + vsize * h_ratio / 2)
   image = image.crop((x1, y1, x2, y2))
 
-  image.thumbnail((size, size), Image.ANTIALIAS)
+  image.thumbnail((hsize, vsize), Image.ANTIALIAS)
 
   output = StringIO()
   image.save(output, "JPEG")
-  data = output.getvalue()
-  cache[cache_key] = data
-  return data
+  converted = output.getvalue()
+  cache[cache_key] = converted
+  return converted

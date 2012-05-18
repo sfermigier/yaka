@@ -66,6 +66,8 @@ class DataLoader(object):
         d[col.lower().replace(" ", "_")] = line[col]
       for k in ['Street', 'City', 'State', 'Country']:
         d["address_" + k.lower()] = line["Billing %s" % k]
+      if d['website'] and not d['website'].startswith("http://"):
+        d['website'] = "http://" + d['website']
       account = Account(**d)
       self.db.session.add(account)
       self.accounts_map[line['Name']] = account

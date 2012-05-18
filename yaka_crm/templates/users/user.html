@@ -40,16 +40,16 @@
   {% elif active_tab_id == 'images' %}
     <ul class="image-gallery">
       {% for image in images %}
-        <li id="image-{{ image.uid }}"><a title="test" href="{{ image._url }}"><img src="{{ image._url }}/preview?s=100"></a></li>
+        <li id="image-{{ image.uid }}"><a title="test" href="{{ image._url }}"><img src="{{ image._url }}/preview?size=100"></a></li>
         <script>
           $(document).ready(function() {
             var id = "#image-{{ image.uid }}";
             $(id).popover({
               placement: "top",
               html: true,
-              title: "toto",
+              title: "{{ image.name }}",
               content: function() {
-                return '{{ image.name }} uploaded on {{ image.created_at.strftime("%Y-%m-%d") }}';
+                return 'Uploaded on {{ image.created_at.strftime("%Y-%m-%d") }}';
               }
           });
           });
