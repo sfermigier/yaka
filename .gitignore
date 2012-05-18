@@ -2,10 +2,15 @@
 .tox
 .DS_Store
 .coverage
+.vagrant
 
 whoosh*
 yaka.db
 tmp
+cache
+dist
+tests/cache
+tests/tmp
 
 *.pyc
 *.egg-info

@@ -1,72 +1,66 @@
-{% extends "base.html" %}
-{% from "macros.html" import m_recent_items %}
+{% extends "base.html" %}{% from "macros.html" import m_recent_items %}
 
 {% block container %}
 
-<div class="row">
-  <div class="span2">
-    <a class="btn btn-primary" href="#upload-files" data-toggle="modal">
-      Upload file(s)
-    </a>
+  <div class="row">
+    <div class="span2">
+      <a class="btn btn-primary" href="#upload-files" data-toggle="modal">
+        Upload file(s)
+      </a>
 
-    <div>&nbsp;</div>
+      <div>&nbsp;</div>
 
-    {{ m_recent_items(g.recent_items) }}
+      {{ m_recent_items(g.recent_items) }}
 
-  </div><!-- /span2 -->
+    </div>
+    <!-- /span2 -->
 
-  <div class="span10">
+    <div class="span10">
 
-    <ul class="breadcrumb">
-      {% for obj in breadcrumbs[0:-1] %}
-        <li><a href="{{ obj.path }}">{{ obj.label }}</a>
-          <span class="divider">/</span></li>
-      {% endfor %}
-      <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
-    </ul>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-block alert-{{category}}">
-            <a class="close" data-dismiss="alert">&times;</a>
-            {{message}}
-          </div>
+      <ul class="breadcrumb">
+        {% for obj in breadcrumbs[0:-1] %}
+          <li><a href="{{ obj.path }}">{{ obj.label }}</a>
+            <span class="divider">/</span></li>
         {% endfor %}
-      {% endif %}
-    {% endwith %}
+        <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
+      </ul>
 
-    {% block main %}
-    {% endblock %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-block alert-{{category}}">
+              <a class="close" data-dismiss="alert">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block main %}
+      {% endblock %}
+    </div>
+    <!--/span-->
   </div>
-  <!--/span-->
-</div>
-<!--/row-->
+  <!--/row-->
 
-<!-- modal stuff -->
-<div class="modal fade" id="upload-files">
+  <!-- modal stuff -->
+  <div class="modal fade" id="upload-files">
 
-  <form id="fileupload" action="/dm/" method="POST" enctype="multipart/form-data"
-          style="margin-bottom: 0;">
-    <div class="modal-header">
-      <button class="close" data-dismiss="modal">&times;</button>
-      <h3>Upload new file(s)</h3>
-    </div>
+    <form id="fileupload" action="/dm/" method="POST" enctype="multipart/form-data" style="margin-bottom: 0;">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+        <h3>Upload new file(s)</h3>
+      </div>
 
-    <div class="modal-body">
-      <span class="btn fileinput-button">
-        <i class="icon-plus icon-white"></i>
-        <span>Add files...</span>
-        <input type="file" multiple name="file" class="hide">
-      </span>
-    </div>
+      <div class="modal-body">
+        <input type="file" multiple name="file">
+      </div>
 
-
-    <div class="modal-footer">
-      <button data-dismiss="modal" class="btn">Cancel</button>
-      <button class="btn btn-primary" type="submit">Save changes</button>
-    </div>
-  </form>
-</div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save changes</button>
+      </div>
+    </form>
+  </div>
 
 {% endblock %}

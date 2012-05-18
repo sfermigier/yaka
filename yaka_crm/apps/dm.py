@@ -210,15 +210,12 @@ def delete(file_id):
 @dm.route("/<int:file_id>/upload", methods=['POST'])
 def upload_new_version(file_id):
   f = get_file(file_id)
-
-  files = request.files
-  form = request.form
-
   fd = request.files['file']
-  print fd
-  f._update(fd.read(), fd.content_type)
 
+  f._update(fd.read(), fd.content_type)
   db.session.commit()
+
+  flash("New version successfully uploaded", "success")
   return redirect(ROOT + "%d" % f.uid)
 
 
@@ -253,12 +250,16 @@ def preview(file_id):
 
   f = get_file(file_id)
   size = int(request.args.get("s", 0))
-  page = int(request.args.get("page", 0))
-  data = converter.to_image(f.digest, f.data, f.mime_type, page, size)
-  #if size:
-  #  data = resize(data, size)
 
-  response = make_response(data)
+  if f.mime_type.startswith("image/"):
+    image = f.data
+    if size:
+      image = resize(image, size)
+  else:
+    page = int(request.args.get("page", 0))
+    image = converter.to_image(f.digest, f.data, f.mime_type, page, size)
+
+  response = make_response(image)
   response.headers['content-type'] = "image/jpeg"
 
   return response

@@ -54,7 +54,7 @@ def date_age(dt, now=None):
     return ""
 
   if not now:
-    now = datetime.now()
+    now = datetime.utcnow()
 
   age = now - dt
   if age.days == 0:
