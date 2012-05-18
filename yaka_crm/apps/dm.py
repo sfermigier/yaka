@@ -56,7 +56,7 @@ class File(Entity):
   data = Column(LargeBinary)
   digest = Column(Text)
   # TODO: normalize mime type?
-  mime_type = Column(UnicodeText, nullable=False)
+  mime_type = Column(Text, nullable=False)
   size = Column(Integer)
 
   tags = Column(UnicodeText, default=u"")
@@ -65,28 +65,39 @@ class File(Entity):
   text = Column(UnicodeText, default=u"", info=searchable)
 
   #: for "view as PDF"
-  pdf = Column(LargeBinary)
+  pdf = Column(LargeBinary, info=dict(auditable=False))
 
   #: preview image
-  preview = Column(LargeBinary)
+  preview = Column(LargeBinary, info=dict(auditable=False))
 
-  extra_metadata_json = Column(Text)
-
+  extra_metadata_json = Column(Text, info=dict(auditable=False))
 
   def __init__(self, name, data, mime_type):
     Entity.__init__(self)
 
-    self.data = data
-    self.digest = hashlib.md5(data).hexdigest()
-    self.size = len(data)
     self.name = name
-    self.mime_type = mime_type
+    self._update(data, mime_type)
+
+  def _update(self, data, mime_type=None):
+    new_digest = hashlib.md5(data).hexdigest()
+    if new_digest == self.digest:
+      return
+
+    self.digest = new_digest
+    self.data = data
+    self.size = len(data)
+    if mime_type:
+      self.mime_type = mime_type
+    # TODO Else: use a sniffer
 
     # TODO: This should be asynchronous
-    try:
-      self.pdf = converter.to_pdf(self.digest, self.data, self.mime_type)
-    except ConversionError:
-      traceback.print_exc()
+    if self.mime_type != "application/pdf":
+      try:
+        self.pdf = converter.to_pdf(self.digest, self.data, self.mime_type)
+      except ConversionError:
+        traceback.print_exc()
+    else:
+      self.pdf = self.data
 
     try:
       self.text = converter.to_text(self.digest, self.data, self.mime_type)
@@ -196,18 +207,18 @@ def delete(file_id):
   return redirect(ROOT)
 
 
-@dm.route("/<int:file_id>", methods=['POST'])
+@dm.route("/<int:file_id>/upload", methods=['POST'])
 def upload_new_version(file_id):
   f = get_file(file_id)
 
+  files = request.files
+  form = request.form
+
   fd = request.files['file']
-  f.name = unicode(fd.filename, errors='ignore')
-  f.data = fd.read()
-  f.mime_type = fd.content_type
-  f.size = fd.content_length
+  print fd
+  f._update(fd.read(), fd.content_type)
 
   db.session.commit()
-
   return redirect(ROOT + "%d" % f.uid)
 
 

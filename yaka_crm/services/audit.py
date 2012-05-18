@@ -46,7 +46,6 @@ class AuditEntry(db.Model):
 
   user = relationship(User)
 
-
   @staticmethod
   def from_model(model, type):
     try:
@@ -144,6 +143,14 @@ class AuditService(object):
       old_value = changes[attr_name][0]
     if old_value == NO_VALUE:
       old_value = None
+    # FIXME: a bit hackish
+    try:
+      if len(old_value) > 100:
+        old_value = "<<large value>>"
+      if len(new_value) > 100:
+        new_value = "<<large value>>"
+    except:
+      pass
     changes[attr_name] = (old_value, new_value)
 
   def before_commit(self, session):
