@@ -113,6 +113,8 @@ class File(Entity):
       self.extra_metadata = {}
       traceback.print_exc()
 
+    self.page_num = self.extra_metadata.get("PDF:Pages", 1)
+
   def get_extra_metadata(self):
     if not hasattr(self, '_extra_metadata'):
       self._extra_metadata = json.loads(self.extra_metadata_json)

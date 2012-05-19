@@ -67,6 +67,7 @@
             { asSorting: [] },
             { asSorting: [ "asc", "desc" ] },
             { asSorting: [ "asc", "desc" ] },
+            { asSorting: [ "asc", "desc" ] },
             { asSorting: [ "asc", "desc" ] }
           ],
           bFilter:       false,
@@ -114,7 +115,8 @@
         <tr>
           <th width="1%"></th>
           <th width="50%">Title</th>
-          <th width="29%">Owner</th>
+          <th width="10%">Size</th>
+          <th width="19%">Owner</th>
           <th width="20%">Age</th>
         </tr>
         </thead>
@@ -126,7 +128,13 @@
               <img src="{{ file.icon }}" style="vertical-align: middle;">
               <a href="{{ file.url }}">{{ file.name }}</a>
             </td>
-            <td>Stefane Fermigier</td>
+            <td>
+              {{ file.size|filesize }}
+            </td>
+            <td>
+              <a href="{{ file.owner._url }}"><img src="{{ file.owner._url }}/mugshot?s=16" style="vertical-align: middle;">
+                {{ file.owner.name }}</a>
+            </td>
             <td>0</td>
           </tr>
         {% endfor %}
@@ -135,6 +143,7 @@
         <tr>
           <th></th>
           <th>Title</th>
+          <th>Size</th>
           <th>Owner</th>
           <th>Age</th>
         </tr>

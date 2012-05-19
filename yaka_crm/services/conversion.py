@@ -13,6 +13,7 @@ import glob
 import hashlib
 import shutil
 from tempfile import mktemp
+import traceback
 from abc import ABCMeta, abstractmethod
 from magic import Magic
 import os
@@ -241,9 +242,16 @@ class PdfToTextHandler(Handler):
 
     subprocess.check_call(['pdftotext', in_fn, out_fn])
 
-    encoding = encoding_sniffer.from_file(out_fn)
     converted = open(out_fn).read()
-    converted_unicode = unicode(converted, encoding, errors="ignore")
+
+    encoding = encoding_sniffer.from_file(out_fn)
+    if encoding == "binary":
+      encoding = "ascii"
+    try:
+      converted_unicode = unicode(converted, encoding, errors="ignore")
+    except:
+      traceback.print_exc()
+      converted_unicode = unicode(converted, errors="ignore")
 
     return converted_unicode
 

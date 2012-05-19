@@ -186,12 +186,18 @@
         previewNav.stop().fadeTo(150, 0);
       }
 
-      $("div.preview").hover(showNav, hideNav);
+      var page_num = {{ file.page_num }};
+      if (page_num > 1) {
+        $("div.preview").hover(showNav, hideNav);
+      }
 
       // TODO: what if we want to go past the last page?
       function loadNext() {
         var img = $("img.preview");
         var page = img.data("page") + 1;
+        if (page >= page_num) {
+          page = page - 1;
+        }
         img.attr("src", imgSrc + "&page=" + page);
         img.data("page", page);
         return true;
