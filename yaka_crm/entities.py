@@ -6,7 +6,7 @@ from .core.entities import *
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date
+from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date, Text
 
 
 searchable = dict(searchable=True)
@@ -61,7 +61,7 @@ class Account(Addressable, Entity):
   __tablename__ = 'account'
 
   name = Column(UnicodeText, default=u"", info=searchable)
-  website = Column(UnicodeText, default=u"")
+  website = Column(Text, default=u"")
   office_phone = Column(UnicodeText, default=u"")
 
   type = Column(UnicodeText, default=u"")

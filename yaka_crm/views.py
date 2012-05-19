@@ -8,6 +8,8 @@ from .entities import *
 from .frontend import CRM
 
 from datetime import datetime
+from yaka_crm.core.frontend import TableView, BreadCrumbs
+from yaka_crm.frontend import Contacts, Opportunities, Leads, Accounts
 
 
 __all__ = []
@@ -147,6 +149,22 @@ def home():
   """Home page."""
   # TODO: dashboard
   return "OK"
+
+
+@app.route("/crm/")
+def crm_home():
+  bc = BreadCrumbs([('/', "Home"), ('/crm/', 'CRM')])
+
+  tables = []
+  for cls in [Accounts, Leads, Opportunities, Contacts]:
+    managed_class = cls.managed_class
+    entities = managed_class.query.limit(10).all()
+
+    table_view = TableView(cls.list_view_columns)
+    rendered_table = table_view.render(entities)
+    tables.append(dict(name=cls.__name__, rendered=rendered_table))
+
+  return render_template('crm/home.html', tables=tables, breadcrumbs=bc)
 
 
 @app.route("/help/")

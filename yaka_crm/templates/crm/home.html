@@ -1,0 +1,13 @@
+{% extends "crm/base.html" %}
+
+{% block main %}
+
+{% for table in tables %}
+
+  <h2 style="margin-top: 20px; margin-bottom: 20px;">Recent {{ table.name }}</h2>
+
+  {{ table.rendered }}
+
+{% endfor %}
+
+{% endblock %}

@@ -145,8 +145,8 @@ class OpportunityEditForm(Form):
 
   type = TextField("Type")
   stage = TextField("Stage")
-  amount = IntegerField("Amount")
-  probability = IntegerField("Probability")
+  amount = IntegerField("Amount", default=0)
+  probability = IntegerField("Probability", default=0)
   close_date = DateField("Close Date")
 
   account = QuerySelectField("Account", widget=Chosen(), query_factory=accounts, allow_blank=True)

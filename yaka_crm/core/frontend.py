@@ -13,7 +13,6 @@ from .entities import *
 # Helper classes
 #
 class BreadCrumbs(object):
-
   def __init__(self, l=()):
     self._bc = []
     for path, label in l:
@@ -95,7 +94,7 @@ class TableView(object):
         self.columns.append(col)
 
   def render(self, model):
-    columns = [ {'name': labelize(col['name']), 'width': col['width']} for col in self.columns ]
+    columns = [{'name': labelize(col['name']), 'width': col['width']} for col in self.columns]
     table = []
     for entity in model:
       table.append(self.render_line(entity))
@@ -117,6 +116,10 @@ class TableView(object):
         cell = Markup('<a href="%s">%s</a>' % (entity.url, cgi.escape(value)))
       elif isinstance(value, Entity):
         cell = Markup('<a href="%s">%s</a>' % (value.url, cgi.escape(value.name)))
+      elif (isinstance(value, str) or isinstance(value, unicode))\
+          and value.startswith("http://"):
+        # XXX: security issue here
+        cell = Markup('<a href="%s">%s</a>' % (value, value[len("http://"):]))
       else:
         cell = str(value)
       line.append(cell)
@@ -131,6 +134,7 @@ class SingleView(object):
     # TODO: refactor by passing a model instead
     def get(attr_name):
       return self.get(model, attr_name)
+
     return Markup(render_template('crm/render_single.html', panels=self.panels, get=get))
 
   def render_form(self, form, for_new=False):
@@ -204,6 +208,7 @@ def expose(url='/', methods=('GET',)):
       `methods`
           Allowed HTTP methods. By default only GET is allowed.
   """
+
   def wrap(f):
     if not hasattr(f, '_urls'):
       f._urls = []
@@ -214,7 +219,7 @@ def expose(url='/', methods=('GET',)):
 
 
 def labelize(s):
-  return " ".join([ w.capitalize() for w in s.split("_") ])
+  return " ".join([w.capitalize() for w in s.split("_")])
 
 
 class ModuleMeta(type):
@@ -224,6 +229,7 @@ class ModuleMeta(type):
       Does some precalculations (like getting list of view methods from the class) to avoid
       calculating them for each view class instance.
   """
+
   def __init__(cls, classname, bases, fields):
     type.__init__(cls, classname, bases, fields)
 
@@ -247,7 +253,6 @@ class ModuleMeta(type):
 
 
 class Module(object):
-
   __metaclass__ = ModuleMeta
 
   id = None
@@ -422,8 +427,7 @@ class Module(object):
     return request.path.startswith(self.url)
 
   def bread_crumbs(self, label=None):
-    bc = BreadCrumbs()
-    bc.add("/", "Home")
+    bc = BreadCrumbs([("/", "Home"), ("/crm/", "CRM")])
     if label:
       bc.add("/crm/" + self.endpoint, self.label)
       bc.add("", label)
@@ -453,7 +457,6 @@ class Module(object):
 
 
 class CRUDApp(object):
-
   def __init__(self, app, modules=None):
     if modules:
       self.modules = modules

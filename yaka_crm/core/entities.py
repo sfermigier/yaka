@@ -18,7 +18,9 @@ __all__ = ['Column', 'Entity']
 #Base = declarative_base()
 
 
-# FIXME: this is completely broken (breaks after a server restart).
+# TODO: very hackish. Use Redis instead?
+# We will need a simpler implementation for unit tests, also, so
+# we have to get rid of the singleton.
 class IdGenerator(object):
   """Dummy integer id generator."""
 

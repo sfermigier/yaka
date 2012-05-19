@@ -6,7 +6,10 @@ APT_PREFIX = "DEBCONF_TERSE=yes DEBIAN_PRIORITY=critical DEBIAN_FRONTEND=noninte
 STAGING_DIR = "yaka-crm/staging"
 PRODUCTION_DIR = "yaka-crm/production"
 NATIVE_PACKAGES = "python-pip poppler-utils imagemagick python-dev " \
-    "libjpeg-dev libxslt1-dev make libreoffice unoconv libzmq-dev"
+    "libjpeg-dev libxslt1-dev make libzmq-dev"
+
+# Deactivated for now
+#NATIVE_PACKAGES += " libreoffice unoconv"
 
 
 @task
