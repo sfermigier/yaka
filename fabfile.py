@@ -75,7 +75,7 @@ def deploy():
 
     circus_ini = open("circus.ini").read()
     circus_ini = circus_ini.replace("@@HOME@@", "/users/" + env.user)
-    with open("/tmp/circus.ini") as fd:
+    with open("/tmp/circus.ini", "wc") as fd:
       fd.write(circus_ini)
     put("/tmp/circus.ini", "circus.ini")
 

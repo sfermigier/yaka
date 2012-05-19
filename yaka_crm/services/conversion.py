@@ -274,9 +274,8 @@ class PdfToPpmHandler(Handler):
 
     subprocess.check_call(['pdftoppm', '-jpeg', in_fn, out_fn])
 
-    # TODO: resize images
-    # TODO: cache
     l = glob.glob("%s-*.jpg" % out_fn)
+    l.sort()
     converted_images = []
     for fn in l:
       converted = resize(open(fn).read(), size)

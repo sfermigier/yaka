@@ -1,4 +1,5 @@
 PYTHON=python
+TARGET=yaka@oss4cloud.org:yaka-crm/production/
 
 test:
 	$(PYTHON) -m nose.core tests
@@ -24,7 +25,7 @@ clean:
 	find . -name "*.pyc" | xargs rm -f
 	find . -name yaka.db | xargs rm -f
 	rm -f maxid.data
-	rm -rf data tests/data
+	rm -rf data tests/data tmp tests/tmp cache tmp/cache
 	rm -rf *.egg-info *.egg .coverage
 	rm -rf whoosh whoosh_indexes tests/whoosh tests/whoosh_indexes
 	rm -rf doc/_build
@@ -35,3 +36,6 @@ tidy: clean
 start-vagrant:
 	vagrant up
 	fab vagrant upgrade setup deploy
+
+push:
+	rsync -e ssh -avz ./ $(TARGET)

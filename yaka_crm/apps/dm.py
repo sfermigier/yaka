@@ -60,6 +60,7 @@ class File(Entity):
   size = Column(Integer)
   page_num = Column(Integer, default=1)
 
+  #: Comma-separated list for now...
   tags = Column(UnicodeText, default=u"")
 
   #: for full-text search
