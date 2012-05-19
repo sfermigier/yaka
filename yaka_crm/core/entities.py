@@ -26,14 +26,22 @@ class IdGenerator(object):
 
   def __init__(self):
     self.lock = Lock()
-    self.current = 0
+    try:
+      self.current = int(open("maxid.data").read())
+    except:
+      self.current = 0
 
   def new(self):
     with self.lock:
       self.current += 1
+      with open("maxid.data", "wc") as fd:
+        fd.write(str(self.current))
+      print self.current
     return self.current
 
 
+# Singleton. Yuck :( !
+id_gen = IdGenerator()
 system = dict(editable=False, auditable=False)
 
 
@@ -84,10 +92,8 @@ class Entity(AbstractConcreteBase, db.Model):
   __searchable__ = set()
   __auditable__ = set()
 
-  id_gen = IdGenerator()
-
   def __init__(self, **kw):
-    self.uid = self.id_gen.new()
+    self.uid = id_gen.new()
     if hasattr(g, 'user'):
       self.creator_id = self.owner_id = g.user.uid
     self.update(kw)
