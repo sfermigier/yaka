@@ -83,6 +83,15 @@ def date_age(dt, now=None):
   return "%s (%s)" % (dt.strftime("%Y-%m-%d %H:%M"), age_str)
 
 
+@app.template_filter('abbrev')
+def abbrev(s, max_size):
+  if len(s) <= max_size:
+    return s
+  else:
+    h = max_size / 2 - 1
+    return s[0:h] + "..." + s[-h:]
+
+
 #  user_id = session.get("user_id")
 #  if user_id:
 #    try:
