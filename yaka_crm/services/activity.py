@@ -4,13 +4,13 @@ See http://activitystrea.ms/specs/json/1.0/
 """
 
 from datetime import datetime
-from blinker import signal
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
+from sqlalchemy.types import Integer, DateTime, Text
 
 from ..extensions import db
 from ..entities import User
+from ..extensions import signals
 
 
 class ActivityEntry(db.Model):
@@ -24,19 +24,13 @@ class ActivityEntry(db.Model):
   verb = Column(Text)
 
   actor_id = Column(Integer, ForeignKey(User.uid))
+  actor = relationship(User)
 
   object_class = Column(Text)
   object_id = Column(Integer)
 
-  subject = Column(Text)
+  subject_class = Column(Text)
   subject_id = Column(Integer)
-
-  type = Column(Integer) # CREATION / UPDATE / DELETION
-
-  entity_id = Column(Integer)
-  entity_class = Column(Text)
-
-  actor = relationship(User)
 
 
   def __repr__(self):
@@ -47,9 +41,11 @@ class ActivityEntry(db.Model):
 class ActivityService(object):
 
   def __init__(self):
-    signal("log-activity").connect(self.log_activity)
+    signals.signal("log-activity").connect(self.log_activity)
     
-  def log_activity(self, actor, verb, object, subject):
+  def log_activity(self, sender, actor, verb, object, subject=None):
+    print "Got an activity"
+    print sender, actor, verb, object, subject
     entry = ActivityEntry()
     entry.actor = actor
     entry.verb = verb
@@ -59,7 +55,8 @@ class ActivityService(object):
       entry.subject_id = subject.uid
       entry.subject_class = subject.__class__.__name__
 
-  @staticmethod
-  def entries_for(entity):
-    return ActivityEntry.query.filter(ActivityEntry.entity_id == entity.uid).all()
+    db.session.add(entry)
 
+  @staticmethod
+  def entries_for_actor(actor, limit=50):
+    return ActivityEntry.query.filter(ActivityEntry.actor_id == actor.uid).limit(limit).all()

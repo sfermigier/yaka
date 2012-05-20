@@ -24,6 +24,8 @@ from sqlalchemy.orm.session import Session
 from ..extensions import db
 from ..core.entities import Entity
 from ..entities import User
+from ..entities import *
+
 
 CREATION = 0
 UPDATE   = 1
@@ -41,10 +43,12 @@ class AuditEntry(db.Model):
 
   entity_id = Column(Integer)
   entity_class = Column(Text)
+
   user_id = Column(Integer, ForeignKey(User.uid))
+  user = relationship(User)
+
   changes_json = Column(Text, default="{}", nullable=False)
 
-  user = relationship(User)
 
   @staticmethod
   def from_model(model, type):
@@ -74,6 +78,15 @@ class AuditEntry(db.Model):
     self.changes_json = json.dumps(changes)
 
   changes = property(get_changes, set_changes)
+
+  # FIXME: extremely innefficient
+  @property
+  def entity(self):
+    from ..apps.dm import File
+
+    #noinspection PyTypeChecker
+    cls = locals()[self.entity_class]
+    return cls.query.get(self.entity_id)
 
 
 class AuditService(object):

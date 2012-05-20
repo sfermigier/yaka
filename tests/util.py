@@ -73,7 +73,6 @@ class DataLoader(object):
   def load_accounts(self):
     reader = self.get_reader("Accounts.csv")
     for line in reader:
-      g.user = choice(self.users)
       d = {}
       for col in ['Name', 'Website', 'Office Phone', 'Type', 'Industry']:
         d[col.lower().replace(" ", "_")] = line[col]
@@ -82,13 +81,14 @@ class DataLoader(object):
       if d['website'] and not d['website'].startswith("http://"):
         d['website'] = "http://" + d['website']
       account = Account(**d)
+      account.creator_id = choice(self.users).uid
+      account.owner_id = choice(self.users).uid
       self.db.session.add(account)
       self.accounts_map[line['Name']] = account
 
   def load_contacts(self):
     reader = self.get_reader("Contacts.csv")
     for line in reader:
-      g.user = choice(self.users)
       d = {}
       d['email'] = line['Email Address']
       d['job_title'] = line['Title']
@@ -100,6 +100,9 @@ class DataLoader(object):
 
       contact = Contact(**d)
 
+      contact.creator_id = choice(self.users).uid
+      contact.owner_id = choice(self.users).uid
+
       account = self.accounts_map.get(line['Account Name'])
       if account:
         contact.account = account
@@ -109,7 +112,6 @@ class DataLoader(object):
   def load_opportunities(self):
     reader = self.get_reader("Opportunities.csv")
     for line in reader:
-      g.user = choice(self.users)
       d = {}
       for col in ['Name', 'Description', 'Type']:
         d[col.lower().replace(" ", "_")] = line[col]
@@ -118,6 +120,9 @@ class DataLoader(object):
       d['close_date'] = self.parse_date(line['Expected Close Date'])
       d['probability'] = line['Probability (%)']
       opportunity = Opportunity(**d)
+
+      opportunity.creator_id = choice(self.users).uid
+      opportunity.owner_id = choice(self.users).uid
 
       account = self.accounts_map.get(line['Account Name'])
       if not account:
@@ -130,7 +135,6 @@ class DataLoader(object):
   def load_leads(self):
     reader = self.get_reader("Leads.csv")
     for line in reader:
-      g.user = choice(self.users)
       d = {}
       d['email'] = line['Email Address']
       d['job_title'] = line['Title']
@@ -140,7 +144,11 @@ class DataLoader(object):
       for k in ['Street', 'City', 'State', 'Country']:
         d["address_" + k.lower()] = line["Primary Address %s" % k]
       lead = Lead(**d)
-      self.db.session.add(lead)
+
+      lead.creator_id = choice(self.users).uid
+      lead.owner_id = choice(self.users).uid
+
+    self.db.session.add(lead)
 
   def load_files(self, directory="dummy_files"):
     dir_path = os.path.join(os.path.dirname(__file__), directory)
@@ -153,13 +161,15 @@ class DataLoader(object):
       if fn.startswith("."):
         continue
 
-      g.user = choice(self.users)
       path = os.path.join(dir_path, fn)
       name = unicode(fn, errors="replace")
       data = open(path).read()
       mime_type = mimetypes.guess_type(fn)[0]
 
       f = File(name, data, mime_type)
+
+      f.creator_id = choice(self.users).uid
+      f.owner_id = choice(self.users).uid
 
       n_tags = random.randint(0, len(TAGS))
       tags = random.sample(TAGS, n_tags)

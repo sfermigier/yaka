@@ -9,6 +9,8 @@ from ..core.frontend import BreadCrumbs
 from ..services.image import crop_and_resize
 
 from .dm import File
+from yaka_crm.services.activity import ActivityEntry
+from yaka_crm.services.audit import AuditEntry
 
 
 users = Blueprint("users", __name__, url_prefix="/users")
@@ -27,6 +29,7 @@ def make_tabs(user):
     dict(id='profile', label='Profile', link=user._url + '?tab=profile'),
     dict(id='documents', label='Documents', link=user._url + '?tab=documents'),
     dict(id='images', label='Images', link=user._url + '?tab=images'),
+    dict(id='audit', label='Audit', link=user._url + '?tab=audit'),
   ]
 
 # Not a great idea (can't be used as a ** argument).
@@ -68,8 +71,14 @@ def user_view(user_id):
   e.tabs = make_tabs(user)
 
   if tab == "activity":
-    # TODO
-    e.activity_entries = []
+    # XXX quick & dirty
+    e.activity_entries =\
+        ActivityEntry.query.filter(ActivityEntry.actor_id == user.uid).limit(30).all()
+
+  elif tab == "audit":
+    # XXX quick & dirty
+    e.audit_entries =\
+        AuditEntry.query.filter(AuditEntry.user_id == user.uid).limit(30).all()
 
   elif tab in ("documents", "images"):
     files = File.query.filter(File.owner_id == user_id)

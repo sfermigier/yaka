@@ -9,7 +9,7 @@ test-with-coverage:
 	   	--cover-package=yaka_crm tests
 
 run: yaka_crm/yaka.db
-	$(PYTHON) manage.py runserver --host 0.0.0.0 --port 6000
+	$(PYTHON) manage.py runserver --host 0.0.0.0
 
 yaka_crm/yaka.db:
 	$(PYTHON) manage.py initdb
@@ -25,7 +25,9 @@ clean:
 	find . -name "*.pyc" | xargs rm -f
 	find . -name yaka.db | xargs rm -f
 	rm -f maxid.data
-	rm -rf data tests/data tmp tests/tmp cache tmp/cache
+	rm -rf data tests/data
+	rm -rf tmp tests/tmp
+	rm -rf cache tests/cache
 	rm -rf *.egg-info *.egg .coverage
 	rm -rf whoosh whoosh_indexes tests/whoosh tests/whoosh_indexes
 	rm -rf doc/_build

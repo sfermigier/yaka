@@ -1,5 +1,6 @@
 """Static configuration for the application.
 """
+from blinker.base import signal
 
 from flask import Flask
 

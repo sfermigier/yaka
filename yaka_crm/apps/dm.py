@@ -3,21 +3,19 @@
 Don't worry, it's just a prototype to test the architecture.
 Will be refactored later and included in the ESN.
 """
+
 import StringIO
 import traceback
 from urllib import quote
 from zipfile import ZipFile
-from flask.globals import g
-
 import os
 import hashlib
-
-from flask import Blueprint, render_template, redirect, request,\
-  make_response, flash, abort, json
 import re
 
-from flaskext.mail import Message
+from flask import Blueprint, render_template, redirect, request,\
+  make_response, flash, abort, json, g, current_app
 
+from flaskext.mail import Message
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
 
@@ -27,7 +25,8 @@ from ..core.frontend import add_to_recent_items
 
 from ..services.conversion import converter, ConversionError
 from ..services.audit import AuditEntry
-from ..services.image import resize, crop_and_resize
+from ..services.image import resize
+from ..extensions import signals
 
 
 ROOT = "/dm/"
@@ -195,6 +194,7 @@ def upload_new():
   else:
     f = create_file(fds[0])
     flash("One new file successfully uploaded", "success")
+
   db.session.commit()
 
   if len(fds) == 1:
@@ -220,8 +220,10 @@ def download_multiple():
 def delete_multiple():
   selected_ids = map(int, request.form.getlist("file-selected"))
   files = map(get_file, selected_ids)
+
   for f in files:
     db.session.delete(f)
+    signals.signal("log-activity").send(actor=g.user, verb="delete", object=f)
 
   db.session.commit()
   flash("%d file(s) successfully deleted." % len(files), "success")
@@ -237,6 +239,9 @@ def create_file(fd):
   f = File(name, fd.read(), fd.content_type)
 
   db.session.add(f)
+  self = current_app._get_current_object()
+  signals.signal("log-activity").send(self, actor=g.user, verb="post", object=f)
+
   return f
 
 
@@ -275,6 +280,7 @@ def upload_new_version(file_id):
   fd = request.files['file']
 
   f._update(fd.read(), fd.content_type)
+  signals.signal("log-activity").send(actor=g.user, verb="update", object=f)
   db.session.commit()
 
   flash("New version successfully uploaded", "success")
@@ -287,6 +293,9 @@ def tag_post(file_id):
   tags = request.form.get("tags")
 
   f.tags = tags
+
+  signals.signal("log-activity").send(actor=g.user, verb="tag", object=f)
+
   db.session.commit()
 
   flash("Tags successfully successfully updated", "success")
@@ -348,19 +357,6 @@ def preview(file_id):
 def upload_form():
   bc = [dict(path=ROOT, label="DM Home")]
   return render_template("dm/upload.html", breadcrumbs=bc)
-
-
-@dm.route("/upload", methods=['POST'])
-def upload_post():
-  fds = request.files.getlist('file')
-  print fds
-  result = []
-  for fd in fds:
-    result.append(dict(name=fd.filename))
-
-  resp = make_response(json.dumps(result))
-  resp.headers['Content-Type'] = "application/json"
-  return resp
 
 
 @dm.route("/<int:file_id>/send", methods=['POST'])

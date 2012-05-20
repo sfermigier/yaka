@@ -1,12 +1,103 @@
 {% extends "base.html" %}
 
-{% from "macros.html" import m_audit_log, m_breadcrumbs, m_files_table %}
+<!-- A few macro first -->
+
+{% from "macros.html" import m_breadcrumbs, m_files_table %}
+
+{% macro m_profile(user) %}
+<div class="row">
+  <div class="span8">
+    My profile.
+  </div>
+
+  <div class="span4">
+    <div class="well property-box" style="padding: 8px 0; background-color: white;">
+      <h4 style="padding: 3px 15px;">Groups</h4>
+
+      <ul class="property-list">
+        <li>
+            <a href=""> <img src="/static/img/tux45.png" class="">
+              GTLL</a> (90 members)
+        </li>
+        <li>
+          <a href=""> <img src="/static/img/ocds45.png" class="">
+            OCDS</a> (254 members)
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+{% endmacro %}
 
 {% macro m_activity(entries) %}
+{% for e in entries %}
+<p>{{ e.post }} on {{ e.object_id }}</p>
+{% endfor %}
 {% endmacro %}
 
 {% macro m_images(images) %}
+  <ul class="image-gallery">
+    {% for image in images %}
+      <li id="image-{{ image.uid }}"><a title="test" href="{{ image._url }}"><img src="{{ image._url }}/preview?size=100"></a></li>
+      <script>
+        $(document).ready(function() {
+          var id = "#image-{{ image.uid }}";
+          $(id).popover({
+            placement: "top",
+            html: true,
+            title: "{{ image.name }}",
+            content: function() {
+              return 'Uploaded on {{ image.created_at.strftime("%Y-%m-%d") }}';
+            }
+          });
+        });
+      </script>
+    {% endfor %}
+  </ul>
+  <div style="clear: both"></div>
 {% endmacro %}
+
+{% macro m_audit(entries) %}
+  <h3 class="main">Audit Log</h3>
+
+  <div style="margin-bottom: 25px;">
+    {% for entry in entries %}
+      {% if entry.type == 1 %}
+        <div>
+          <img src="{{ entry.user._url }}/mugshot?s=16">
+          <a href="{{ entry.user._url }}">{{ entry.user.name }}</a>
+          made changes on {{ entry.happened_at.strftime('%Y-%m-%d %H:%M') }}
+          to entity {{ entry.entity }}
+          <ul>
+            {% for key, (old_value, new_value) in entry.changes.items() %}
+              <li>
+                {% if old_value %}
+                  Field <b>{{ key }}</b> changed from <em>{{ old_value }}</em> to <em>{{ new_value }}</em>
+                {% else %}
+                  Field <b>{{ key }}</b> set to <em>{{ new_value }}</em>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% elif entry.type == 0 %}
+        <div>
+          <img src="{{ entry.user._url }}/mugshot?s=16">
+          <a href="{{ entry.user._url }}">{{ entry.user.name }}</a>
+          created a new {{ entry.entity.__class__.__name__ }},
+          <a href="{{ entry.entity._url }}">{{ entry.entity.name }}</a>,
+          on {{ entry.happened_at.strftime('%Y-%m-%d %H:%M') }}
+        </div>
+      {% elif entry.type == 2 %}
+        TODO: deletion.
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+<!-- Main stuff -->
 
 {% block container %}
   {{ m_breadcrumbs(breadcrumbs) }}
@@ -34,29 +125,17 @@
   {% if active_tab_id == 'activity' %}
     {{ m_activity(activity_entries) }}
 
+  {% elif active_tab_id == 'profile' %}
+    {{ m_profile(user) }}
+
   {% elif active_tab_id == 'documents' %}
     {{ m_files_table(documents) }}
 
   {% elif active_tab_id == 'images' %}
-    <ul class="image-gallery">
-      {% for image in images %}
-        <li id="image-{{ image.uid }}"><a title="test" href="{{ image._url }}"><img src="{{ image._url }}/preview?size=100"></a></li>
-        <script>
-          $(document).ready(function() {
-            var id = "#image-{{ image.uid }}";
-            $(id).popover({
-              placement: "top",
-              html: true,
-              title: "{{ image.name }}",
-              content: function() {
-                return 'Uploaded on {{ image.created_at.strftime("%Y-%m-%d") }}';
-              }
-          });
-          });
-        </script>
-      {% endfor %}
-    </ul>
-    <div style="clear: both"></div>
+    {{ m_images(images) }}
+
+  {% elif active_tab_id == 'audit' %}
+    {{ m_audit(audit_entries) }}
   {% endif %}
 
 {% endblock %}

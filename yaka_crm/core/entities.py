@@ -111,7 +111,10 @@ class Entity(AbstractConcreteBase, db.Model):
   def __init__(self, **kw):
     self.uid = id_gen.new()
     if hasattr(g, 'user'):
-      self.creator_id = self.owner_id = g.user.uid
+      if not self.creator_id:
+        self.creator_id = g.user.uid
+      if not self.owner_id:
+        self.owner_id = g.user.uid
     self.update(kw)
 
   def __repr__(self):
