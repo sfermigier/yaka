@@ -29,11 +29,13 @@ def before_request():
         user = User.query.get(user_id)
         g.user = user
       except:
-        abort(401, "Must authenticate")
-    elif request.path == '/login':
+        return redirect("/login", code=401)
+        #abort(401, "Must authenticate")
+    elif request.path == '/login' or request.path.startswith("/static/"):
       g.user = None
     else:
-      abort(401, "Must authenticate")
+      return redirect("/login", code=401)
+      #abort(401, "Must authenticate")
 
   g.modules = CRM.modules
   g.recent_items = session.get('recent_items', [])
@@ -50,32 +52,35 @@ def login_form():
 
 @app.route("/login", methods=['POST'])
 def login():
+  if 'user_id' in session:
+    del session['user_id']
+
   email = request.form.get('email')
   password = request.form.get('password')
-  err_msg = ""
+
+  if not email or not password:
+    err_msg = "You must provide your email and password."
+    return render_template("login.html", err_msg=err_msg), 401
 
   try:
     user = User.query.filter(User.email == email).one()
   except NoResultFound:
-    user = None
-    err_msg = "Sorry, we couldn't find an account for email %s." % email
+    err_msg = "Sorry, we couldn't find an account for email '%s'." % email
+    return render_template("login.html", err_msg=err_msg), 401
 
   # TODO: encrypt passwd
   if user and password != user.password:
-    user = None
     err_msg = "Sorry, wrong password."
-
-  if not user:
-    if 'user_id' in session:
-      del session['user_id']
     return render_template("login.html", err_msg=err_msg), 401
-  else:
-    session['user_id'] = user.uid
-    return redirect("/")
+
+  # Login successful
+  session['user_id'] = user.uid
+  return redirect("/")
 
 
 @app.route("/logout")
 def logout():
+  del session['user_id']
   return redirect("/login")
 
 

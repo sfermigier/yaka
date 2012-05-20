@@ -9,7 +9,7 @@ test-with-coverage:
 	   	--cover-package=yaka_crm tests
 
 run: yaka_crm/yaka.db
-	$(PYTHON) manage.py runserver --host 0.0.0.0
+	$(PYTHON) manage.py runserver --host 0.0.0.0 --port 6000
 
 yaka_crm/yaka.db:
 	$(PYTHON) manage.py initdb
