@@ -178,7 +178,7 @@ def upload_new():
     flash("%d new files successfully uploaded" % len(fds), "success")
   else:
     f = create_file(fds[0])
-    flash("One new file successfully uploaded" % len(fds), "success")
+    flash("One new file successfully uploaded", "success")
   db.session.commit()
 
   if len(fds) == 1:

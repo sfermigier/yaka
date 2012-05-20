@@ -72,6 +72,7 @@ class TestViews(TestCase):
     NAME = u'hello world.txt'
     data = {
       'file': (StringIO(CONTENT), NAME, 'text/plain'),
+      'action': 'upload',
     }
     response = self.client.post(ROOT, data=data)
     self.assert_302(response)
@@ -101,6 +102,7 @@ class TestViews(TestCase):
     NAME = u"onepage.pdf"
     data = {
       'file': (self.open_file(NAME), NAME, 'application/pdf'),
+      'action': 'upload',
     }
     response = self.client.post(ROOT, data=data)
     self.assert_302(response)
