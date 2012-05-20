@@ -51,14 +51,13 @@ On a VM
 
 2. Download a box:
 
-    vagrant box add precise64 http://files.vagrantup.com/precise64.box
+        vagrant box add precise64 http://files.vagrantup.com/precise64.box
 
 3. Use `fabric` and `vagrant` to run tests:
 
-    vagrant up
-    fab vagrant upgrade
-    fab vagrant setup
-    fab vagrant deploy
+        vagrant up
+        fab vagrant upgrade setup
+        fab vagrant push stage deploy
 
 
 Deploy
