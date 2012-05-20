@@ -93,7 +93,7 @@
           </div>
 
           <div class="btn-group pull-right">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i><span
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-filter"></i><span
                     class="caret"></span></a>
             <ul class="dropdown-menu" style="left: -300%;">
               <li><a href="#">All file types</a></li>
@@ -103,9 +103,8 @@
             </ul>
           </div>
           <div class="btn-group pull-right">
-            <button class="btn">1</button>
-            <button class="btn">2</button>
-            <button class="btn">3</button>
+            <button class="btn"><i class="icon-th-list"></i></button>
+            <button class="btn"><i class="icon-th-large"></i></button>
           </div>
         </div>
       {% endif %}
@@ -135,7 +134,7 @@
               <a href="{{ file.owner._url }}"><img src="{{ file.owner._url }}/mugshot?s=16" style="vertical-align: middle;">
                 {{ file.owner.name }}</a>
             </td>
-            <td>0</td>
+            <td>{{ file.created_at|age }}</td>
           </tr>
         {% endfor %}
         </tbody>
