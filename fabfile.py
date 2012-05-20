@@ -1,4 +1,5 @@
 from fabric.api import env, run, cd, local, put, sudo, task
+from fabric.context_managers import prefix
 
 APT_PREFIX = "DEBCONF_TERSE=yes DEBIAN_PRIORITY=critical DEBIAN_FRONTEND=noninteractive"
 
@@ -73,14 +74,27 @@ def deploy():
     run("env/bin/python setup.py develop")
     run("env/bin/pip install circus")
 
-    circus_ini = open("circus.ini").read()
-    circus_ini = circus_ini.replace("@@HOME@@", "/users/" + env.user)
-    with open("/tmp/circus.ini", "wc") as fd:
-      fd.write(circus_ini)
-    put("/tmp/circus.ini", "circus.ini")
+#    circus_ini = open("circus.ini").read()
+#    circus_ini = circus_ini.replace("@@HOME@@", "/users/" + env.user)
+#    with open("/tmp/circus.ini", "wc") as fd:
+#      fd.write(circus_ini)
+#    put("/tmp/circus.ini", "circus.ini")
+#
+#    run("if [ ! -e circus.pid ] ; then env/bin/circusd --daemon --pidfile circus.pid circus.ini; fi;")
+#    run("env/bin/circusctl reload")
 
-    run("if [ ! -e circus.pid ] ; then env/bin/circusd --daemon --pidfile circus.pid circus.ini; fi;")
-    run("env/bin/circusctl reload")
+
+@task
+def clean():
+  with cd(PRODUCTION_DIR):
+    run("make clean")
+
+
+@task(alias="run")
+def run_():
+  with cd(PRODUCTION_DIR):
+    with prefix(". env/bin/activate"):
+      run("make run")
 
 
 @task(default=True)
@@ -88,4 +102,5 @@ def default():
   push()
   stage()
   deploy()
+  run_()
 
