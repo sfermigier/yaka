@@ -6,7 +6,5 @@ admin = Blueprint("admin", __name__, url_prefix="/admin")
 
 @admin.route("/")
 def admin_home():
-  bc = BreadCrumbs()
-  bc.add("/", "Home")
-  bc.add("/admin", "Admin")
+  bc = BreadCrumbs([('/', "Home"), ('/admin/', 'Admin')])
   return render_template("admin.html", breadcrumbs=bc)

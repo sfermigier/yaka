@@ -147,10 +147,10 @@ def test():
 @app.route("/")
 def home():
   """Home page."""
-  # TODO: dashboard
-  return "OK"
+  return redirect("/social/")
 
 
+# Hackish home page for the CRM apps. TODO: redefine & refactor.
 @app.route("/crm/")
 def crm_home():
   bc = BreadCrumbs([('/', "Home"), ('/crm/', 'CRM')])

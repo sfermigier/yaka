@@ -188,7 +188,7 @@ class Converter(object):
       for line in output.split("\n"):
         if ":" in line:
           key, value = line.strip().split(":", 1)
-          ret["PDF:" + key] = value.strip()
+          ret["PDF:" + key] = unicode(value.strip(), errors="replace")
       return ret
 
     return {}
@@ -245,7 +245,7 @@ class PdfToTextHandler(Handler):
     converted = open(out_fn).read()
 
     encoding = encoding_sniffer.from_file(out_fn)
-    if encoding == "binary":
+    if encoding in ("binary", None):
       encoding = "ascii"
     try:
       converted_unicode = unicode(converted, encoding, errors="ignore")

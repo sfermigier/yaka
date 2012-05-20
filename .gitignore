@@ -11,6 +11,8 @@ cache
 dist
 tests/cache
 tests/tmp
+tests/extra_files
+maxid.data
 
 *.pyc
 *.egg-info

@@ -38,7 +38,6 @@ class IdGenerator(object):
       self.current += 1
       with open("maxid.data", "wc") as fd:
         fd.write(str(self.current))
-      print self.current
     return self.current
 
 
@@ -117,7 +116,10 @@ class Entity(AbstractConcreteBase, db.Model):
 
   def __repr__(self):
     if hasattr(self, 'name'):
-      name = self.name
+      if isinstance(self.name, unicode):
+        name = self.name.encode("ascii", errors="ignore")
+      else:
+        name = self.name
     else:
       name = "with id=%s" % self.uid
     return "<%s %s>" % (self.__class__.__name__, name)

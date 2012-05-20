@@ -1,7 +1,10 @@
 import csv
 import mimetypes
+from random import choice
 import os.path
 import datetime
+
+from flask import g
 
 from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
 from yaka_crm.apps.dm import File
@@ -33,34 +36,41 @@ class DataLoader(object):
   def __init__(self, db):
     self.db = db
     self.accounts_map = {}
+    self.users = []
 
   def load_data(self):
-    self.init_users()
+    self.load_users()
     self.db.session.commit()
-
-    from flask import g
-    g.user = User.query.all()[0]
 
     self.load_accounts()
     self.load_contacts()
     self.load_opportunities()
     self.load_leads()
 
-    self.load_files()
+    self.load_files("dummy_files")
+    self.load_files("extra_files")
 
     self.db.session.commit()
 
-  def init_users(self):
-    user1 = User(first_name="Stefane", last_name="Fermigier",
-                 email="sf@example.com", password="admin",
-                 job_title="Founder")
-    photo_path = os.path.join(os.path.dirname(__file__), "dummy_files", "mugshot.jpg")
-    user1.photo = open(photo_path).read()
-    self.db.session.add(user1)
+  def load_users(self):
+    reader = self.get_reader("Users.csv")
+    for line in reader:
+      d = {}
+      for col in ['first_name', 'last_name', 'email', 'password', 'job_title']:
+        d[col] = line[col]
+
+      user = User(**d)
+      photo_path = os.path.join(os.path.dirname(__file__),
+                                "user_photos",
+                                d['last_name'].lower() + ".jpg")
+      user.photo = open(photo_path).read()
+      self.db.session.add(user)
+      self.users.append(user)
 
   def load_accounts(self):
     reader = self.get_reader("Accounts.csv")
     for line in reader:
+      g.user = choice(self.users)
       d = {}
       for col in ['Name', 'Website', 'Office Phone', 'Type', 'Industry']:
         d[col.lower().replace(" ", "_")] = line[col]
@@ -75,6 +85,7 @@ class DataLoader(object):
   def load_contacts(self):
     reader = self.get_reader("Contacts.csv")
     for line in reader:
+      g.user = choice(self.users)
       d = {}
       d['email'] = line['Email Address']
       d['job_title'] = line['Title']
@@ -95,6 +106,7 @@ class DataLoader(object):
   def load_opportunities(self):
     reader = self.get_reader("Opportunities.csv")
     for line in reader:
+      g.user = choice(self.users)
       d = {}
       for col in ['Name', 'Description', 'Type']:
         d[col.lower().replace(" ", "_")] = line[col]
@@ -115,6 +127,7 @@ class DataLoader(object):
   def load_leads(self):
     reader = self.get_reader("Leads.csv")
     for line in reader:
+      g.user = choice(self.users)
       d = {}
       d['email'] = line['Email Address']
       d['job_title'] = line['Title']
@@ -126,22 +139,30 @@ class DataLoader(object):
       lead = Lead(**d)
       self.db.session.add(lead)
 
-  def load_files(self):
-    dir_path = os.path.join(os.path.dirname(__file__), "dummy_files")
+  def load_files(self, directory):
+    dir_path = os.path.join(os.path.dirname(__file__), directory)
+    if not os.path.isdir(dir_path):
+      print "Skipping non-existing dir", directory
+      return
+
     file_names = os.listdir(dir_path)
     for fn in file_names:
       if fn.startswith("."):
         continue
 
+      print fn
+
+      g.user = choice(self.users)
       path = os.path.join(dir_path, fn)
-      name = unicode(fn)
+      name = unicode(fn, errors="replace")
       data = open(path).read()
       mime_type = mimetypes.guess_type(fn)[0]
 
       f = File(name, data, mime_type)
       self.db.session.add(f)
 
-  # Utilities
+
+# Utilities
   @staticmethod
   def get_reader(filename):
     path = os.path.join(os.path.dirname(__file__), "dummy_data", filename)
