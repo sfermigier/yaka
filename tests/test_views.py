@@ -101,7 +101,7 @@ class TestFilters(unittest.TestCase):
     now = datetime.datetime(2012, 6, 10, 10, 10, 10)
 
     dt = datetime.datetime(2012, 6, 10, 10, 10, 0)
-    eq_("2012-06-10 10:10 (a few seconds ago)", date_age(dt, now))
+    eq_("2012-06-10 10:10 (a minute ago)", date_age(dt, now))
 
     dt = datetime.datetime(2012, 6, 10, 10, 8, 10)
     eq_("2012-06-10 10:08 (2 minutes ago)", date_age(dt, now))

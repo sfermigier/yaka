@@ -1,3 +1,23 @@
+/* override */
+.property-box .nav > li > a {
+    display: inline;
+    background-color: white;
+}
+
+.property-list {
+    padding-left: 14px;
+    padding-right: 14px;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-bottom: 18px;
+    list-style: none;
+}
+
+.property-list li {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 /* image-gallery in user.html */
 
 ul.image-gallery {
