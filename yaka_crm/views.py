@@ -177,7 +177,7 @@ def crm_home():
 @app.route("/help/")
 def help():
   # TODO: help
-  return "HELP"
+  return render_template('help.html')
 
 
 @app.errorhandler(404)

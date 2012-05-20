@@ -70,13 +70,14 @@
             { asSorting: [ "asc", "desc" ] },
             { asSorting: [ "asc", "desc" ] }
           ],
+          sPaginationType: "bootstrap",
           bFilter:       false,
           bLengthChange: false
         });
       });
     </script>
 
-    <form style="margin-bottom: 0;">
+    <form style="margin-bottom: 0;" method="POST">
 
       {% if edit %}
         <div class="btn-toolbar" style="margin-bottom: 0;">
@@ -86,11 +87,26 @@
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="">All</a></li>
-              <li><a href="">All</a></li>
+              <li><a href="">Select this page (20)</a></li>
+              <li><a href="">Select all</a></li>
               <!-- dropdown menu links -->
             </ul>
           </div>
+
+          <div class="btn-group" style="margin-left: 20px;">
+            <button class="btn" name="action" value="download"><i class="icon-download"></i></button>
+            <button class="btn" name="action" value="send"><i class="icon-envelope"></i></button>
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i><span
+                    class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">More...</a></li>
+            </ul>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-danger" name="action" value="delete"><i class="icon-trash"></i></button>
+          </div>
+
 
           <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-filter"></i><span
@@ -122,7 +138,7 @@
         <tbody>
         {% for file in files %}
           <tr>
-            <td><input type="checkbox"></td>
+            <td><input type="checkbox" name="file-selected" value="{{ file.uid }}"></td>
             <td>
               <img src="{{ file.icon }}" style="vertical-align: middle;">
               <a href="{{ file.url }}">{{ file.name }}</a>

@@ -3,8 +3,10 @@
 Don't worry, it's just a prototype to test the architecture.
 Will be refactored later and included in the ESN.
 """
+import StringIO
 import traceback
 from urllib import quote
+from zipfile import ZipFile
 from flask.globals import g
 
 import os
@@ -153,22 +155,62 @@ def home():
 
 
 @dm.route("/", methods=['POST'])
+def home_post():
+  action = request.form.get("action")
+
+  if action == 'upload':
+    return upload_new()
+
+  if action == 'download':
+    return download_multiple()
+  elif action == 'delete':
+    return delete_multiple()
+  else:
+    return home()
+
+
 def upload_new():
   fds = request.files.getlist('file')
   if len(fds) > 1:
     for fd in fds:
       create_file(fd)
     f = None
+    flash("%d new files successfully uploaded" % len(fds), "success")
   else:
     f = create_file(fds[0])
+    flash("One new file successfully uploaded" % len(fds), "success")
   db.session.commit()
-
-  flash("%d files successfully uploaded" % len(fds), "success")
 
   if len(fds) == 1:
     return redirect(ROOT + "%d" % f.uid)
   else:
     return redirect(ROOT)
+
+
+def download_multiple():
+  selected_ids = map(int, request.form.getlist("file-selected"))
+  files = map(get_file, selected_ids)
+
+  zip_fd = StringIO.StringIO()
+  with ZipFile(zip_fd, "w") as zipfile:
+    for f in files:
+      zipfile.writestr(f.name, f.data)
+
+  response = make_response(zip_fd.getvalue())
+  response.headers['content-type'] = "application/zip"
+  return response
+
+
+def delete_multiple():
+  selected_ids = map(int, request.form.getlist("file-selected"))
+  files = map(get_file, selected_ids)
+  for f in files:
+    db.session.delete(f)
+
+  db.session.commit()
+  flash("%d file(s) successfully deleted." % len(files), "success")
+
+  return redirect(ROOT)
 
 
 def create_file(fd):
@@ -200,7 +242,7 @@ def view(file_id):
 
 
 @dm.route("/<int:file_id>/delete", methods=['POST'])
-def delete(file_id):
+def delete_file(file_id):
   f = get_file(file_id)
 
   db.session.delete(f)
