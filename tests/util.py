@@ -1,6 +1,7 @@
 import csv
 import mimetypes
 from random import choice
+import random
 import os.path
 import datetime
 
@@ -8,6 +9,8 @@ from flask import g
 
 from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
 from yaka_crm.apps.dm import File
+
+TAGS = ["GTLL", "OCDS", "GIE", "BE", "FUI14", "FUI15", "Ambition PME"]
 
 
 def init_data(db):
@@ -157,6 +160,11 @@ class DataLoader(object):
       mime_type = mimetypes.guess_type(fn)[0]
 
       f = File(name, data, mime_type)
+
+      n_tags = random.randint(0, len(TAGS))
+      tags = random.sample(TAGS, n_tags)
+      f.tags = u",".join(tags)
+
       self.db.session.add(f)
 
 

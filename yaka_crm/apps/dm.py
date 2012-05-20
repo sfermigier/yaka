@@ -149,9 +149,25 @@ class File(Entity):
 #
 @dm.route("/")
 def home():
-  bc = [dict(path="/dm/", label="DM Home")]
+  bc = [dict(path="/", label="Home"), dict(path="/dm/", label="DM")]
   files = list(File.query.all())
-  return render_template("dm/home.html", breadcrumbs=bc, files=files)
+  title = "All your files"
+  return render_template("dm/home.html", title=title, breadcrumbs=bc, files=files)
+
+
+@dm.route("/tag")
+def tag():
+  tag = request.args.get("tag")
+  if not tag:
+    return redirect("/dm/")
+
+  bc = [dict(path="/", label="Home"), dict(path="/dm/", label="DM")]
+  bc += [dict(path=request.path, label="Filter by tag")]
+  files = File.query.filter(File.tags.like("%" + tag + "%"))
+  files = list(files.all())
+  files = [f for f in files if tag in f.tags.split(",")]
+  title = "Files filtered by tag: %s" % tag
+  return render_template("dm/home.html", title=title, breadcrumbs=bc, files=files)
 
 
 @dm.route("/", methods=['POST'])
@@ -233,7 +249,7 @@ def view(file_id):
   else:
     add_to_recent_items(f, "document")
 
-  bc = [dict(path=ROOT, label="DM Home")]
+  bc = [dict(path="/", label="Home"), dict(path="/dm/", label="DM")]
   bc.append(dict(label=f.name))
 
   # FIXME: too intimate
@@ -262,6 +278,18 @@ def upload_new_version(file_id):
   db.session.commit()
 
   flash("New version successfully uploaded", "success")
+  return redirect(ROOT + "%d" % f.uid)
+
+
+@dm.route("/<int:file_id>/tag", methods=['POST'])
+def tag_post(file_id):
+  f = get_file(file_id)
+  tags = request.form.get("tags")
+
+  f.tags = tags
+  db.session.commit()
+
+  flash("Tags successfully successfully updated", "success")
   return redirect(ROOT + "%d" % f.uid)
 
 

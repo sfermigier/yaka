@@ -50,9 +50,10 @@
       <h3 class="main">Tags</h3>
 
       <div>
-        <p>
-          <input class="tagbox" value="{{ file.tags }}">
-        </p>
+        <form action="/dm/{{ file.uid }}/tag" method="POST">
+          <input class="tagbox" name="tags" value="{{ file.tags }}">
+          <input type="submit" class="btn-primary">
+        </form>
       </div>
 
       <h3 class="main">Dates</h3>
@@ -117,6 +118,18 @@
       </ul>
     </div>
 
+    <div class="well property-box" style="padding: 8px 0; background-color: white;">
+      <h4 style="padding: 3px 15px;">Tags</h4>
+
+      <ul class="property-list"><li>
+      {% for tag in file.tags.split(",") %}
+        <a href="/dm/tag?tag={{ tag }}">{{ tag }}</a>
+        &nbsp;&nbsp;
+      {% else %}
+        No tag.
+      {% endfor %}
+      </li></ul>
+    </div>
   </div>
 
 
