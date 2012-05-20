@@ -50,6 +50,10 @@ from .services.audit import AuditService
 audit_service = AuditService(start=True)
 app.extensions['audit'] = audit_service
 
+from .services.activity import ActivityService
+activity_service = ActivityService()
+app.extensions['activity'] = activity_service
+
 # TODO: remove
 for cls in all_entity_classes:
   index_service.register_class(cls)

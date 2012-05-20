@@ -1,4 +1,9 @@
-/* override */
+/* mugshot on top */
+.navbar .nav > li > a {
+    padding-bottom: 6px;
+}
+
+/* My own (ugly) boxes */
 .property-box .nav > li > a {
     display: inline;
     background-color: white;

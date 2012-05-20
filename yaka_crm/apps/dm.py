@@ -290,6 +290,7 @@ def tag_post(file_id):
   db.session.commit()
 
   flash("Tags successfully successfully updated", "success")
+
   return redirect(ROOT + "%d" % f.uid)
 
 

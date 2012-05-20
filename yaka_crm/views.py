@@ -1,118 +1,46 @@
 from flask import render_template, session, request
 from flask.globals import g
 from sqlalchemy.orm.exc import NoResultFound
+from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from . import app
 from .entities import *
 from .frontend import CRM
 
-from datetime import datetime
 from yaka_crm.core.frontend import TableView, BreadCrumbs
 from yaka_crm.frontend import Contacts, Opportunities, Leads, Accounts
 
+import filters #don't remove
 
 __all__ = []
 
 
 @app.before_request
 def before_request():
-  # FIXME: temp hack
-  g.user = User.query.all()[0]
+  # TODO remove when tests pass
+  if app.config.get("UNSAFE", False):
+    g.user = User.query.all()[0]
+
+  else:
+    user_id = session.get("user_id")
+    if user_id:
+      try:
+        user = User.query.get(user_id)
+        g.user = user
+      except:
+        abort(401, "Must authenticate")
+    elif request.path == '/login':
+      g.user = None
+    else:
+      abort(401, "Must authenticate")
+
   g.modules = CRM.modules
   g.recent_items = session.get('recent_items', [])
 
 
-@app.template_filter('labelize')
-def labelize(s):
-  return " ".join([ w.capitalize() for w in s.split("_") ])
-
-
-@app.template_filter('filesize')
-def filesize(d):
-  if d < 1000:
-    return "%d B" % d
-
-  if d < 1e4:
-    return "%.1f kB" % (d / 1e3)
-  if d < 1e6:
-    return "%.0f kB" % (d / 1e3)
-
-  if d < 1e7:
-    return "%.1f MB" % (d / 1e6)
-  if d < 1e9:
-    return "%.0f MB" % (d / 1e6)
-
-  if d < 1e10:
-    return "%.1f GB" % (d / 1e9)
-
-  return "%.0f GB" % (d / 1e9)
-
-
-@app.template_filter('age')
-def age(dt, now=None):
-  # Fail silently for now XXX
-  if not dt:
-    return ""
-
-  if not now:
-    now = datetime.utcnow()
-
-  age = now - dt
-  if age.days == 0:
-    if age.seconds < 120:
-      age_str = "a minute ago"
-    elif age.seconds < 3600:
-      age_str = "%d minutes ago" % (age.seconds / 60)
-    elif age.seconds < 7200:
-      age_str = "an hour ago"
-    else:
-      age_str = "%d hours ago" % (age.seconds / 3600)
-  else:
-    if age.days == 1:
-      age_str = "yesterday"
-    elif age.days <= 31:
-      age_str = "%d days ago" % age.days
-    elif age.days <= 72:
-      age_str = "a month ago"
-    elif age.days <= 365:
-      age_str = "%d months ago" % (age.days / 30)
-    else:
-      age_str = "%d years ago" % (age.days / 365)
-
-  return age_str
-
-
-@app.template_filter('date_age')
-def date_age(dt, now=None):
-  # Fail silently for now XXX
-  if not dt:
-    return ""
-  age_str = age(dt, now)
-  return "%s (%s)" % (dt.strftime("%Y-%m-%d %H:%M"), age_str)
-
-
-@app.template_filter('abbrev')
-def abbrev(s, max_size):
-  if len(s) <= max_size:
-    return s
-  else:
-    h = max_size / 2 - 1
-    return s[0:h] + "..." + s[-h:]
-
-
-#  user_id = session.get("user_id")
-#  if user_id:
-#    try:
-#      user = User.query.get(user_id)
-#      g.user = user
-#    except:
-#      abort(401, "Must authenticate")
-#  else:
-#    g.user = None
-
 #
-# Navigation
+# Authentication
 #
 @app.route("/login")
 def login_form():
@@ -146,6 +74,14 @@ def login():
     return redirect("/")
 
 
+@app.route("/logout")
+def logout():
+  return redirect("/login")
+
+
+#
+# Basic navigation
+#
 @app.route("/test")
 def test():
   return "BAD", 401

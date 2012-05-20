@@ -26,6 +26,7 @@ class TestViews(TestCase):
 
   def create_app(self):
     app.config.from_object(TestConfig())
+    app.config['UNSAFE'] = True
     return app
 
   def setUp(self):

@@ -15,13 +15,14 @@ from yaka_crm import app, db
 import re
 
 from yaka_crm import views # Don't remove
-from yaka_crm.views import filesize, date_age
+from yaka_crm.filters import filesize, date_age
 
 
 class TestViews(TestCase):
 
   def create_app(self):
     app.config.from_object(TestConfig())
+    app.config['UNSAFE'] = True
     return app
 
   def setUp(self):

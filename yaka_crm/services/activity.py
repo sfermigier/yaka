@@ -23,7 +23,7 @@ class ActivityEntry(db.Model):
 
   verb = Column(Text)
 
-  actor_id = Column(Integer, ForeignKey(User.id))
+  actor_id = Column(Integer, ForeignKey(User.uid))
 
   object_class = Column(Text)
   object_id = Column(Integer)
@@ -62,3 +62,4 @@ class ActivityService(object):
   @staticmethod
   def entries_for(entity):
     return ActivityEntry.query.filter(ActivityEntry.entity_id == entity.uid).all()
+
