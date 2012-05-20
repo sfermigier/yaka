@@ -1,5 +1,5 @@
 first_name,last_name,email,password,job_title
-Stefane,Fermigier,sf@example.com,toto,Founder
-Coconut,Octopus,test@example.com,toto,CFO
-Red Eyed,Frog,toto@exampe.com,toto,CTO
-Bald,Eagle,titi@example.com,toto,VP Sales
+Stefane,Fermigier,fermigier@example.com,toto,Founder
+Coconut,Octopus,octopus@example.com,toto,CFO
+Red Eyed,Frog,frog@example.com,toto,CTO
+Bald,Eagle,eagle@example.com,toto,VP Sales

@@ -5,7 +5,7 @@ import fix_path
 
 import unittest
 from flaskext.testing import TestCase
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 
 from util import init_data
 from config import TestConfig
@@ -38,7 +38,7 @@ class TestViews(TestCase):
 
   def test_home(self):
     response = self.client.get("/")
-    self.assert_200(response)
+    ok_(response.status_code in [200, 302])
 
   def test_admin(self):
     response = self.client.get("/admin/")

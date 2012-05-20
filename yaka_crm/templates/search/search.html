@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% from "search/macros.html" import left_column %}
+
 {% macro m_table(objects, columns) %}
   {% set table_id = objects[0].uid %}
   <script>
@@ -52,30 +54,41 @@
 
 
 {% block container %}
-  <h2>Search results for query "{{ query_string }}"</h2>
+  <div class="row">
 
-  {% if not documents and not res %}
-    Your query didn't find any results.
-  {% endif %}
+    <div class="span3">
+      {{ left_column() }}
+      ...
+    </div>
 
-  {% if documents %}
-    {% if documents|count > 1 %}
-      <h3 style="margin-top: 20px;">Documents ({{ documents|count }} matches)</h3>
-    {% else %}
-      <h3 style="margin-top: 20px;">Documents (1 match)</h3>
-    {% endif %}
+    <div class="span9">
+      <h2>Search results for query "{{ query_string }}"</h2>
 
-    {% for obj, hit, snippet in documents %}
-      <p>
-        <strong><a href="{{obj.url}}">{{ obj.name }}</a></strong><br>
-        {{ snippet }}<br>
-        Created by <a href="{{ obj.creator._url }}">{{ obj.creator }}</a>. </p>
-    {% endfor %}
+      {% if not documents and not res %}
+        Your query didn't find any results.
+      {% endif %}
 
-  {% endif %}
+      {% if documents %}
+        {% if documents|count > 1 %}
+          <h3 style="margin-top: 20px;">Documents ({{ documents|count }} matches)</h3>
+        {% else %}
+          <h3 style="margin-top: 20px;">Documents (1 match)</h3>
+        {% endif %}
 
-  {% for plural, objects, columns in res %}
-    {{ render(plural, objects, columns) }}
-  {% endfor %}
+        {% for obj, hit, snippet in documents %}
+          <p>
+            <strong><a href="{{obj.url}}">{{ obj.name }}</a></strong><br>
+            {{ snippet }}<br>
+            Created by <a href="{{ obj.creator._url }}">{{ obj.creator }}</a>. </p>
+        {% endfor %}
+
+      {% endif %}
+
+      {% for plural, objects, columns in res %}
+        {{ render(plural, objects, columns) }}
+      {% endfor %}
+
+    </div>
+  </div>
 
 {% endblock %}

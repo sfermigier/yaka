@@ -139,7 +139,7 @@ class DataLoader(object):
       lead = Lead(**d)
       self.db.session.add(lead)
 
-  def load_files(self, directory):
+  def load_files(self, directory="dummy_files"):
     dir_path = os.path.join(os.path.dirname(__file__), directory)
     if not os.path.isdir(dir_path):
       print "Skipping non-existing dir", directory
@@ -149,8 +149,6 @@ class DataLoader(object):
     for fn in file_names:
       if fn.startswith("."):
         continue
-
-      print fn
 
       g.user = choice(self.users)
       path = os.path.join(dir_path, fn)

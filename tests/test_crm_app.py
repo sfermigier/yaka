@@ -35,11 +35,7 @@ class TestViews(TestCase):
 
 
   def test_home(self):
-    response = self.client.get("/")
-    self.assert_200(response)
-
-  def test_admin(self):
-    response = self.client.get("/admin/")
+    response = self.client.get("/crm/")
     self.assert_200(response)
 
   def test_accounts(self):

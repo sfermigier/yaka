@@ -53,6 +53,7 @@ class TestViews(TestCase):
 
   def test_preview(self):
     loader = DataLoader(db)
+    loader.load_users()
     loader.load_files()
     db.session.commit()
 
