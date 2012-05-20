@@ -47,6 +47,15 @@ id_gen = IdGenerator()
 system = dict(editable=False, auditable=False)
 
 
+# Special case for "unowned" object? Maybe not. XXX.
+class DummyUser(object):
+  name = "Nobody"
+  _url = ""
+  photo = ""
+
+nobody = DummyUser()
+
+
 class Entity(AbstractConcreteBase, db.Model):
   """Base class for Yaka entities."""
 
@@ -82,12 +91,18 @@ class Entity(AbstractConcreteBase, db.Model):
   @property
   def creator(self):
     from ..entities import User
-    return User.query.get(self.creator_id)
+    if self.creator_id:
+      return User.query.get(self.creator_id)
+    else:
+      return nobody
 
   @property
   def owner(self):
     from ..entities import User
-    return User.query.get(self.owner_id)
+    if self.owner_id:
+      return User.query.get(self.owner_id)
+    else:
+      return nobody
 
   # Should not be necessary
   __editable__ = set()
