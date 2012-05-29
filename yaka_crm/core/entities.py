@@ -55,6 +55,10 @@ class DummyUser(object):
 nobody = DummyUser()
 
 
+# Cache to speed up demos. TODO: remove later.
+user_cache = {} 
+
+
 class Entity(AbstractConcreteBase, db.Model):
   """Base class for Yaka entities."""
 
@@ -91,7 +95,12 @@ class Entity(AbstractConcreteBase, db.Model):
   def creator(self):
     from ..entities import User
     if self.creator_id:
-      return User.query.get(self.creator_id)
+      if self.creator_id in user_cache:
+        return user_cache[self.creator_id]
+      else:
+        user = User.query.get(self.creator_id)
+        user_cache[self.creator_id] = user
+        return user
     else:
       return nobody
 
@@ -99,7 +108,12 @@ class Entity(AbstractConcreteBase, db.Model):
   def owner(self):
     from ..entities import User
     if self.owner_id:
-      return User.query.get(self.owner_id)
+      if self.owner_id in user_cache:
+        return user_cache[self.owner_id]
+      else:
+        user = User.query.get(self.owner_id)
+        user_cache[self.owner_id] = user
+        return user
     else:
       return nobody
 

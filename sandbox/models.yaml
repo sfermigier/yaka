@@ -1,0 +1,94 @@
+# Models
+---
+Person:
+  abstract: true
+  structure:
+    salutation: {unicode}
+    first_name: {unicode, searchable}
+    last_name: {unicode, searchable}
+    job_title: {unicode, searchable}
+    department: {unicode, searchable}
+    email: {email}
+    phone: {phone}
+    description: {unicode, searchable}
+    photo: {blob}
+
+Addressable:
+  abstract: true
+  # TODO: add constraints
+  structure:
+    street: unicode
+    city: unicode
+    state: unicode
+    country: unicode
+
+class Account:
+  extends: Addressable
+  structure:
+    name: {unicode, searchable}
+    website: url
+    office_phone: phone
+    type: unicode
+    industry: unicode
+    logo: blob
+
+  relationhips:
+    contacts: Contact
+    opportunities: Opportunity
+
+Contact:
+  extends: Addressable, Person
+
+
+# Etc.
+
+#class Contact(Addressable, Person, Entity):
+#  __tablename__ = 'contact'
+#
+#  account_id = Column(Integer, ForeignKey(Account.uid), nullable=True)
+#
+#
+#class Opportunity(Entity):
+#  __tablename__ = 'opportunity'
+#
+#  name = Column(UnicodeText, nullable=False, info=searchable)
+#  description = Column(UnicodeText, default=u"", info=searchable)
+#
+#  type = Column(UnicodeText, default=u"")
+#  stage = Column(UnicodeText, default=u"")
+#  amount = Column(Integer)
+#  probability = Column(Integer)
+#  close_date = Column(Date)
+#
+#  account_id = Column(Integer, ForeignKey(Account.uid), nullable=False)
+#
+#
+#class Lead(Addressable, Person, Entity):
+#  __tablename__ = 'lead'
+#
+#  account_name = Column(UnicodeText, default=u"")
+#  lead_status = Column(UnicodeText, default=u"")
+#
+#
+#class Document(Entity):
+#  __tablename__ = 'document'
+#
+#  blob = Column(LargeBinary)
+#
+#
+#class User(Person, Entity):
+#  __tablename__ = 'user'
+#
+#  password = Column(UnicodeText, nullable=False)
+#
+#  def __unicode__(self):
+#    return self.name
+#
+#  # Should entities know about their own URL? I guess yes.
+#  @property
+#  def _url(self):
+#    return "/users/%d" % self.uid
+#
+#
+## TODO: Task
+## TODO: Activity

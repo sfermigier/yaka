@@ -1,0 +1,41 @@
+{% extends "base.html" %}{% from "macros.html" import m_recent_items %}
+
+{% block container %}
+
+  <div class="row">
+    <div class="span2">
+
+      {{ m_recent_items(g.recent_items) }}
+
+    </div>
+    <!-- /span2 -->
+
+    <div class="span10">
+
+      <ul class="breadcrumb">
+        {% for obj in breadcrumbs[0:-1] %}
+          <li><a href="{{ obj.path }}">{{ obj.label }}</a>
+            <span class="divider">/</span></li>
+        {% endfor %}
+        <li class="active"><strong>{{ breadcrumbs[-1].label }}</strong></li>
+      </ul>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-block alert-{{category}}">
+              <a class="close" data-dismiss="alert">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block main %}
+      {% endblock %}
+    </div>
+    <!--/span-->
+  </div>
+  <!--/row-->
+
+{% endblock %}

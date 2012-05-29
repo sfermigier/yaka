@@ -48,4 +48,3 @@ def home():
   e = Env()
   e.bread_crumbs = make_bread_crumbs()
   return render_template("social/home.html", **e._d)
-

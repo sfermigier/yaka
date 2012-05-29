@@ -19,14 +19,14 @@ from flaskext.mail import Message
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
 
-from ..extensions import db, mail
+from ..extensions import db, mail, signals
+
 from ..core.entities import Entity, Column
 from ..core.frontend import add_to_recent_items
 
 from ..services.conversion import converter, ConversionError
 from ..services.audit import AuditEntry
 from ..services.image import resize
-from ..extensions import signals
 
 
 ROOT = "/dm/"

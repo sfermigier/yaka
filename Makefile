@@ -41,3 +41,6 @@ start-vagrant:
 
 push:
 	rsync -e ssh -avz ./ $(TARGET)
+
+push-code:
+	rsync -e ssh -avz ./yaka_crm $(TARGET)/

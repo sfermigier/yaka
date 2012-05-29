@@ -106,3 +106,12 @@ def mugshot(user_id):
   response = make_response(data)
   response.headers['content-type'] = 'image/jpeg'
   return response
+
+
+@users.route("/groups/")
+def groups_home():
+  e = Env()
+  e.bread_crumbs = make_bread_crumbs()
+  e.users = User.query.all()
+  return render_template("users/groups.html", **e._d)
+
