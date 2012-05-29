@@ -5,8 +5,6 @@ import random
 import os.path
 import datetime
 
-from flask import g
-
 from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
 from yaka_crm.apps.dm import File
 
@@ -25,7 +23,7 @@ def init_data(db):
   contact2 = Contact(first_name="Paul", last_name="Dupont", email="paul@example.com")
 
   user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
-  photo_path = os.path.join(os.path.dirname(__file__), "dummy_files", "mugshot.jpg")
+  photo_path = os.path.join(os.path.dirname(__file__), "..", "dummy_files", "mugshot.jpg")
   user1.photo = open(photo_path).read()
 
   db.session.add(contact1)
@@ -64,7 +62,7 @@ class DataLoader(object):
 
       user = User(**d)
       photo_path = os.path.join(os.path.dirname(__file__),
-                                "user_photos",
+                                "..", "user_photos",
                                 d['last_name'].lower() + ".jpg")
       user.photo = open(photo_path).read()
       self.db.session.add(user)
@@ -181,7 +179,7 @@ class DataLoader(object):
 # Utilities
   @staticmethod
   def get_reader(filename):
-    path = os.path.join(os.path.dirname(__file__), "dummy_data", filename)
+    path = os.path.join(os.path.dirname(__file__), "..", "dummy_data", filename)
     return csv.DictReader(open(path))
 
   @staticmethod

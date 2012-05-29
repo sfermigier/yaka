@@ -134,7 +134,7 @@ class TestViews(TestCase):
 
   @staticmethod
   def open_file(filename):
-    path = os.path.join(os.path.dirname(__file__), "dummy_files", filename)
+    path = os.path.join(os.path.dirname(__file__), "..", "dummy_files", filename)
     return open(path)
 
 

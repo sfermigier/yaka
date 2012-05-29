@@ -4,9 +4,16 @@ TARGET=yaka@oss4cloud.org:yaka-crm/production/
 test:
 	$(PYTHON) -m nose.core tests
 
+unit:
+	$(PYTHON) -m nose.core tests/unit
+
 test-with-coverage:
 	$(PYTHON) -m nose.core --with-coverage --cover-erase \
 	   	--cover-package=yaka_crm tests
+
+unit-with-coverage:
+	$(PYTHON) -m nose.core --with-coverage --cover-erase \
+	   	--cover-package=yaka_crm tests/unit
 
 run: yaka_crm/yaka.db
 	$(PYTHON) manage.py runserver --host 0.0.0.0

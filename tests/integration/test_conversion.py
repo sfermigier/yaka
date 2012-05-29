@@ -9,8 +9,8 @@ from magic import Magic
 from yaka_crm.services.conversion import converter
 
 
-BASEDIR = join(dirname(__file__), "dummy_files")
-BASEDIR2 = join(dirname(__file__), "dummy_files2")
+BASEDIR = join(dirname(__file__), "..", "dummy_files")
+BASEDIR2 = join(dirname(__file__), "..", "dummy_files2")
 
 mime_sniffer = Magic(mime=True)
 encoding_sniffer = Magic(mime_encoding=True)
