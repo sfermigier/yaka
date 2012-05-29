@@ -1,12 +1,13 @@
 import unittest
 import datetime
 from nose.tools import eq_
+
 from yaka_crm.filters import filesize, date_age
 
 
 class TestFilters(unittest.TestCase):
 
-  def test_bytes(self):
+  def test_filesize(self):
     eq_("100 B", filesize(100))
     eq_("1.0 kB", filesize(1000))
     eq_("1.1 kB", filesize(1100))

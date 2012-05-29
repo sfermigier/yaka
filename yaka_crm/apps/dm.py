@@ -19,10 +19,11 @@ from flaskext.mail import Message
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
 
-from ..extensions import db, mail, signals
+from ..extensions import db, mail
 
 from ..core.entities import Entity, Column
 from ..core.frontend import add_to_recent_items
+from ..core.signals import activity
 
 from ..services.conversion import converter, ConversionError
 from ..services.audit import AuditEntry
@@ -223,7 +224,8 @@ def delete_multiple():
 
   for f in files:
     db.session.delete(f)
-    signals.signal("log-activity").send(actor=g.user, verb="delete", object=f)
+    self = current_app._get_current_object()
+    activity.send(self, actor=g.user, verb="delete", object=f)
 
   db.session.commit()
   flash("%d file(s) successfully deleted." % len(files), "success")
@@ -240,7 +242,7 @@ def create_file(fd):
 
   db.session.add(f)
   self = current_app._get_current_object()
-  signals.signal("log-activity").send(self, actor=g.user, verb="post", object=f)
+  activity.send(self, actor=g.user, verb="post", object=f)
 
   return f
 
@@ -280,7 +282,8 @@ def upload_new_version(file_id):
   fd = request.files['file']
 
   f._update(fd.read(), fd.content_type)
-  signals.signal("log-activity").send(actor=g.user, verb="update", object=f)
+  self = current_app._get_current_object()
+  activity.send(self, actor=g.user, verb="update", object=f)
   db.session.commit()
 
   flash("New version successfully uploaded", "success")
@@ -293,8 +296,8 @@ def tag_post(file_id):
   tags = request.form.get("tags")
 
   f.tags = tags
-
-  signals.signal("log-activity").send(actor=g.user, verb="tag", object=f)
+  self = current_app._get_current_object()
+  activity.send(self, actor=g.user, verb="tag", object=f)
 
   db.session.commit()
 

@@ -8,9 +8,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, DateTime, Text
 
+from ..core.signals import activity
 from ..extensions import db
 from ..entities import User
-from ..extensions import signals
 
 
 class ActivityEntry(db.Model):
@@ -41,11 +41,10 @@ class ActivityEntry(db.Model):
 class ActivityService(object):
 
   def __init__(self):
-    signals.signal("log-activity").connect(self.log_activity)
-    
+    activity.connect(self.log_activity)
+
   def log_activity(self, sender, actor, verb, object, subject=None):
-    print "Got an activity"
-    print sender, actor, verb, object, subject
+    print "New activity", sender, actor, verb, object, subject
     entry = ActivityEntry()
     entry.actor = actor
     entry.verb = verb

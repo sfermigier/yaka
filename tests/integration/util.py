@@ -146,10 +146,10 @@ class DataLoader(object):
       lead.creator_id = choice(self.users).uid
       lead.owner_id = choice(self.users).uid
 
-    self.db.session.add(lead)
+      self.db.session.add(lead)
 
   def load_files(self, directory="dummy_files"):
-    dir_path = os.path.join(os.path.dirname(__file__), directory)
+    dir_path = os.path.join(os.path.dirname(__file__), "..", directory)
     if not os.path.isdir(dir_path):
       print "Skipping non-existing dir", directory
       return

@@ -46,7 +46,7 @@ def initdata():
 @manager.command
 def loaddata():
   """Initializes DB with some dummy data."""
-  from tests.util import load_data
+  from tests.integration.util import load_data
 
   load_data(db)
 
