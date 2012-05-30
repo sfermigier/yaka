@@ -1,6 +1,10 @@
 PYTHON=python
 TARGET=yaka@oss4cloud.org:yaka-crm/production/
 
+
+#
+# testing
+#
 test:
 	$(PYTHON) -m nose.core tests
 
@@ -11,10 +15,19 @@ test-with-coverage:
 	$(PYTHON) -m nose.core --with-coverage --cover-erase \
 	   	--cover-package=yaka_crm tests
 
+test-with-profile:
+	$(PYTHON) -m nose.core --with-profile tests
+
 unit-with-coverage:
 	$(PYTHON) -m nose.core --with-coverage --cover-erase \
 	   	--cover-package=yaka_crm tests/unit
 
+unit-with-profile:
+	$(PYTHON) -m nose.core --with-profile tests/unit
+
+#
+# Everything else
+#
 run: yaka_crm/yaka.db
 	$(PYTHON) manage.py runserver --host 0.0.0.0
 
@@ -36,7 +49,7 @@ clean:
 	rm -rf tmp tests/tmp
 	rm -rf cache tests/cache
 	rm -rf *.egg-info *.egg .coverage
-	rm -rf whoosh whoosh_indexes tests/whoosh tests/whoosh_indexes
+	rm -rf whoosh tests/whoosh
 	rm -rf doc/_build
 
 tidy: clean

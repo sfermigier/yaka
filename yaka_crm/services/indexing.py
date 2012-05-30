@@ -14,10 +14,8 @@
 
 # TODO: not sure that one index per class is the way to go.
 # TODO: speed issue
-# TODO:
+# TODO: this is a singleton. makes tests hard (for instance, launching parallel tests).
 
-
-from __future__ import absolute_import
 
 import sqlalchemy
 from sqlalchemy import event
@@ -38,7 +36,8 @@ class IndexService(object):
     if not whoosh_base and config:
       whoosh_base = config.get("WHOOSH_BASE")
     if not whoosh_base:
-      whoosh_base = "whoosh_indexes"  # Default value
+      whoosh_base = "whoosh"  # Default value
+    print whoosh_base
     self.whoosh_base = whoosh_base
     self.indexes = {}
 
