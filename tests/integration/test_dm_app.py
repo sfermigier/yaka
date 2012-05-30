@@ -1,7 +1,5 @@
-
-# Don't remove
+from base import IntegrationTestCase
 import unittest
-import fix_path
 
 import os
 import re
@@ -22,26 +20,15 @@ from util import init_data
 ROOT = "/dm/"
 
 
-class TestViews(TestCase):
-
+class TestViews(IntegrationTestCase):
   def create_app(self):
     app.config.from_object(TestConfig())
     app.config['UNSAFE'] = True
     return app
 
   def setUp(self):
-    TestCase.setUp(self)
-    db.create_all()
-    self.session = db.session
+    IntegrationTestCase.setUp(self)
     init_data(db)
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    TestCase.tearDown(self)
-
-  def assert_302(self, response):
-    self.assertStatus(response, 302)
 
   @staticmethod
   def uid_from_url(url):

@@ -1,31 +1,12 @@
-# Don't remove
-import fix_path
-
+from base import IntegrationTestCase
 from nose.tools import eq_, ok_
-from flaskext.testing import TestCase
 
-from yaka_crm import app, db
 from yaka_crm.entities import *
-from yaka_crm.services.audit import *
-
-from config import TestConfig
 
 from datetime import datetime, timedelta
 
 
-class TestModels(TestCase):
-
-  def create_app(self):
-    app.config.from_object(TestConfig())
-    return app
-
-  def setUp(self):
-    db.create_all()
-    self.session = db.session
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
+class TestModels(IntegrationTestCase):
 
   # Utility
   def check_editable(self, object):
@@ -60,22 +41,3 @@ class TestModels(TestCase):
 
     contacts = list(Contact.search_query(u"john").all())
     eq_(1, len(contacts))
-
-  def test_audit(self):
-    eq_(0, len(AuditEntry.query.all()))
-
-    account = Account(name="John SARL")
-    self.session.add(account)
-    self.session.commit()
-
-    eq_(1, len(AuditEntry.query.all()))
-
-    account.address_country = u"FR"
-    self.session.commit()
-
-    eq_(2, len(AuditEntry.query.all()))
-
-    self.session.delete(account)
-    self.session.commit()
-
-    eq_(3, len(AuditEntry.query.all()))

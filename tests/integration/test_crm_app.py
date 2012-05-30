@@ -1,7 +1,4 @@
-# Don't remove
-import fix_path
-
-from flaskext.testing import TestCase
+from base import IntegrationTestCase
 from nose.tools import ok_
 import re
 
@@ -13,7 +10,7 @@ import yaka_crm.views # Don't remove
 from util import init_data
 
 
-class TestViews(TestCase):
+class TestViews(IntegrationTestCase):
 
   def create_app(self):
     app.config.from_object(TestConfig())
@@ -21,20 +18,13 @@ class TestViews(TestCase):
     return app
 
   def setUp(self):
-    TestCase.setUp(self)
-    db.create_all()
-    self.session = db.session
+    IntegrationTestCase.setUp(self)
     init_data(db)
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    TestCase.tearDown(self)
 
   def assert_302(self, response):
     self.assertStatus(response, 302)
 
-
+  # Tests start here
   def test_home(self):
     response = self.client.get("/crm/")
     self.assert_200(response)
@@ -95,5 +85,3 @@ class TestViews(TestCase):
     response = self.client.get("/search/live?q=dupont")
     self.assert_200(response)
     ok_("Paul" in response.data)
-
-

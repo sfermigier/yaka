@@ -2,13 +2,43 @@
 
 {% block container %}
 
-<div class="row">
-<div class="span3">
-  <img src="/static/placeholders/social-left.png">
-</div>
-<div class="span9">
-  <img src="/static/placeholders/social.png">
-</div>
-</div>
+  <div class="row">
+    <div class="span2">
+
+      <div class="well" style="padding: 8px 0;">
+        <ul class="nav nav-list">
+          <li class="nav-header">Main</li>
+          <li><a href="/social/">My feed</a></li>
+          <li><a href="/social/private/">Private messages</a></li>
+          <li><a href="/social/private/">My profile</a></li>
+
+          <li class="nav-header">Groups</li>
+          <li><a href="/social/">All groups</a></li>
+          <li><a href="/social/private/">Group 1</a></li>
+          <li><a href="/social/private/">Group 2</a></li>
+          <li><a href="/social/private/">Group 3</a></li>
+          <li><a href="/social/private/">Group 4</a></li>
+
+          <li class="nav-header">People</li>
+          <li><a href="/social/">Everyone</a></li>
+          <li><a href="/social/">Followees</a></li>
+          <li><a href="/social/">Followers</a></li>
+
+          <li class="nav-header">Apps</li>
+          <li><a href="/social/">My feed</a></li>
+          <li><a href="/social/private/">Private messages</a></li>
+        </ul>
+      </div>
+
+      <img src="/static/placeholders/social-left.png">
+    </div>
+    <div class="span7">
+      <img src="/static/placeholders/social-center-top.png">
+      <img src="/static/placeholders/social-center.png">
+    </div>
+    <div class="span3">
+      <img src="/static/placeholders/social-right.png">
+    </div>
+  </div>
 
 {% endblock %}

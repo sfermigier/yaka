@@ -1,10 +1,5 @@
-# Don't remove
-import datetime
-import fix_path
+from base import IntegrationTestCase
 
-
-import unittest
-from flaskext.testing import TestCase
 from nose.tools import eq_, ok_
 
 from util import init_data
@@ -18,7 +13,7 @@ from yaka_crm import views # Don't remove
 from yaka_crm.filters import filesize, date_age
 
 
-class TestViews(TestCase):
+class TestViews(IntegrationTestCase):
 
   def create_app(self):
     app.config.from_object(TestConfig())
@@ -26,17 +21,10 @@ class TestViews(TestCase):
     return app
 
   def setUp(self):
-    TestCase.setUp(self)
-    db.create_all()
-    self.session = db.session
+    IntegrationTestCase.setUp(self)
     init_data(db)
 
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    TestCase.tearDown(self)
-
-
+  # Tests start here
   def test_home(self):
     response = self.client.get("/")
     ok_(response.status_code in [200, 302])
@@ -78,7 +66,6 @@ class TestViews(TestCase):
     response = self.client.get("/users/%d/mugshot?s=48" % uid)
     self.assert_200(response)
     eq_("image/jpeg", response.headers["content-type"])
-
 
   def test_reports(self):
     response = self.client.get("/reports/")

@@ -1,34 +1,17 @@
-
-# Don't remove
-import fix_path
-
 from nose.tools import eq_
-from flaskext.testing import TestCase
-
-from yaka_crm import app, db
-from yaka_crm import views # Don't remove
-
-from config import TestConfig
+from base import IntegrationTestCase
 from util import init_data
 
+from yaka_crm import db
 
-class TestViews(TestCase):
 
-  def create_app(self):
-    app.config.from_object(TestConfig())
-    return app
+class TestViews(IntegrationTestCase):
 
   def setUp(self):
-    TestCase.setUp(self)
-    db.create_all()
-    self.session = db.session
+    IntegrationTestCase.setUp(self)
     init_data(db)
 
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    TestCase.tearDown(self)
-
+  # Tests start here
   def test_login_happy_path(self):
     data = dict(email='sf@example.com', password='admin')
     response = self.client.post("/login", data=data)
