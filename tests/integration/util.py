@@ -8,7 +8,7 @@ import datetime
 from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
 from yaka_crm.apps.dm import File
 
-TAGS = ["GTLL", "OCDS", "GIE", "BE", "FUI14", "FUI15", "Ambition PME"]
+TAGS = ["tag1", "tag2", "tag3", "tag4"]
 
 
 def init_data(db):
@@ -175,8 +175,7 @@ class DataLoader(object):
 
       self.db.session.add(f)
 
-
-# Utilities
+  # Utilities
   @staticmethod
   def get_reader(filename):
     path = os.path.join(os.path.dirname(__file__), "..", "dummy_data", filename)

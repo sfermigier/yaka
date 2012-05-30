@@ -14,9 +14,7 @@ class TestModels(IntegrationTestCase):
       for k in object.__editable__:
         ok_(hasattr(object, k), "Property '%s' of object %s is not editable" % (k, object))
 
-  #
   # Tests start here
-  #
   def test_account(self):
     account = Account(name="John SARL")
     self.check_editable(account)

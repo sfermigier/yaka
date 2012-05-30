@@ -6,7 +6,6 @@ import re
 from io import StringIO
 
 from nose.tools import eq_, ok_
-from flaskext.testing import TestCase
 from util import DataLoader
 
 from yaka_crm import app, db
@@ -21,6 +20,7 @@ ROOT = "/dm/"
 
 
 class TestViews(IntegrationTestCase):
+
   def create_app(self):
     app.config.from_object(TestConfig())
     app.config['UNSAFE'] = True

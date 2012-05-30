@@ -6,11 +6,9 @@ from util import init_data
 from config import TestConfig
 
 from yaka_crm import app, db
+from yaka_crm import views # Don't remove
 
 import re
-
-from yaka_crm import views # Don't remove
-from yaka_crm.filters import filesize, date_age
 
 
 class TestViews(IntegrationTestCase):
