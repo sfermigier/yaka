@@ -10,11 +10,11 @@ from config import DebugConfig
 
 app = create_app(DebugConfig())
 app.start_services()
+
 manager = Manager(app)
 
 from flask_debugtoolbar import DebugToolbarExtension
 toolbar = DebugToolbarExtension(app)
-
 
 #
 # Specific commands

@@ -1,17 +1,14 @@
-from base import IntegrationTestCase
-import unittest
-
 import os
 import re
 from io import StringIO
 
+from base import IntegrationTestCase
+import unittest
 from nose.tools import eq_, ok_
 from util import DataLoader
 
 from yaka_crm import db
 from yaka_crm.apps.dm import match
-
-import yaka_crm.views # Don't remove
 
 
 ROOT = "/dm/"

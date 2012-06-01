@@ -1,8 +1,6 @@
 from base import IntegrationTestCase
 import re
 
-import yaka_crm.views # Don't remove
-
 
 class TestViews(IntegrationTestCase):
 

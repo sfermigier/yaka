@@ -74,4 +74,3 @@ def init_filters(app):
   app.jinja_env.filters['age'] = age
   app.jinja_env.filters['filesize'] = filesize
   app.jinja_env.filters['labelize'] = labelize
-

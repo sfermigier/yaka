@@ -58,11 +58,6 @@ def logout():
 #
 # Basic navigation
 #
-@main.route("/test")
-def test():
-  return "BAD", 401
-
-
 @main.route("/")
 def home():
   """Home page."""

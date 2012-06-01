@@ -4,7 +4,7 @@ import fix_path
 from flaskext.testing import TestCase
 from tests.integration import util
 
-from yaka_crm.application import create_app
+from yaka_crm.application import Application
 from yaka_crm.extensions import db
 
 from config import TestConfig
@@ -24,7 +24,7 @@ class IntegrationTestCase(TestCase):
     config = TestConfig()
     config.WHOOSH_BASE = os.path.join(BASEDIR, "whoosh", str(uuid.uuid4()))
     config.NO_LOGIN = self.no_login
-    self.app = create_app(config)
+    self.app = Application(config)
 
     return self.app
 

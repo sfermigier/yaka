@@ -43,6 +43,7 @@ class IndexService(object):
 
   def __init__(self, app=None):
     self.indexes = {}
+    self.indexed_classes = set()
     self.running = False
     if app:
       self.init_app(app)
@@ -63,18 +64,26 @@ class IndexService(object):
   def stop(self):
     self.running = False
 
+  def search(self, query, limit=50):
+    for indexed_class in self.indexed_classes:
+      searcher = indexed_class.search_query
+      for res in searcher.search(query, limit):
+        yield res
+
   def register_classes(self):
     for cls in all_entity_classes():
-      self.register_class(cls)
+      if not cls in self.indexed_classes:
+        self.register_class(cls)
 
-  def register_class(self, model_class):
+  def register_class(self, cls):
     """
     Registers a model class, by creating the necessary Whoosh index if needed.
     """
+    self.indexed_classes.add(cls)
 
-    index_path = os.path.join(self.whoosh_base, model_class.__name__)
+    index_path = os.path.join(self.whoosh_base, cls.__name__)
 
-    schema, primary = self._get_whoosh_schema_and_primary(model_class)
+    schema, primary = self._get_whoosh_schema_and_primary(cls)
 
     if whoosh.index.exists_in(index_path):
       index = whoosh.index.open_dir(index_path)
@@ -83,11 +92,11 @@ class IndexService(object):
         os.makedirs(index_path)
       index = whoosh.index.create_in(index_path, schema)
 
-    self.indexes[model_class.__name__] = index
-    model_class.search_query = Searcher(model_class, primary, index)
+    self.indexes[cls.__name__] = index
+    cls.search_query = Searcher(cls, primary, index)
     return index
 
-  def index_for_model_class(self, model_class):
+  def index_for_model_class(self, cls):
     """
     Gets the whoosh index for this model, creating one if it does not exist.
     in creating one, a schema is created based on the fields of the model.
@@ -95,19 +104,19 @@ class IndexService(object):
     -> whoosh.TEXT, but can add more later. A dict of model -> whoosh index
     is added to the ``app`` variable.
     """
-    index = self.indexes.get(model_class.__name__)
+    index = self.indexes.get(cls.__name__)
     if index is None:
-      index = self.register_class(model_class)
+      index = self.register_class(cls)
     return index
 
-  def _get_whoosh_schema_and_primary(self, model_class):
+  def _get_whoosh_schema_and_primary(self, cls):
     schema = {}
     primary = None
-    for field in model_class.__table__.columns:
+    for field in cls.__table__.columns:
       if field.primary_key:
         schema[field.name] = whoosh.fields.ID(stored=True, unique=True)
         primary = field.name
-      if field.name in model_class.__searchable__:
+      if field.name in cls.__searchable__:
         if type(field.type) in (sqlalchemy.types.Text, sqlalchemy.types.UnicodeText):
           schema[field.name] = whoosh.fields.TEXT(analyzer=StemmingAnalyzer())
 

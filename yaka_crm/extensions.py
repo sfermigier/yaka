@@ -8,4 +8,3 @@ oid = OpenID()
 mail = Mail()
 db = SQLAlchemy()
 cache = Cache()
-

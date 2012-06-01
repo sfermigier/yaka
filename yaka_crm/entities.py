@@ -72,7 +72,6 @@ class Account(Addressable, Entity):
   contacts = relationship("Contact", backref='account')
   opportunities = relationship("Opportunity", backref='account')
 
-
   def __unicode__(self):
     return self.name
 

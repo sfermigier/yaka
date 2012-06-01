@@ -1,23 +1,12 @@
 from base import IntegrationTestCase
-
 from nose.tools import eq_, ok_
-
-from util import init_data
-
-from yaka_crm import db
-from yaka_crm import views # Don't remove
-
 import re
 
 
 class TestViews(IntegrationTestCase):
 
   init_data = True
-
-  def create_app(self):
-    app = IntegrationTestCase.create_app(self)
-    app.config['NO_LOGIN'] = True
-    return app
+  no_login = True
 
   # Tests start here
   def test_home(self):
