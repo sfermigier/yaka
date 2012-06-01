@@ -3,20 +3,19 @@
 
 from flask import Flask
 
-#noinspection PyUnresolvedReferences
-from .extensions import oid, mail, db, cache
+from .extensions import mail, db
 from .filters import init_filters
 from .auth import init_auth
 from .services.audit import AuditService
 from .services.activity import ActivityService
 from .services.indexing import IndexService
 
-# TODO: autodiscovery of searchable classes
+# Import entity classes. Don't remove
 from .entities import *
 from .apps.dm import *
 
 
-__all__ = ['oid', 'mail', 'db', 'cache', 'create_app']
+__all__ = ['mail', 'db', 'create_app']
 
 
 def create_app(config):

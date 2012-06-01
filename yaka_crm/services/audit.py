@@ -12,11 +12,10 @@ TODO: In the future, we may decide to:
 from datetime import datetime
 import json
 from flask.globals import g
+
 from sqlalchemy import event
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.attributes import NO_VALUE
-from sqlalchemy.orm.events import InstrumentationEvents
-
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
 from sqlalchemy.orm.session import Session
@@ -100,45 +99,22 @@ class AuditService(object):
 
   def __init__(self):
     self.all_model_classes = set()
-
-    # Testing (not sure if the first one is really needed)
-    event.listen(InstrumentationEvents, "attribute_instrument", self.attribute_instrument)
-    event.listen(InstrumentationEvents, "class_instrument", self.class_instrument)
-
-    # We register the events late in the boot process, beacause it doesn't work otherwise
-    #event.listen(Session, "after_attach", self.after_attach)
-
     event.listen(Session, "before_commit", self.before_commit)
 
   def start(self):
     assert not self.running
     self.running = True
+    self.register_classes()
 
   def stop(self):
     assert self.running
     self.running = False
-    #event.remove(InstrumentationEvents, "attribute_instrument", self.attribute_instrument)
-    #event.remove(InstrumentationEvents, "class_instrument", self.class_instrument)
+    # One can't currently remove these events.
     #event.remove(Session, "before_commit", self.before_commit)
 
-  def class_instrument(self, cls):
-    pass
-    #print "class_instrument", cls
-
-  def attribute_instrument(self, cls, key, inst):
-    #print "attribute_instrument", cls, key, inst
-    if issubclass(cls, Entity):
+  def register_classes(self):
+    for cls in all_entity_classes():
       self.register_class(cls)
-
-  def after_attach(self, session, model):
-    self.register_model(model)
-
-  def register_model(self, model):
-    model_class = model.__class__
-    if not model_class in self.all_model_classes:
-      self.all_model_classes.add(model_class)
-      if issubclass(model_class, Entity):
-        self.register_class(model_class)
 
   def register_class(self, entity_class):
     if not hasattr(entity_class, "__table__"):
