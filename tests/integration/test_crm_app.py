@@ -1,25 +1,13 @@
 from base import IntegrationTestCase
-from nose.tools import ok_
 import re
 
-from yaka_crm import app, db
-from config import TestConfig
-
 import yaka_crm.views # Don't remove
-
-from util import init_data
 
 
 class TestViews(IntegrationTestCase):
 
-  def create_app(self):
-    app.config.from_object(TestConfig())
-    app.config['UNSAFE'] = True
-    return app
-
-  def setUp(self):
-    IntegrationTestCase.setUp(self)
-    init_data(db)
+  init_data = True
+  no_login = True
 
   def assert_302(self, response):
     self.assertStatus(response, 302)
@@ -69,19 +57,3 @@ class TestViews(IntegrationTestCase):
   def test_opportunities(self):
     response = self.client.get("/crm/opportunities/")
     self.assert_200(response)
-
-  def test_search(self):
-    response = self.client.get("/search/?q=john")
-    self.assert_200(response)
-
-    response = self.client.get("/search/live?q=john")
-    self.assert_200(response)
-
-    # Note: there a guy named "Paul Dupont" in the test data
-    response = self.client.get("/search/?q=dupont")
-    self.assert_200(response)
-    ok_("Paul" in response.data)
-
-    response = self.client.get("/search/live?q=dupont")
-    self.assert_200(response)
-    ok_("Paul" in response.data)

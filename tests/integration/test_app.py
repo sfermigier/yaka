@@ -1,15 +1,10 @@
 from nose.tools import eq_
 from base import IntegrationTestCase
-from util import init_data
-
-from yaka_crm import db
 
 
 class TestViews(IntegrationTestCase):
 
-  def setUp(self):
-    IntegrationTestCase.setUp(self)
-    init_data(db)
+  init_data = True
 
   # Tests start here
   def test_login_happy_path(self):

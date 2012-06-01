@@ -8,27 +8,18 @@ from io import StringIO
 from nose.tools import eq_, ok_
 from util import DataLoader
 
-from yaka_crm import app, db
-from config import TestConfig
+from yaka_crm import db
 from yaka_crm.apps.dm import match
 
 import yaka_crm.views # Don't remove
 
-from util import init_data
 
 ROOT = "/dm/"
 
-
 class TestViews(IntegrationTestCase):
 
-  def create_app(self):
-    app.config.from_object(TestConfig())
-    app.config['UNSAFE'] = True
-    return app
-
-  def setUp(self):
-    IntegrationTestCase.setUp(self)
-    init_data(db)
+  init_data = True
+  no_login = True
 
   @staticmethod
   def uid_from_url(url):

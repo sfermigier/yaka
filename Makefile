@@ -6,10 +6,10 @@ TARGET=yaka@oss4cloud.org:yaka-crm/production/
 # testing
 #
 test:
-	$(PYTHON) -m nose.core tests
+	$(PYTHON) -m nose.core -v tests
 
 unit:
-	$(PYTHON) -m nose.core tests/unit
+	$(PYTHON) -m nose.core -v tests/unit
 
 test-with-coverage:
 	$(PYTHON) -m nose.core --with-coverage --cover-erase \

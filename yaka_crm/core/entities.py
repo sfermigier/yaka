@@ -8,10 +8,12 @@ from sqlalchemy.orm.util import class_mapper
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, DateTime, UnicodeText
 from sqlalchemy import event
+import sys
 
 from ..extensions import db
+from yaka_crm.util import memoized
 
-__all__ = ['Column', 'Entity']
+__all__ = ['Column', 'Entity', 'all_entity_classes']
 
 
 # TODO: get rid of flask-sqlalchemy, replace db.Model by Base
@@ -172,6 +174,7 @@ def register_metadata(cls):
   cls.__searchable__ = set()
   cls.__auditable__ = set()
 
+  # TODO: use SQLAlchemy 0.8 introspection
   if hasattr(cls, '__table__'):
     columns = cls.__table__.columns
   else:
@@ -190,3 +193,19 @@ def register_metadata(cls):
 
 
 event.listen(Entity, 'class_instrument', register_metadata)
+
+
+@memoized
+def all_entity_classes():
+  classes = []
+  for module_name, module in sys.modules.items():
+    for name in dir(module):
+      v = getattr(module, name)
+      if isinstance(v, type) and issubclass(v, Entity) and hasattr(v, '__table__'):
+        classes.append(v)
+  return classes
+
+
+def register_all_entity_classes():
+  for cls in all_entity_classes():
+    register_metadata(cls)

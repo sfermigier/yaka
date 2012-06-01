@@ -1,56 +1,27 @@
-from flask import render_template, session, request
-from flask.globals import g
+from flask import render_template, session, request, Blueprint
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
-from . import app
 from .entities import *
-from .frontend import CRM
 
 from yaka_crm.core.frontend import TableView, BreadCrumbs
 from yaka_crm.frontend import Contacts, Opportunities, Leads, Accounts
 
-import filters #don't remove
 
 __all__ = []
 
-
-@app.before_request
-def before_request():
-  # TODO remove when tests pass
-  if app.config.get("UNSAFE", False):
-    g.user = User.query.all()[0]
-
-  else:
-    user_id = session.get("user_id")
-    if user_id:
-      try:
-        user = User.query.get(user_id)
-        g.user = user
-      except:
-        return redirect("/login", code=401)
-        #abort(401, "Must authenticate")
-    elif request.path == '/login' or request.path.startswith("/static/"):
-      g.user = None
-    else:
-      return redirect("/login", code=401)
-      #abort(401, "Must authenticate")
-
-  g.modules = CRM.modules
-  g.recent_items = session.get('recent_items', [])
-
+main = Blueprint("main", __name__, url_prefix="")
 
 #
 # Authentication
 #
-@app.route("/login")
+@main.route("/login")
 def login_form():
   """Login form."""
   return render_template("login.html")
 
 
-@app.route("/login", methods=['POST'])
+@main.route("/login", methods=['POST'])
 def login():
   if 'user_id' in session:
     del session['user_id']
@@ -78,7 +49,7 @@ def login():
   return redirect("/")
 
 
-@app.route("/logout")
+@main.route("/logout")
 def logout():
   del session['user_id']
   return redirect("/login")
@@ -87,19 +58,19 @@ def logout():
 #
 # Basic navigation
 #
-@app.route("/test")
+@main.route("/test")
 def test():
   return "BAD", 401
 
 
-@app.route("/")
+@main.route("/")
 def home():
   """Home page."""
   return redirect("/social/")
 
 
 # Hackish home page for the CRM apps. TODO: redefine & refactor.
-@app.route("/crm/")
+@main.route("/crm/")
 def crm_home():
   bc = BreadCrumbs([('/', "Home"), ('/crm/', 'CRM')])
 
@@ -115,12 +86,12 @@ def crm_home():
   return render_template('crm/home.html', tables=tables, breadcrumbs=bc)
 
 
-@app.route("/help/")
+@main.route("/help/")
 def help():
   # TODO: help
   return render_template('help.html')
 
 
-@app.errorhandler(404)
+@main.errorhandler(404)
 def page_not_found(error):
   return render_template('error404.html'), 404

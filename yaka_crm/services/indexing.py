@@ -27,9 +27,18 @@ from whoosh.analysis import StemmingAnalyzer
 from whoosh.fields import Schema
 
 import os
+from yaka_crm.core.entities import all_entity_classes
 
 
 class IndexService(object):
+
+  __instance = None
+
+  @classmethod
+  def instance(cls, config=None, session=None, whoosh_base=None):
+    if not cls.__instance:
+      cls.__instance = IndexService(config, session, whoosh_base)
+    return cls.__instance
 
   def __init__(self, config=None, session=None, whoosh_base=None):
     self.session = session
@@ -43,6 +52,10 @@ class IndexService(object):
 
     event.listen(Session, "before_commit", self.before_commit)
     event.listen(Session, "after_commit", self.after_commit)
+
+  def register_classes(self):
+    for cls in all_entity_classes():
+      self.register_class(cls)
 
   def register_class(self, model_class):
     """

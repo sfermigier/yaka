@@ -3,9 +3,8 @@ from base import IntegrationTestCase
 from nose.tools import eq_, ok_
 
 from util import init_data
-from config import TestConfig
 
-from yaka_crm import app, db
+from yaka_crm import db
 from yaka_crm import views # Don't remove
 
 import re
@@ -13,14 +12,12 @@ import re
 
 class TestViews(IntegrationTestCase):
 
-  def create_app(self):
-    app.config.from_object(TestConfig())
-    app.config['UNSAFE'] = True
-    return app
+  init_data = True
 
-  def setUp(self):
-    IntegrationTestCase.setUp(self)
-    init_data(db)
+  def create_app(self):
+    app = IntegrationTestCase.create_app(self)
+    app.config['NO_LOGIN'] = True
+    return app
 
   # Tests start here
   def test_home(self):
@@ -33,13 +30,6 @@ class TestViews(IntegrationTestCase):
 
   def test_accounts(self):
     response = self.client.get("/crm/accounts/")
-    self.assert_200(response)
-
-  def test_search(self):
-    response = self.client.get("/search/?q=john")
-    self.assert_200(response)
-
-    response = self.client.get("/search/live?q=john")
     self.assert_200(response)
 
   # Test additional blueprints (TODO: move to a distinct test case).

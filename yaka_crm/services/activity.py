@@ -40,7 +40,18 @@ class ActivityEntry(db.Model):
 
 class ActivityService(object):
 
+  __instance = None
+
+  @classmethod
+  def instance(cls):
+    if not cls.__instance:
+      cls.__instance = ActivityService()
+    return cls.__instance
+
   def __init__(self):
+    self.start()
+
+  def start(self):
     activity.connect(self.log_activity)
 
   def log_activity(self, sender, actor, verb, object, subject=None):

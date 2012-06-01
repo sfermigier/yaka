@@ -91,10 +91,23 @@ class AuditEntry(db.Model):
 
 class AuditService(object):
 
+  __instance = None
+
+  @classmethod
+  def instance(cls, start=False):
+    if not cls.__instance:
+      cls.__instance = AuditService(start)
+    return cls.__instance
+
   def __init__(self, start=False):
     self.all_model_classes = set()
-    self.active = start
+    self.running = start
+    if start:
+      self.start()
 
+
+  def start(self):
+    self.running = True
     # Testing (not sure if the first one is really needed)
     event.listen(InstrumentationEvents, "attribute_instrument", self.attribute_instrument)
     event.listen(InstrumentationEvents, "class_instrument", self.class_instrument)
@@ -104,11 +117,11 @@ class AuditService(object):
 
     event.listen(Session, "before_commit", self.before_commit)
 
-  def start(self):
-    self.active = True
-
   def stop(self):
-    self.active = False
+    self.running = False
+    #event.remove(InstrumentationEvents, "attribute_instrument", self.attribute_instrument)
+    #event.remove(InstrumentationEvents, "class_instrument", self.class_instrument)
+    #event.remove(Session, "before_commit", self.before_commit)
 
   def class_instrument(self, cls):
     pass
@@ -167,9 +180,6 @@ class AuditService(object):
     changes[attr_name] = (old_value, new_value)
 
   def before_commit(self, session):
-    if not self.active:
-      return
-
     for model in session.new:
       self.log_new(session, model)
 

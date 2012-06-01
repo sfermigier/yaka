@@ -1,31 +1,43 @@
 # Don't remove
-import uuid
 import fix_path
 
 from flaskext.testing import TestCase
+from tests.integration import util
 
-from yaka_crm import app, db
+from yaka_crm.application import create_app
+from yaka_crm.extensions import db
+
 from config import TestConfig
 
 import os
+import uuid
 
 
 BASEDIR = os.path.dirname(__file__)
 
 class IntegrationTestCase(TestCase):
 
+  init_data = False
+  no_login = False
+
   def create_app(self):
-    app.config.from_object(TestConfig())
-    app.config['WHOOSH_BASE'] = os.path.join(BASEDIR, "whoosh", str(uuid.uuid4()))
-    return app
+    config = TestConfig()
+    config.WHOOSH_BASE = os.path.join(BASEDIR, "whoosh", str(uuid.uuid4()))
+    config.NO_LOGIN = self.no_login
+    self.app = create_app(config)
+
+    return self.app
 
   def setUp(self):
     db.create_all()
     self.session = db.session
+    if self.init_data:
+      util.init_data(db)
 
   def tearDown(self):
     db.session.remove()
     db.drop_all()
+    self.app.extensions['audit'].stop()
 
   def assert_302(self, response):
     self.assertStatus(response, 302)

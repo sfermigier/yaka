@@ -1,13 +1,8 @@
-from . import app
 from datetime import datetime
 
-
-@app.template_filter('labelize')
 def labelize(s):
   return " ".join([ w.capitalize() for w in s.split("_") ])
 
-
-@app.template_filter('filesize')
 def filesize(d):
   if d < 1000:
     return "%d B" % d
@@ -27,8 +22,6 @@ def filesize(d):
 
   return "%.0f GB" % (d / 1e9)
 
-
-@app.template_filter('age')
 def age(dt, now=None):
   # Fail silently for now XXX
   if not dt:
@@ -61,8 +54,6 @@ def age(dt, now=None):
 
   return age_str
 
-
-@app.template_filter('date_age')
 def date_age(dt, now=None):
   # Fail silently for now XXX
   if not dt:
@@ -70,11 +61,17 @@ def date_age(dt, now=None):
   age_str = age(dt, now)
   return "%s (%s)" % (dt.strftime("%Y-%m-%d %H:%M"), age_str)
 
-
-@app.template_filter('abbrev')
 def abbrev(s, max_size):
   if len(s) <= max_size:
     return s
   else:
     h = max_size / 2 - 1
     return s[0:h] + "..." + s[-h:]
+
+def init_filters(app):
+  app.jinja_env.filters['abbrev'] = abbrev
+  app.jinja_env.filters['date_age'] = date_age
+  app.jinja_env.filters['age'] = age
+  app.jinja_env.filters['filesize'] = filesize
+  app.jinja_env.filters['labelize'] = labelize
+

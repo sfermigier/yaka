@@ -25,5 +25,6 @@ py-bcrypt
 pillow
 python-magic
 twill
+logbook
 
 coverage==3.5.1

@@ -1,12 +1,10 @@
-from base import IntegrationTestCase
+from unittest import TestCase
 from nose.tools import eq_, ok_
 
 from yaka_crm.entities import *
 
-from datetime import datetime, timedelta
 
-
-class TestModels(IntegrationTestCase):
+class TestModels(TestCase):
 
   # Utility
   def check_editable(self, object):
@@ -19,20 +17,15 @@ class TestModels(IntegrationTestCase):
     account = Account(name="John SARL")
     self.check_editable(account)
 
-    self.session.add(account)
-    self.session.commit()
-
-    ok_(datetime.utcnow() - account.created_at < timedelta(1))
-
   def test_contact(self):
     contact = Contact(first_name="John", last_name="Test User", email="test@example.com")
     self.check_editable(contact)
 
     account = Account(name="John SARL")
     contact.account = account
+    eq_([contact], account.contacts)
 
-    self.session.add(account)
-    self.session.add(contact)
-    self.session.commit()
-
-    ok_(datetime.utcnow() - contact.created_at < timedelta(1))
+  def test_get_all_entity_classes(self):
+    classes = all_entity_classes()
+    print classes
+    ok_(len(classes) > 4)
