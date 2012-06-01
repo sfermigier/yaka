@@ -46,12 +46,19 @@ class IndexService(object):
       whoosh_base = config.get("WHOOSH_BASE")
     if not whoosh_base:
       whoosh_base = "whoosh"  # Default value
-    print whoosh_base
     self.whoosh_base = whoosh_base
     self.indexes = {}
+    self.running = False
 
     event.listen(Session, "before_commit", self.before_commit)
     event.listen(Session, "after_commit", self.after_commit)
+
+  def start(self):
+    self.running = True
+    self.register_classes()
+
+  def stop(self):
+    self.running = False
 
   def register_classes(self):
     for cls in all_entity_classes():
@@ -104,6 +111,9 @@ class IndexService(object):
     return Schema(**schema), primary
 
   def before_commit(self, session):
+    if not self.running:
+      return
+
     self.to_update = {}
 
     for model in session.new:
@@ -129,6 +139,9 @@ class IndexService(object):
     we update the whoosh index for the model. If no index exists, it will be
     created here; this could impose a penalty on the initial commit of a model.
     """
+
+    if not self.running:
+      return
 
     for typ, values in self.to_update.iteritems():
       model_class = values[0][1].__class__

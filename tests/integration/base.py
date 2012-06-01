@@ -37,7 +37,6 @@ class IntegrationTestCase(TestCase):
   def tearDown(self):
     db.session.remove()
     db.drop_all()
-    self.app.extensions['audit'].stop()
 
   def assert_302(self, response):
     self.assertStatus(response, 302)

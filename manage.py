@@ -5,18 +5,14 @@ from flaskext.script import Manager
 from flask.ext.sqlalchemy import get_debug_queries, SQLAlchemy
 import sys
 
-from yaka_crm import create_app, db, entities, views
+from yaka_crm import create_app, db
 from config import DebugConfig
 
-# Config
 app = create_app(DebugConfig())
-
-# Manager
+app.start_services()
 manager = Manager(app)
 
-# Debug Toolbar
 from flask_debugtoolbar import DebugToolbarExtension
-
 toolbar = DebugToolbarExtension(app)
 
 

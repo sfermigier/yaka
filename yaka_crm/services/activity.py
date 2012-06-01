@@ -38,9 +38,11 @@ class ActivityEntry(db.Model):
       self.uid, self.actor, self.verb, "TODO", "TODO")
 
 
+# TODO: this class has no state (except for the running variable). Do we really need a class here?
 class ActivityService(object):
 
   __instance = None
+  running = False
 
   @classmethod
   def instance(cls):
@@ -49,12 +51,21 @@ class ActivityService(object):
     return cls.__instance
 
   def __init__(self):
-    self.start()
+    pass
 
   def start(self):
+    assert not self.running
     activity.connect(self.log_activity)
+    self.running = True
+
+  def stop(self):
+    assert self.running
+    activity.disconnect(self.log_activity)
+    self.running = False
 
   def log_activity(self, sender, actor, verb, object, subject=None):
+    assert self.running
+
     print "New activity", sender, actor, verb, object, subject
     entry = ActivityEntry()
     entry.actor = actor

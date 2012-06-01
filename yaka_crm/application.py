@@ -12,11 +12,8 @@ from .services.activity import ActivityService
 from .services.indexing import IndexService
 
 # TODO: autodiscovery of searchable classes
-from .entities import Contact, Account, Opportunity, Lead, Document
-from .apps.dm import File, Folder
-from yaka_crm.util import timer
-
-all_entity_classes = [Contact, Account, Opportunity, Lead, Document, File, Folder]
+from .entities import *
+from .apps.dm import *
 
 
 __all__ = ['oid', 'mail', 'db', 'cache', 'create_app']
@@ -59,24 +56,37 @@ def create_app(config):
   app.register_blueprint(social)
 
   # Initiate services
-  # Must (currently) come after all entity classes are declared.
+  # Must come after all entity classes have been declared.
   init_index_service(app)
   init_audit_service(app)
   init_activity_service(app)
 
   return app
 
-@timer
+
+def start_services(app):
+  for service in app.extensions.values():
+    if hasattr(service, 'start'):
+      service.start()
+
+
+def stop_services(app):
+  for service in app.extensions.values():
+    if hasattr(service, 'stop'):
+      service.stop()
+
+
 def init_activity_service(app):
   activity_service = ActivityService.instance()
   app.extensions['activity'] = activity_service
 
-@timer
+
 def init_audit_service(app):
-  audit_service = AuditService.instance(start=True)
+  audit_service = AuditService.instance()
   app.extensions['audit'] = audit_service
 
-@timer
+
 def init_index_service(app):
   index_service = IndexService.instance(app.config)
-  index_service.register_classes()
+  app.extensions['index'] = index_service
+

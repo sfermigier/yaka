@@ -82,8 +82,6 @@ class AuditEntry(db.Model):
   # FIXME: extremely innefficient
   @property
   def entity(self):
-    from ..apps.dm import File
-
     #noinspection PyTypeChecker
     cls = locals()[self.entity_class]
     return cls.query.get(self.entity_id)
@@ -92,22 +90,17 @@ class AuditEntry(db.Model):
 class AuditService(object):
 
   __instance = None
+  running = False
 
   @classmethod
-  def instance(cls, start=False):
+  def instance(cls):
     if not cls.__instance:
-      cls.__instance = AuditService(start)
+      cls.__instance = AuditService()
     return cls.__instance
 
-  def __init__(self, start=False):
+  def __init__(self):
     self.all_model_classes = set()
-    self.running = start
-    if start:
-      self.start()
 
-
-  def start(self):
-    self.running = True
     # Testing (not sure if the first one is really needed)
     event.listen(InstrumentationEvents, "attribute_instrument", self.attribute_instrument)
     event.listen(InstrumentationEvents, "class_instrument", self.class_instrument)
@@ -117,7 +110,12 @@ class AuditService(object):
 
     event.listen(Session, "before_commit", self.before_commit)
 
+  def start(self):
+    assert not self.running
+    self.running = True
+
   def stop(self):
+    assert self.running
     self.running = False
     #event.remove(InstrumentationEvents, "attribute_instrument", self.attribute_instrument)
     #event.remove(InstrumentationEvents, "class_instrument", self.class_instrument)
