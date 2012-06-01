@@ -7,6 +7,9 @@ from yaka_crm.entities import Contact
 
 class TestSearch(IntegrationTestCase):
 
+  init_data = True
+  no_login = True
+
   def create_app(self):
     app = IntegrationTestCase.create_app(self)
     init_index_service(app)
@@ -19,7 +22,7 @@ class TestSearch(IntegrationTestCase):
     contacts = list(Contact.search_query(u"john").all())
     eq_(1, len(contacts))
 
-  def XXXtest_search(self):
+  def test_search(self):
     response = self.client.get("/search/?q=john")
     self.assert_200(response)
 
