@@ -17,7 +17,7 @@ from sqlalchemy import event
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.attributes import NO_VALUE
 from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, DateTime, Text, LargeBinary
+from sqlalchemy.types import Integer, DateTime, Text
 from sqlalchemy.orm.session import Session
 
 from ..extensions import db
@@ -168,7 +168,6 @@ class AuditService(object):
       return
 
     entry = AuditEntry.from_model(model, type=CREATION)
-    #print "logging", entry
     session.add(entry)
 
   def log_deleted(self, session, model):

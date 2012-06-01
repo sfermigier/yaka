@@ -197,6 +197,7 @@ event.listen(Entity, 'class_instrument', register_metadata)
 
 @memoized
 def all_entity_classes():
+  """Returns the list of all concrete persistent classes that are subclasses of Entity."""
   classes = []
   for module_name, module in sys.modules.items():
     for name in dir(module):

@@ -26,8 +26,9 @@ from whoosh.qparser import MultifieldParser
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.fields import Schema
 
+from ..core.entities import all_entity_classes
+
 import os
-from yaka_crm.core.entities import all_entity_classes
 
 
 class IndexService(object):
@@ -35,20 +36,22 @@ class IndexService(object):
   __instance = None
 
   @classmethod
-  def instance(cls, config=None, session=None, whoosh_base=None):
+  def instance(cls, app=None):
     if not cls.__instance:
-      cls.__instance = IndexService(config, session, whoosh_base)
+      cls.__instance = IndexService(app)
     return cls.__instance
 
-  def __init__(self, config=None, session=None, whoosh_base=None):
-    self.session = session
-    if not whoosh_base and config:
-      whoosh_base = config.get("WHOOSH_BASE")
-    if not whoosh_base:
-      whoosh_base = "whoosh"  # Default value
-    self.whoosh_base = whoosh_base
+  def __init__(self, app=None):
     self.indexes = {}
     self.running = False
+    if app:
+      self.init_app(app)
+
+  def init_app(self, app):
+    self.app = app
+    self.whoosh_base = app.config.get("WHOOSH_BASE")
+    if not self.whoosh_base:
+      self.whoosh_base = "whoosh"  # Default value
 
     event.listen(Session, "before_commit", self.before_commit)
     event.listen(Session, "after_commit", self.after_commit)
@@ -81,7 +84,7 @@ class IndexService(object):
       index = whoosh.index.create_in(index_path, schema)
 
     self.indexes[model_class.__name__] = index
-    model_class.search_query = Searcher(model_class, primary, index, self.session)
+    model_class.search_query = Searcher(model_class, primary, index)
     return index
 
   def index_for_model_class(self, model_class):
@@ -170,11 +173,10 @@ class Searcher(object):
   Assigned to a Model class as ``search_query``, which enables text-querying.
   """
 
-  def __init__(self, model_class, primary, index, session=None):
+  def __init__(self, model_class, primary, index):
     self.model_class = model_class
     self.primary = primary
     self.index = index
-    self.session = session
     self.searcher = index.searcher()
     fields = set(index.schema._fields.keys()) - set([self.primary])
     self.parser = MultifieldParser(list(fields), index.schema)
@@ -182,10 +184,7 @@ class Searcher(object):
   def __call__(self, query, limit=None):
     """API similar to SQLAlchemy's queries.
     """
-    session = self.session
-    # When using Flask, get the session from the query attached to the model class.
-    if not session:
-      session = self.model_class.query.session
+    session = self.model_class.query.session
 
     results = self.index.searcher().search(self.parser.parse(query), limit=limit)
     keys = [x[self.primary] for x in results]

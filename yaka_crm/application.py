@@ -86,6 +86,6 @@ def init_audit_service(app):
 
 
 def init_index_service(app):
-  index_service = IndexService.instance(app.config)
+  index_service = IndexService.instance(app)
   app.extensions['index'] = index_service
 
