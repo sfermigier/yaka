@@ -1,14 +1,14 @@
-import os
+from os.path import join, dirname
 import re
 from io import StringIO
+from werkzeug.datastructures import FileStorage
 
 from base import IntegrationTestCase
-import unittest
 from nose.tools import eq_, ok_
 from util import DataLoader
 
 from yaka_crm import db
-from yaka_crm.apps.dm import match
+from yaka_crm.apps.dm import create_file
 
 
 ROOT = "/dm/"
@@ -27,6 +27,15 @@ class TestViews(IntegrationTestCase):
     response = self.client.get(ROOT)
     self.assert_200(response)
 
+  def test_create_file(self):
+    fs = FileStorage(stream=self.open_file("rammstein.pdf"),
+                     filename="rammstein.pdf", content_type="application/pdf")
+    with self.app.test_request_context('/dm/dummy'):
+      self.app.preprocess_request()
+      f = create_file(fs)
+      ok_("rammstein" in f.text.lower())
+      eq_("English", f.language)
+
   def test_preview(self):
     loader = DataLoader(db)
     loader.load_users()
@@ -39,7 +48,6 @@ class TestViews(IntegrationTestCase):
     data = response.data
     for m in re.findall(ROOT + "([0-9]+)", data):
       uid = int(m)
-
       response = self.client.get(ROOT + "%d/preview?size=500" % uid)
       self.assert_200(response)
 
@@ -109,15 +117,5 @@ class TestViews(IntegrationTestCase):
 
   @staticmethod
   def open_file(filename):
-    path = os.path.join(os.path.dirname(__file__), "..", "dummy_files", filename)
+    path = join(dirname(__file__), "..", "dummy_files", filename)
     return open(path)
-
-
-class TestUtils(unittest.TestCase):
-
-  def test_match(self):
-    ok_(match("text/plain", ["text/*"]))
-    ok_(not match("text/plain", ["text/html"]))
-
-    ok_(match("text/plain", ["application/pdf", "text/plain"]))
-    ok_(not match("text/plain", ["application/pdf", "application/msword"]))

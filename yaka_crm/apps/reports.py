@@ -1,9 +1,10 @@
-from flask import Blueprint
-from flask import render_template
+from flask import Blueprint, render_template
 
 from ..core.frontend import BreadCrumbs
 
+
 reports = Blueprint("reports", __name__, url_prefix="/reports")
+
 
 @reports.route("/")
 def home():
@@ -11,6 +12,7 @@ def home():
   bc.add("/", "Home")
   bc.add("/reports", "Reports")
   return render_template("reports/home.html", breadcrumbs=bc)
+
 
 @reports.route("/report")
 def report():

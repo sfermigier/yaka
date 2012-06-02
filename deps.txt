@@ -26,5 +26,6 @@ pillow
 python-magic
 twill
 logbook
+guess-language
 
 coverage==3.5.1

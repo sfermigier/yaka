@@ -7,10 +7,9 @@ from sqlalchemy.sql.expression import not_
 from ..entities import User
 from ..core.frontend import BreadCrumbs
 from ..services.image import crop_and_resize
-
+from ..services.activity import ActivityEntry
+from ..services.audit import AuditEntry
 from .dm import File
-from yaka_crm.services.activity import ActivityEntry
-from yaka_crm.services.audit import AuditEntry
 
 
 users = Blueprint("users", __name__, url_prefix="/users")

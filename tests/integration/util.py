@@ -2,8 +2,9 @@ import csv
 import mimetypes
 from random import choice
 import random
-import os.path
 import datetime
+from os.path import join, dirname, isdir
+from posix import listdir
 
 from yaka_crm.entities import Contact, Account, Opportunity, Lead, User
 from yaka_crm.apps.dm import File
@@ -23,7 +24,7 @@ def init_data(db):
   contact2 = Contact(first_name="Paul", last_name="Dupont", email="paul@example.com")
 
   user1 = User(first_name="Stefane", last_name="Fermigier", email="sf@example.com", password="admin")
-  photo_path = os.path.join(os.path.dirname(__file__), "..", "dummy_files", "mugshot.jpg")
+  photo_path = join(dirname(__file__), "..", "dummy_files", "mugshot.jpg")
   user1.photo = open(photo_path).read()
 
   db.session.add(contact1)
@@ -61,9 +62,9 @@ class DataLoader(object):
         d[col] = line[col]
 
       user = User(**d)
-      photo_path = os.path.join(os.path.dirname(__file__),
-                                "..", "user_photos",
-                                d['last_name'].lower() + ".jpg")
+      photo_path = join(dirname(__file__),
+                        "..", "user_photos",
+                        d['last_name'].lower() + ".jpg")
       user.photo = open(photo_path).read()
       self.db.session.add(user)
       self.users.append(user)
@@ -149,17 +150,17 @@ class DataLoader(object):
       self.db.session.add(lead)
 
   def load_files(self, directory="dummy_files"):
-    dir_path = os.path.join(os.path.dirname(__file__), "..", directory)
-    if not os.path.isdir(dir_path):
+    dir_path = join(dirname(__file__), "..", directory)
+    if not isdir(dir_path):
       print "Skipping non-existing dir", directory
       return
 
-    file_names = os.listdir(dir_path)
+    file_names = listdir(dir_path)
     for fn in file_names:
       if fn.startswith("."):
         continue
 
-      path = os.path.join(dir_path, fn)
+      path = join(dir_path, fn)
       name = unicode(fn, errors="replace")
       data = open(path).read()
       mime_type = mimetypes.guess_type(fn)[0]
@@ -178,7 +179,7 @@ class DataLoader(object):
   # Utilities
   @staticmethod
   def get_reader(filename):
-    path = os.path.join(os.path.dirname(__file__), "..", "dummy_data", filename)
+    path = join(dirname(__file__), "..", "dummy_data", filename)
     return csv.DictReader(open(path))
 
   @staticmethod

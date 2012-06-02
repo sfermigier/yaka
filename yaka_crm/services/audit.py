@@ -16,9 +16,9 @@ from flask.globals import g
 from sqlalchemy import event
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.attributes import NO_VALUE
+from sqlalchemy.orm.session import Session
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, DateTime, Text
-from sqlalchemy.orm.session import Session
 
 from ..extensions import db
 from ..core.entities import Entity

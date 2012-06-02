@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from flaskext.script import Manager
-
 from flask.ext.sqlalchemy import get_debug_queries, SQLAlchemy
 import sys
 
 from yaka_crm import create_app, db
 from config import DebugConfig
+
 
 app = create_app(DebugConfig())
 app.start_services()

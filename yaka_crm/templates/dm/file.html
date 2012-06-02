@@ -34,6 +34,10 @@
         <p>
           MIME Type: {{ file.mime_type }}
         </p>
+
+        <p>
+          Language: {{ file.language }}
+        </p>
       </div>
 
       {% if file.extra_metadata %}
@@ -108,6 +112,7 @@
         <li>File name: {{ file.name }}</li>
         <li>Size: {{ file.size|filesize }}</li>
         <li>Type: {{ file.mime_type }}</li>
+        <li>Language: {{ file.language }}</li>
         <li>Pages: {{ file.page_num }}</li>
         <li>Created: {{ file.created_at|age }}</li>
         <li>Modified: {{ file.updated_at|age }}</li>

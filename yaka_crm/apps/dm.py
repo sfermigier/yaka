@@ -8,6 +8,7 @@ import StringIO
 import traceback
 from urllib import quote
 from zipfile import ZipFile
+from guess_language.guess_language import guessLanguageName
 import os
 import hashlib
 import re
@@ -59,6 +60,7 @@ class File(Entity):
   digest = Column(Text)
   # TODO: normalize mime type?
   mime_type = Column(Text, nullable=False)
+  language = Column(Text)
   size = Column(Integer)
   page_num = Column(Integer, default=1)
 
@@ -115,6 +117,9 @@ class File(Entity):
       self.extra_metadata = {}
       traceback.print_exc()
 
+    if self.text:
+      self.language = guessLanguageName(self.text)
+
     self.page_num = self.extra_metadata.get("PDF:Pages", 1)
 
   def get_extra_metadata(self):
@@ -127,7 +132,6 @@ class File(Entity):
     self.extra_metadata_json = json.dumps(extra_metadata)
 
   extra_metadata = property(get_extra_metadata, set_extra_metadata)
-
 
   @property
   def icon(self):
@@ -233,12 +237,12 @@ def delete_multiple():
   return redirect(ROOT)
 
 
-def create_file(fd):
-  if isinstance(fd.filename, unicode):
-    name = fd.filename
+def create_file(fs):
+  if isinstance(fs.filename, unicode):
+    name = fs.filename
   else:
-    name = unicode(fd.filename, errors='ignore')
-  f = File(name, fd.read(), fd.content_type)
+    name = unicode(fs.filename, errors='ignore')
+  f = File(name, fs.read(), fs.content_type)
 
   db.session.add(f)
   self = current_app._get_current_object()
