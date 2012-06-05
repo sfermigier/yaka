@@ -26,7 +26,7 @@ import StringIO
 
 from PIL import Image
 from PIL.ExifTags import TAGS
-from yaka_crm.services.image import resize
+from .image import resize
 
 
 TMP_DIR = "tmp"

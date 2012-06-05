@@ -3,6 +3,7 @@ from jinja2._markupsafe import Markup
 
 from ..entities import *
 from .dm import File
+from ..services import indexing
 
 
 search = Blueprint("search", __name__, url_prefix="/search")
@@ -64,6 +65,34 @@ def search_main():
 
   return render_template('search/search.html', query_string=q,
                          res=res, documents=documents,
+                         breadcrumbs=breadcrumbs)
+
+
+@search.route("/docs")
+def search_docs():
+  """Alternative route for document search."""
+
+  q = request.args.get("q")
+  breadcrumbs = [
+    dict(path="/", label="Home"),
+    dict(path="", label="Search for '%s'" % q),
+  ]
+
+  index_service = indexing.get_service()
+  hits = index_service.search(q, File)
+  print hits.groups("language")
+  print hits.groups("mime_type")
+  print hits.groups("creator")
+  print hits.groups("owner")
+
+  documents = []
+  for hit in hits:
+    obj = File.query.get(hit['uid'])
+    documents.append((obj, hit, Markup(hit.highlights("text"))))
+
+  return render_template('search/search-docs.html',
+                         query_string=q,
+                         documents=documents,
                          breadcrumbs=breadcrumbs)
 
 

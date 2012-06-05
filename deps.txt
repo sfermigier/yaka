@@ -14,7 +14,6 @@ Flask-OpenID
 Flask-Cache
 
 sqlalchemy
-WhooshAlchemy
 markdown
 feedparser
 blinker
@@ -27,5 +26,6 @@ python-magic
 twill
 logbook
 guess-language
+envoy
 
 coverage==3.5.1

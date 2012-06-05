@@ -8,7 +8,7 @@ from .filters import init_filters
 from .auth import init_auth
 from .services.audit import AuditService
 from .services.activity import ActivityService
-from .services.indexing import IndexService
+from .services import indexing
 
 # Import entity classes. Don't remove
 from .entities import *
@@ -78,7 +78,7 @@ class Application(Flask):
     self.extensions['audit'] = audit_service
 
   def init_index_service(self):
-    index_service = IndexService.instance(self)
+    index_service = indexing.get_service(self)
     self.extensions['index'] = index_service
 
 

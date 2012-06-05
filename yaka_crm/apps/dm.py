@@ -1,4 +1,4 @@
-"""Document Management module for Yaka.
+"""File / Document Management module for Yaka.
 
 Don't worry, it's just a prototype to test the architecture.
 Will be refactored later and included in the ESN.
@@ -19,6 +19,8 @@ from flask import Blueprint, render_template, redirect, request,\
 from flaskext.mail import Message
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
+import whoosh
+from whoosh.fields import Schema
 
 from ..extensions import db, mail
 
@@ -77,6 +79,25 @@ class File(Entity):
   preview = Column(LargeBinary, info=dict(auditable=False))
 
   extra_metadata_json = Column(UnicodeText, info=dict(auditable=False))
+
+  # FIXME: hardwired dependency
+  whoosh_schema = Schema(
+    uid=whoosh.fields.ID(stored=True, unique=True),
+
+    created_at=whoosh.fields.DATETIME(stored=True),
+    updated_at=whoosh.fields.DATETIME(stored=True),
+    creator=whoosh.fields.ID(stored=True),
+    owner=whoosh.fields.ID(stored=True),
+
+    name=whoosh.fields.TEXT(stored=True),
+    description=whoosh.fields.TEXT(stored=True),
+    text=whoosh.fields.TEXT(stored=True),
+
+    mime_type=whoosh.fields.ID(stored=True),
+    language=whoosh.fields.ID(stored=True),
+    size=whoosh.fields.NUMERIC(stored=True),
+    tags=whoosh.fields.KEYWORD(stored=True, commas=True),
+  )
 
   def __init__(self, name, data, mime_type):
     Entity.__init__(self)

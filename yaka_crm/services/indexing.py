@@ -20,6 +20,7 @@
 import sqlalchemy
 from sqlalchemy import event
 from sqlalchemy.orm.session import Session
+from whoosh import sorting
 
 import whoosh.index
 from whoosh.qparser import MultifieldParser
@@ -31,14 +32,18 @@ from ..core.entities import all_entity_classes
 import os
 
 
-class IndexService(object):
+def get_service(app=None):
+  return WhooshIndexService.instance(app)
+
+
+class WhooshIndexService(object):
 
   __instance = None
 
   @classmethod
   def instance(cls, app=None):
     if not cls.__instance:
-      cls.__instance = IndexService(app)
+      cls.__instance = WhooshIndexService(app)
     return cls.__instance
 
   def __init__(self, app=None):
@@ -64,11 +69,31 @@ class IndexService(object):
   def stop(self):
     self.running = False
 
-  def search(self, query, limit=50):
-    for indexed_class in self.indexed_classes:
-      searcher = indexed_class.search_query
-      for res in searcher.search(query, limit):
-        yield res
+  def search(self, query, cls=None, limit=50):
+    if cls:
+      return self.search_for_class(query, cls, limit)
+
+    else:
+      res = []
+      for indexed_class in self.indexed_classes:
+        searcher = indexed_class.search_query
+        res += searcher.search(query, limit)
+      return res
+
+  def search_for_class(self, query, cls, limit=50):
+    index = self.indexes[cls.__name__]
+    searcher = index.searcher()
+    fields = set(index.schema._fields.keys()) - set(['uid'])
+    parser = MultifieldParser(list(fields), index.schema)
+
+    facets = sorting.Facets()
+    facets.add_field("language")
+    facets.add_field("mime_type")
+    facets.add_field("creator")
+    facets.add_field("owner")
+
+    results = searcher.search(parser.parse(query), groupedby=facets, limit=limit)
+    return results
 
   def register_classes(self):
     for cls in all_entity_classes():
@@ -83,7 +108,12 @@ class IndexService(object):
 
     index_path = os.path.join(self.whoosh_base, cls.__name__)
 
-    schema, primary = self._get_whoosh_schema_and_primary(cls)
+    if hasattr(cls, 'whoosh_schema'):
+      schema = cls.whoosh_schema
+      primary = 'uid'
+    else:
+      schema, primary = self._get_whoosh_schema_and_primary(cls)
+      cls.whoosh_schema = schema
 
     if whoosh.index.exists_in(index_path):
       index = whoosh.index.open_dir(index_path)
@@ -160,7 +190,7 @@ class IndexService(object):
       index = self.index_for_model_class(model_class)
       with index.writer() as writer:
         primary_field = model_class.search_query.primary
-        searchable = model_class.__searchable__
+        indexed_fields = model_class.whoosh_schema.names()
 
         for change_type, model in values:
           # delete everything. stuff that's updated or inserted will get
@@ -170,7 +200,14 @@ class IndexService(object):
           writer.delete_by_term(primary_field, unicode(getattr(model, primary_field)))
 
           if change_type in ("new", "changed"):
-            attrs = dict((key, getattr(model, key)) for key in searchable)
+            attrs = {}
+            for key in indexed_fields:
+              value = getattr(model, key)
+              if hasattr(value, 'name'):
+                value = value.name
+              if isinstance(value, str):
+                value = unicode(value)
+              attrs[key] = value
             attrs[primary_field] = unicode(getattr(model, primary_field))
             writer.add_document(**attrs)
 

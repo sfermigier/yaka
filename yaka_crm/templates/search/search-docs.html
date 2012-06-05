@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% from "search/macros.html" import left_column %}
+
+{% block container %}
+  <div class="row">
+
+    <div class="span3">
+      {{ left_column() }}
+      ...
+    </div>
+
+    <div class="span9">
+      <h2>Search results for query "{{ query_string }}"</h2>
+
+      {% if not documents and not res %}
+        Your query didn't find any results.
+      {% endif %}
+
+      {% if documents %}
+        {% if documents|count > 1 %}
+          <h3 style="margin-top: 20px;">Documents ({{ documents|count }} matches)</h3>
+        {% else %}
+          <h3 style="margin-top: 20px;">Documents (1 match)</h3>
+        {% endif %}
+
+        {% for obj, hit, snippet in documents %}
+          <p>
+            <strong><a href="{{obj.url}}">{{ hit.name }}</a></strong><br>
+            {{ snippet }}<br>
+            Created by <a href="{{ obj.creator._url }}">{{ hit.creator }}</a>. </p>
+        {% endfor %}
+
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}
