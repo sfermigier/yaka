@@ -69,9 +69,9 @@ class WhooshIndexService(object):
   def stop(self):
     self.running = False
 
-  def search(self, query, cls=None, limit=50):
+  def search(self, query, cls=None, limit=10, filter=None):
     if cls:
-      return self.search_for_class(query, cls, limit)
+      return self.search_for_class(query, cls, limit, filter)
 
     else:
       res = []
@@ -80,7 +80,7 @@ class WhooshIndexService(object):
         res += searcher.search(query, limit)
       return res
 
-  def search_for_class(self, query, cls, limit=50):
+  def search_for_class(self, query, cls, limit=50, filter=None):
     index = self.indexes[cls.__name__]
     searcher = index.searcher()
     fields = set(index.schema._fields.keys()) - set(['uid'])
@@ -92,7 +92,7 @@ class WhooshIndexService(object):
     facets.add_field("creator")
     facets.add_field("owner")
 
-    results = searcher.search(parser.parse(query), groupedby=facets, limit=limit)
+    results = searcher.search(parser.parse(query), groupedby=facets, limit=limit, filter=filter)
     return results
 
   def register_classes(self):
@@ -206,6 +206,8 @@ class WhooshIndexService(object):
               if hasattr(value, 'name'):
                 value = value.name
               if isinstance(value, str):
+                value = unicode(value)
+              elif isinstance(value, int):
                 value = unicode(value)
               attrs[key] = value
             attrs[primary_field] = unicode(getattr(model, primary_field))

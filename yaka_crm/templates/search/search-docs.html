@@ -6,34 +6,88 @@
   <div class="row">
 
     <div class="span3">
-      {{ left_column() }}
+      {{ left_column(facets) }}
       ...
     </div>
 
     <div class="span9">
-      <h2>Search results for query "{{ query_string }}"</h2>
+      <form>
+        <div class="input-append">
+          <input class="span6" size="16" type="text" name="q" value="{{ query }}">
+          <button class="btn" type="button">Search</button>
+        </div>
 
-      {% if not documents and not res %}
-        Your query didn't find any results.
-      {% endif %}
-
-      {% if documents %}
-        {% if documents|count > 1 %}
-          <h3 style="margin-top: 20px;">Documents ({{ documents|count }} matches)</h3>
+        {% if hit_count == 0 %}
+          <h3 style="margin-top: 20px;">No matches</h3>
+        {% elif hit_count > 1 %}
+          <h3 style="margin-top: 20px;">{{ hit_count }} matches</h3>
         {% else %}
-          <h3 style="margin-top: 20px;">Documents (1 match)</h3>
+          <h3 style="margin-top: 20px;">1 match</h3>
         {% endif %}
 
-        {% for obj, hit, snippet in documents %}
-          <p>
-            <strong><a href="{{obj.url}}">{{ hit.name }}</a></strong><br>
-            {{ snippet }}<br>
-            Created by <a href="{{ obj.creator._url }}">{{ hit.creator }}</a>. </p>
-        {% endfor %}
+        <div id="hits">
+          {% for hit in hits %}
+            <p>
+              <strong><a href="/dm/{{ hit.uid }}">{{ hit.name }}</a></strong><br>
+              {{ hit.highlights("text") | safe }}<br>
+              Created by <a href="/users/{{ hit.creator_id }}">{{ hit.creator }}</a>. </p>
+          {% endfor %}
 
-      {% endif %}
+          <div class=pagination>
+            <ul>
+              {%- for page in pagination.iter_pages() %}
+                {% if page %}
+                  {% if page != pagination.page %}
+                    <li><a href="/search/docs?q={{ query }}&page={{ page }}">{{ page }}</a></li>
+                  {% else %}
+                    <li class="active disabled"><a>{{ page }}</a></li>
+                  {% endif %}
+                {% else %}
+                  <li class="active disabled">...</li>
+                {% endif %}
+              {%- endfor %}
+            </ul>
+          </div>
+        </div>
+
+      </form>
 
     </div>
   </div>
+
+
+  <script>
+    $(document).ready(function() {
+      var items = $("li.facet-item");
+      items.click(
+              function() {
+                var item = $(this);
+                if (item.data("active")) {
+                  item.data("active", false);
+                  item.find("img").attr("src", "/static/icons/checkbox-unchecked-12.png");
+                } else {
+                  item.data("active", true);
+                  item.find("img").attr("src", "/static/icons/checkbox-checked-12.png");
+                }
+                var filters = [];
+                items.each(function() {
+                  var item = $(this);
+                  if (item.data("active")) {
+                    filters.push(item.data('facet-name') + ":" + item.data('facet-value'));
+                  }
+                });
+                var params = {
+                  q:       "{{ query }}",
+                  filters: filters,
+                  page:    "{{ pagination.page }}" };
+                $.get("/search/ajax",
+                        params,
+                        function(data) {
+                          $("#hits").empty().append(data);
+                        });
+              }
+      );
+    });
+  </script>
 
 {% endblock %}

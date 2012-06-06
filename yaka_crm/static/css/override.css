@@ -1,3 +1,12 @@
+/* faceted search */
+li.facet-item {
+    cursor: pointer;
+}
+
+li.facet-item img {
+    vertical-align: -1px;
+}
+
 /* mugshot on top */
 .navbar .nav > li > a {
     padding-bottom: 6px;
@@ -464,6 +473,7 @@ NOTE: this removes two full columns from the grid, meaning you only go to 14 col
     position: relative;
     vertical-align: middle;
 }
+
 .btn.btn-file > input[type="file"] {
     width: 100%;
     position: absolute;

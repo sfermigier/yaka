@@ -86,7 +86,9 @@ class File(Entity):
 
     created_at=whoosh.fields.DATETIME(stored=True),
     updated_at=whoosh.fields.DATETIME(stored=True),
+    creator_id=whoosh.fields.ID(stored=True),
     creator=whoosh.fields.ID(stored=True),
+    owner_id=whoosh.fields.ID(stored=True),
     owner=whoosh.fields.ID(stored=True),
 
     name=whoosh.fields.TEXT(stored=True),

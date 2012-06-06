@@ -1,0 +1,24 @@
+<div id="hits">
+  {% for hit in hits %}
+    <p>
+      <strong><a href="/dm/{{ hit.uid }}">{{ hit.name }}</a></strong><br>
+      {{ hit.highlights("text") | safe }}<br>
+      Created by <a href="/users/{{ hit.creator_id }}">{{ hit.creator }}</a>. </p>
+  {% endfor %}
+
+  <div class=pagination>
+    <ul>
+      {%- for page in pagination.iter_pages() %}
+        {% if page %}
+          {% if page != pagination.page %}
+            <li><a href="/search/docs?q={{ query }}&page={{ page }}">{{ page }}</a></li>
+          {% else %}
+            <li class="active disabled"><a>{{ page }}</a></li>
+          {% endif %}
+        {% else %}
+          <li class="active disabled">...</li>
+        {% endif %}
+      {%- endfor %}
+    </ul>
+  </div>
+</div>

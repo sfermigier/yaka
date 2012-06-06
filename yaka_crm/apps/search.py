@@ -1,9 +1,15 @@
 from flask import render_template, request, Blueprint
 from jinja2._markupsafe import Markup
+from whoosh.query.terms import Term
 
 from ..entities import *
 from .dm import File
 from ..services import indexing
+from yaka_crm.util import Pagination
+
+
+# TODO: make it a config param
+PAGE_SIZE = 10
 
 
 search = Blueprint("search", __name__, url_prefix="/search")
@@ -73,27 +79,75 @@ def search_docs():
   """Alternative route for document search."""
 
   q = request.args.get("q")
+  page = int(request.args.get("page", 1))
+
   breadcrumbs = [
     dict(path="/", label="Home"),
     dict(path="", label="Search for '%s'" % q),
   ]
 
   index_service = indexing.get_service()
-  hits = index_service.search(q, File)
-  print hits.groups("language")
-  print hits.groups("mime_type")
-  print hits.groups("creator")
-  print hits.groups("owner")
+  results = index_service.search(q, File, page*PAGE_SIZE)
+  hit_count = results.estimated_length()
 
-  documents = []
-  for hit in hits:
-    obj = File.query.get(hit['uid'])
-    documents.append((obj, hit, Markup(hit.highlights("text"))))
+  pagination = Pagination(page, PAGE_SIZE, hit_count)
+
+  facets = []
+  facets.append(make_facet(results, "Language", "language"))
+  facets.append(make_facet(results, "File format", "mime_type"))
+  facets.append(make_facet(results, "Creator", "creator"))
+  facets.append(make_facet(results, "Owner", "owner"))
+  #  ('Created since', []),
+  #  ('Modified since', []),
+
+  hits = results[(page-1)*PAGE_SIZE:page*PAGE_SIZE]
 
   return render_template('search/search-docs.html',
-                         query_string=q,
-                         documents=documents,
+                         query=q,
+                         hits=hits,
+                         hit_count=hit_count,
+                         pagination=pagination,
+                         facets=facets,
                          breadcrumbs=breadcrumbs)
+
+
+def make_facet(hits, name, group, limit=10):
+  l = [ (k, len(v)) for k, v in hits.groups(group).items()]
+  l.sort(key=lambda x: x[1], reverse=True)
+  if limit and limit < len(l):
+    l = l[0:limit]
+  return [name, l]
+
+
+@search.route("/ajax")
+def ajax():
+  q = request.args.get("q")
+  page = int(request.args.get("page", 1))
+  filters = request.args.getlist("filters[]")
+
+  index_service = indexing.get_service()
+
+  if not filters:
+    results = index_service.search(q, File, limit=page*PAGE_SIZE)
+    hit_count = results.estimated_length()
+  else:
+    fieldname, text = filters[0].split(":", 1)
+    filter = Term(fieldname, text)
+    print filter
+    results = index_service.search(q, File, limit=page*PAGE_SIZE, filter=filter)
+    hit_count = results.estimated_length()
+
+
+  pagination = Pagination(page, PAGE_SIZE, hit_count)
+
+
+  hits = results[(page-1)*PAGE_SIZE:page*PAGE_SIZE]
+
+  return render_template('search/search-ajax.html',
+                         query=q,
+                         hits=hits,
+                         hit_count=hit_count,
+                         pagination=pagination)
 
 
 @search.route("/live")
