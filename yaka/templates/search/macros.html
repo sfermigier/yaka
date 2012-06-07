@@ -1,0 +1,24 @@
+{% macro left_column(facets) %}
+
+  <div class="well" style="padding: 3px;">
+
+    <ul class="nav nav-list">
+
+      <div style="font-weight: bold; font-size: 120%; margin-bottom: 5px;">Facets</div>
+
+      {% for facet_name, facet_items in facets %}
+        <li class="nav-header">{{ facet_name }}</li>
+
+        {% for value, count in facet_items %}
+          <li class="facet-item" data-facet-name="language" data-facet-value="{{ value }}">
+            <img src="/static/icons/checkbox-unchecked-12.png">
+            <span class="facet-label">{{ value }}</span>
+            <span class="facet-count">({{ count }})</span>
+          </li>
+        {% endfor %}
+      {% endfor %}
+
+    </ul>
+  </div>
+
+{% endmacro %}
