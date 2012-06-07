@@ -37,7 +37,7 @@ class Application(Flask):
     crm = CRM(self)
 
     # Register additional blueprints
-    from .views import main
+    from .apps.main import main
     from .apps.admin import admin
     from .apps.dm import dm
     from .apps.reports import reports

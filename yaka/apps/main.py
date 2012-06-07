@@ -1,11 +1,14 @@
+"""Main views.
+"""
+
 from flask import render_template, session, request, Blueprint
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.utils import redirect
 
-from .entities import *
+from ..entities import *
 
-from .core.frontend import TableView, BreadCrumbs
-from .frontend import Contacts, Opportunities, Leads, Accounts
+from ..core.frontend import TableView, BreadCrumbs
+from ..frontend import Contacts, Opportunities, Leads, Accounts
 
 
 __all__ = []
