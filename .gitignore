@@ -14,7 +14,7 @@ tests/tmp
 tests/extra_files
 maxid.data
 
-yaka_crm/static/misc/
+yaka/static/misc
 
 *.pyc
 *.egg-info
