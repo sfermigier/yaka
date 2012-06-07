@@ -1,9 +1,8 @@
 """Main views.
 """
 
-from flask import render_template, session, request, Blueprint
+from flask import render_template, session, request, Blueprint, redirect
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.utils import redirect
 
 from ..entities import *
 

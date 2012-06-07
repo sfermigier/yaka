@@ -166,6 +166,10 @@ class Entity(AbstractConcreteBase, db.Model):
   def _icon(self, size=12):
     return "/static/icons/%s-%d.png" % (self.__class__.__name__.lower(), size)
 
+  @property
+  def name(self):
+    raise NotImplementedError()
+
 
 # TODO: make this unecessary
 def register_metadata(cls):

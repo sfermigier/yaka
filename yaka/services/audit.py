@@ -92,13 +92,18 @@ class AuditService(object):
   running = False
 
   @classmethod
-  def instance(cls):
+  def instance(cls, app=None):
     if not cls.__instance:
-      cls.__instance = AuditService()
+      cls.__instance = AuditService(app)
     return cls.__instance
 
-  def __init__(self):
+  def __init__(self, app=None):
     self.all_model_classes = set()
+    if app:
+      self.init_app(app)
+
+  def init_app(self, app):
+    self.app = app
     event.listen(Session, "before_commit", self.before_commit)
 
   def start(self):
@@ -192,3 +197,6 @@ class AuditService(object):
   def entries_for(self, entity):
     return AuditEntry.query.filter(AuditEntry.entity_id == entity.uid).all()
 
+
+def get_service(app=None):
+  return AuditService.instance(app)

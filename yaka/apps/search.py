@@ -3,9 +3,9 @@ from jinja2._markupsafe import Markup
 from whoosh.query.terms import Term
 
 from ..entities import *
-from .dm import File
 from ..services import indexing
 from ..util import Pagination
+from .dm import File
 
 
 # TODO: make it a config param

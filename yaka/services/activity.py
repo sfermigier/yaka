@@ -42,16 +42,20 @@ class ActivityEntry(db.Model):
 class ActivityService(object):
 
   __instance = None
-  running = False
 
   @classmethod
-  def instance(cls):
+  def instance(cls, app=None):
     if not cls.__instance:
-      cls.__instance = ActivityService()
+      cls.__instance = ActivityService(app)
     return cls.__instance
 
-  def __init__(self):
-    pass
+  def __init__(self, app=None):
+    self.running = False
+    if app:
+      self.init_app(app)
+
+  def init_app(self, app):
+    self.app = app
 
   def start(self):
     assert not self.running
@@ -81,3 +85,7 @@ class ActivityService(object):
   @staticmethod
   def entries_for_actor(actor, limit=50):
     return ActivityEntry.query.filter(ActivityEntry.actor_id == actor.uid).limit(limit).all()
+
+
+def get_service(app=None):
+  return ActivityService.instance(app)

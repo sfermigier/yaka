@@ -1,7 +1,4 @@
-from flask import Blueprint
-from flask import render_template
-from flask.globals import request
-from flask.helpers import make_response
+from flask import Blueprint, render_template, request, make_response
 from sqlalchemy.sql.expression import not_
 
 from ..entities import User
@@ -9,6 +6,7 @@ from ..core.frontend import BreadCrumbs
 from ..services.image import crop_and_resize
 from ..services.activity import ActivityEntry
 from ..services.audit import AuditEntry
+
 from .dm import File
 
 

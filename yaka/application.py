@@ -6,13 +6,11 @@ from flask import Flask
 from .extensions import mail, db
 from .filters import init_filters
 from .auth import init_auth
-from .services.audit import AuditService
-from .services.activity import ActivityService
-from .services import indexing
+from .services import indexing, audit, activity
 
 # Import entity classes. Don't remove
 from .entities import *
-from .apps.dm import *
+from .apps.dm import File, Folder
 
 
 __all__ = ['mail', 'db', 'create_app']
@@ -55,9 +53,9 @@ class Application(Flask):
 
     # Initiate services
     # Must come after all entity classes have been declared.
-    self.init_index_service()
-    self.init_audit_service()
-    self.init_activity_service()
+    self.extensions['indexing'] = indexing.get_service(self)
+    self.extensions['audit'] = audit.get_service(self)
+    self.extensions['activity'] = activity.get_service(self)
 
   def start_services(self):
     for service in self.extensions.values():
@@ -69,18 +67,6 @@ class Application(Flask):
       if hasattr(service, 'stop'):
         service.stop()
   
-  def init_activity_service(self):
-    activity_service = ActivityService.instance()
-    self.extensions['activity'] = activity_service
-  
-  def init_audit_service(self):
-    audit_service = AuditService.instance()
-    self.extensions['audit'] = audit_service
-
-  def init_index_service(self):
-    index_service = indexing.get_service(self)
-    self.extensions['index'] = index_service
-
 
 def create_app(config):
   return Application(config)

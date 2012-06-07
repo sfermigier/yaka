@@ -51,16 +51,22 @@
 
       <a class="brand" href="/">Yaka</a>
 
+      <!-- TODO: move to config -->
+      {% set top_nav = [
+              ("/crm/", "CRM"),
+              ("/dm/", "DM"),
+              ("/social/", "Social"),
+              ("/reports/", "Reports"),
+              ("/users/", "Users"),
+              ("/users/groups/", "Groups"),
+              ("/admin/", "Admin"),
+              ("/help/", "Help"),
+              ]
+      %}
       <ul class="nav">
-        <li><a href="/crm/">CRM</a></li>
-        <li><a href="/dm/">DM</a></li>
-        <li><a href="/social/">RSE</a></li>
-        <li><a href="/reports/">Reports</a></li>
-        <li><a href="/users/">Users</a></li>
-        <li><a href="/users/groups/">Groups</a></li>
-
-        <li><a href="/admin/">Admin</a></li>
-        <li><a href="/help/">Help</a></li>
+        {% for url, label in top_nav %}
+        <li><a href="{{ url }}">{{ label }}</a></li>
+        {% endfor %}
       </ul>
 
       <ul class="nav pull-right">

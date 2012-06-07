@@ -19,8 +19,8 @@ from flask import Blueprint, render_template, redirect, request,\
 from flaskext.mail import Message
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
+
 import whoosh
-from whoosh.fields import Schema
 
 from ..extensions import db, mail
 
@@ -81,7 +81,7 @@ class File(Entity):
   extra_metadata_json = Column(UnicodeText, info=dict(auditable=False))
 
   # FIXME: hardwired dependency
-  whoosh_schema = Schema(
+  whoosh_schema = whoosh.fields.Schema(
     uid=whoosh.fields.ID(stored=True, unique=True),
 
     created_at=whoosh.fields.DATETIME(stored=True),

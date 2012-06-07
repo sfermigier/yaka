@@ -32,10 +32,6 @@ from ..core.entities import all_entity_classes
 import os
 
 
-def get_service(app=None):
-  return WhooshIndexService.instance(app)
-
-
 class WhooshIndexService(object):
 
   __instance = None
@@ -251,3 +247,7 @@ class Searcher(object):
     hits = self.index.searcher().search(self.parser.parse(query), limit=limit)
     for hit in hits:
       yield (hit, session.query(self.model_class).get(hit[self.primary]))
+
+
+def get_service(app=None):
+  return WhooshIndexService.instance(app)
