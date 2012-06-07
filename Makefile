@@ -13,14 +13,14 @@ unit:
 
 test-with-coverage:
 	$(PYTHON) -m nose.core --with-coverage --cover-erase \
-	   	--cover-package=yaka_crm tests
+	   	--cover-package=yaka tests
 
 test-with-profile:
 	$(PYTHON) -m nose.core --with-profile tests
 
 unit-with-coverage:
 	$(PYTHON) -m nose.core --with-coverage --cover-erase \
-	   	--cover-package=yaka_crm tests/unit
+	   	--cover-package=yaka tests/unit
 
 unit-with-profile:
 	$(PYTHON) -m nose.core --with-profile tests/unit
@@ -28,10 +28,10 @@ unit-with-profile:
 #
 # Everything else
 #
-run: yaka_crm/yaka.db
+run: yaka/yaka.db
 	$(PYTHON) manage.py runserver --host 0.0.0.0
 
-yaka_crm/yaka.db:
+yaka/yaka.db:
 	$(PYTHON) manage.py initdb
 	$(PYTHON) manage.py loaddata
 
@@ -39,7 +39,7 @@ full-test:
 	tox -e py27
 
 pep8:
-	pep8 -r --ignore E111,E225,E501 *.py yaka_crm tests
+	pep8 -r --ignore E111,E225,E501 *.py yaka tests
 
 clean:
 	find . -name "*.pyc" | xargs rm -f
@@ -63,4 +63,4 @@ push:
 	rsync -e ssh -avz ./ $(TARGET)
 
 push-code:
-	rsync -e ssh -avz ./yaka_crm $(TARGET)/
+	rsync -e ssh -avz ./yaka $(TARGET)/

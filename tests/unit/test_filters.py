@@ -2,7 +2,7 @@ import unittest
 import datetime
 from nose.tools import eq_
 
-from yaka_crm.filters import filesize, date_age
+from yaka.filters import filesize, date_age
 
 
 class TestFilters(unittest.TestCase):

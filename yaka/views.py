@@ -4,8 +4,8 @@ from werkzeug.utils import redirect
 
 from .entities import *
 
-from yaka_crm.core.frontend import TableView, BreadCrumbs
-from yaka_crm.frontend import Contacts, Opportunities, Leads, Accounts
+from .core.frontend import TableView, BreadCrumbs
+from .frontend import Contacts, Opportunities, Leads, Accounts
 
 
 __all__ = []

@@ -7,8 +7,8 @@ from base import IntegrationTestCase
 from nose.tools import eq_, ok_
 from util import DataLoader
 
-from yaka_crm import db
-from yaka_crm.apps.dm import create_file
+from yaka import db
+from yaka.apps.dm import create_file
 
 
 ROOT = "/dm/"

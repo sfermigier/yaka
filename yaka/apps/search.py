@@ -5,7 +5,7 @@ from whoosh.query.terms import Term
 from ..entities import *
 from .dm import File
 from ..services import indexing
-from yaka_crm.util import Pagination
+from ..util import Pagination
 
 
 # TODO: make it a config param

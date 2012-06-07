@@ -16,7 +16,7 @@ from .entities import *
 #
 # Domain-specific application classes
 #
-from yaka_crm.core.forms import Chosen
+from .core.forms import Chosen
 
 #
 # Select lists choices

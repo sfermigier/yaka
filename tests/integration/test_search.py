@@ -2,9 +2,9 @@ from base import IntegrationTestCase
 from nose.tools import eq_, ok_
 from tests.integration.util import DataLoader
 
-from yaka_crm.entities import Contact
-from yaka_crm.extensions import db
-from yaka_crm.services import indexing
+from yaka.entities import Contact
+from yaka.extensions import db
+from yaka.services import indexing
 
 
 class TestSearch(IntegrationTestCase):

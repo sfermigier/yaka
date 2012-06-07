@@ -1,7 +1,7 @@
 from unittest import TestCase
 from nose.tools import eq_, ok_
 
-from yaka_crm.entities import *
+from yaka.entities import *
 
 
 class TestModels(TestCase):

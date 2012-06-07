@@ -11,7 +11,7 @@ from sqlalchemy import event
 import sys
 
 from ..extensions import db
-from yaka_crm.util import memoized
+from ..util import memoized
 
 __all__ = ['Column', 'Entity', 'all_entity_classes']
 

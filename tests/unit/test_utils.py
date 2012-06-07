@@ -1,7 +1,8 @@
 from unittest import TestCase
 from nose.tools import ok_
-from yaka_crm.apps.dm import match
-from yaka_crm.util import Pagination
+
+from yaka.apps.dm import match
+from yaka.util import Pagination
 
 
 class TestDMUtils(TestCase):

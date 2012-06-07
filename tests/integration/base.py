@@ -4,8 +4,8 @@ import fix_path
 from flaskext.testing import TestCase
 from tests.integration import util
 
-from yaka_crm.application import Application
-from yaka_crm.extensions import db
+from yaka.application import Application
+from yaka.extensions import db
 
 from config import TestConfig
 

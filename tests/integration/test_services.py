@@ -1,8 +1,8 @@
 from nose.tools import eq_
 from base import IntegrationTestCase
 
-from yaka_crm.entities import Account
-from yaka_crm.services.audit import AuditEntry, AuditService
+from yaka.entities import Account
+from yaka.services.audit import AuditEntry, AuditService
 
 
 class TestAudit(IntegrationTestCase):

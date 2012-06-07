@@ -165,7 +165,7 @@ class File(Entity):
 
     #noinspection PyUnresolvedReferences
     suffix = self.name.split(".")[-1]
-    if os.path.exists("yaka_crm/static/fileicons/%s.png" % suffix):
+    if os.path.exists("yaka/static/fileicons/%s.png" % suffix):
       return '/static/fileicons/%s.png' % suffix
     else:
       return '/static/fileicons/bin.png'
