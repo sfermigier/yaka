@@ -20,10 +20,10 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, DateTime, Text
 
+from ..core.subjects import User
+from ..core.entities import Entity, all_entity_classes
+
 from ..extensions import db
-from ..core.entities import Entity
-from ..entities import User
-from ..entities import *
 
 
 CREATION = 0

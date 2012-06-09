@@ -9,8 +9,8 @@ from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, DateTime, Text
 
 from ..core.signals import activity
+from ..core.subjects import User
 from ..extensions import db
-from ..entities import User
 
 
 class ActivityEntry(db.Model):

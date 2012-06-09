@@ -2,7 +2,7 @@ from base import IntegrationTestCase
 from nose.tools import eq_, ok_
 from tests.integration.util import DataLoader
 
-from yaka.entities import Contact
+from yaka.apps.crm.entities import Contact
 from yaka.extensions import db
 from yaka.services import indexing
 

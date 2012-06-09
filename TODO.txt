@@ -1,25 +1,46 @@
-TODO for v. 0.1
-===============
+TODO for v. 0.1 (19 june 2012)
+==============================
 
-- Login
-- Audit
+Focus: usable social networking.
+
+- ESN: follow, timelines, activities, groups
+- ESN: social content types
 - Security
-- Graphical cleanup (datatables)
-- Search
-- DM
-- Convert leads to account + opportunity
+- Home page
+- Timelines
+- Config
+- Finish REST API
+
+
+TODO v. 0.2 (end of July 2012)
+===========
+
+Focus: social CRM
+
+- Split Core / ESN / CRM
+- Finish basic CRM
 - Export to csv
 - Reports
-- Home page
 - Actions
-- Ownership
-- Timelines
-- whooshalchemy is performing poorly: fix this
+- Convert leads to account + opportunity
+
+
+TODO v 0.3 (end of August 2012)
+===============================
+
+Focus: configuration.
+
+
+TODO later
+==========
+
+- Replace Chosen with https://github.com/ivaynberg/select2
+
 
 DONE
 ====
 
-+ Project scaffold
++ Project structure
 + Create data classes
 + Create views
 + Use datatable.net for tables
@@ -28,4 +49,10 @@ DONE
 + Relation field
 + Load dummy data
 + Finish import and default data model
-
++ Login
++ Audit
++ whooshalchemy is performing poorly: fix this
++ Graphical cleanup (datatables)
++ Ownership
++ Basic Search
++ Basic DM

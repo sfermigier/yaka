@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template
 
-from ..core.frontend import BreadCrumbs
+from yaka.core.frontend import BreadCrumbs
 
+__all__ = ['social']
 
 social = Blueprint("social", __name__, url_prefix="/social")
 

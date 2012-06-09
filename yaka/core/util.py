@@ -6,6 +6,18 @@ import functools
 import time
 from logbook import Logger
 from math import ceil
+from flask import request
+
+
+# XXX: really needed ?
+def get_params(names):
+  """Returns dictionary with params from request"""
+  params = {}
+  for name in names:
+    value = request.form.get(name) or request.files.get(name)
+    if value is not None:
+      params[name] = value
+  return params
 
 
 class timer(object):
@@ -82,8 +94,8 @@ class Pagination(object):
                  right_current=5, right_edge=2):
     last = 0
     for num in xrange(1, self.pages + 1):
-      if num <= left_edge or \
-         (num > self.page - left_current - 1 and num < self.page + right_current) or \
+      if num <= left_edge or\
+         (num > self.page - left_current - 1 and num < self.page + right_current) or\
          num > self.pages - right_edge:
         if last + 1 != num:
           yield None

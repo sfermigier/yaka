@@ -1,7 +1,7 @@
 from base import IntegrationTestCase
-from nose.tools import eq_, ok_
+from nose.tools import ok_
 
-from yaka.entities import *
+from yaka.apps.crm.entities import *
 
 from datetime import datetime, timedelta
 

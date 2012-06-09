@@ -4,10 +4,11 @@
 from flask import render_template, session, request, Blueprint, redirect
 from sqlalchemy.orm.exc import NoResultFound
 
-from ..entities import *
+from yaka.core.frontend import TableView, BreadCrumbs
+from yaka.core.subjects import User
 
-from ..core.frontend import TableView, BreadCrumbs
-from ..frontend import Contacts, Opportunities, Leads, Accounts
+from .crm.entities import *
+from .crm.frontend import Contacts, Opportunities, Leads, Accounts
 
 
 __all__ = []

@@ -39,4 +39,7 @@ class IntegrationTestCase(TestCase):
     db.drop_all()
 
   def assert_302(self, response):
-    self.assertStatus(response, 302)
+    self.assert_status(response, 302)
+
+  def assert_204(self, response):
+    self.assert_status(response, 204)

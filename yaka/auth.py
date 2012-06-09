@@ -1,9 +1,10 @@
 from flask import g, session, redirect, request
 
-from .entities import User
-from .frontend import CRM
+from yaka.core.subjects import User
+from yaka.apps.crm.frontend import CRM
 
 
+# TODO: split method
 def init_auth(app):
 
   @app.before_request

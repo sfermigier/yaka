@@ -6,8 +6,10 @@ import datetime
 from os.path import join, dirname, isdir
 from posix import listdir
 
-from yaka.entities import Contact, Account, Opportunity, Lead, User
+from yaka.apps.crm.entities import Contact, Account, Opportunity, Lead
+from yaka.core.subjects import User
 from yaka.apps.dm import File
+
 
 TAGS = ["tag1", "tag2", "tag3", "tag4"]
 

@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request, make_response
 from sqlalchemy.sql.expression import not_
 
-from ..entities import User
-from ..core.frontend import BreadCrumbs
-from ..services.image import crop_and_resize
-from ..services.activity import ActivityEntry
-from ..services.audit import AuditEntry
+from yaka.core.subjects import User
+from yaka.core.frontend import BreadCrumbs
+from yaka.services.image import crop_and_resize
+from yaka.services.activity import ActivityEntry
+from yaka.services.audit import AuditEntry
 
 from .dm import File
 

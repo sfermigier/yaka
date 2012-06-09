@@ -7,16 +7,16 @@ from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextField, TextAreaField
 
 # Our custom validators
-from .core.forms import email, url, required
+from yaka.core.forms import email, url, required
+from yaka.core.frontend import *
 
-from .core.frontend import *
 from .entities import *
 
 
 #
 # Domain-specific application classes
 #
-from .core.forms import Chosen
+from yaka.core.forms import Chosen
 
 #
 # Select lists choices

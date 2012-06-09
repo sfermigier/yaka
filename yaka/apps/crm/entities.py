@@ -2,14 +2,14 @@
 
 """
 
-from .core.entities import *
-
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import ForeignKey
+from sqlalchemy.schema import ForeignKey, Column
 from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date, Text
 
+from yaka.core.entities import Entity
 
-searchable = dict(searchable=True)
+
+SEARCHABLE = dict(searchable=True)
 
 #
 # Mixins
@@ -18,16 +18,16 @@ class Person(object):
   """Mixin class for persons."""
 
   salutation = Column(UnicodeText, default=u"")
-  first_name = Column(UnicodeText, default=u"", info=searchable)
-  last_name = Column(UnicodeText, default=u"", info=searchable)
+  first_name = Column(UnicodeText, default=u"", info=SEARCHABLE)
+  last_name = Column(UnicodeText, default=u"", info=SEARCHABLE)
 
-  job_title = Column(UnicodeText, default=u"", info=searchable)
-  department = Column(UnicodeText, default=u"", info=searchable)
+  job_title = Column(UnicodeText, default=u"", info=SEARCHABLE)
+  department = Column(UnicodeText, default=u"", info=SEARCHABLE)
 
   email = Column(UnicodeText, default=u"")
   phone = Column(UnicodeText, default=u"")
 
-  description = Column(UnicodeText, default=u"", info=searchable)
+  description = Column(UnicodeText, default=u"", info=SEARCHABLE)
 
   photo = Column(LargeBinary)
 
@@ -60,7 +60,7 @@ class Addressable(object):
 class Account(Addressable, Entity):
   __tablename__ = 'account'
 
-  name = Column(UnicodeText, default=u"", info=searchable)
+  name = Column(UnicodeText, default=u"", info=SEARCHABLE)
   website = Column(Text, default=u"")
   office_phone = Column(UnicodeText, default=u"")
 
@@ -85,8 +85,9 @@ class Contact(Addressable, Person, Entity):
 class Opportunity(Entity):
   __tablename__ = 'opportunity'
 
-  name = Column(UnicodeText, nullable=False, info=searchable)
-  description = Column(UnicodeText, default=u"", info=searchable)
+  name = Column(UnicodeText, nullable=False, info=SEARCHABLE)
+
+  description = Column(UnicodeText, default=u"", info=SEARCHABLE)
 
   type = Column(UnicodeText, default=u"")
   stage = Column(UnicodeText, default=u"")
@@ -108,20 +109,6 @@ class Document(Entity):
   __tablename__ = 'document'
 
   blob = Column(LargeBinary)
-
-
-class User(Person, Entity):
-  __tablename__ = 'user'
-
-  password = Column(UnicodeText, nullable=False)
-
-  def __unicode__(self):
-    return self.name
-
-  # Should entities know about their own URL? I guess yes.
-  @property
-  def _url(self):
-    return "/users/%d" % self.uid
 
 
 # TODO: Task

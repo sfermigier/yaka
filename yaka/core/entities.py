@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from threading import Lock
 from flask.globals import g
 
@@ -11,7 +12,8 @@ from sqlalchemy import event
 import sys
 
 from ..extensions import db
-from ..util import memoized
+from util import memoized
+
 
 __all__ = ['Column', 'Entity', 'all_entity_classes']
 
@@ -95,7 +97,7 @@ class Entity(AbstractConcreteBase, db.Model):
   # FIXME: extremely suboptimal
   @property
   def creator(self):
-    from ..entities import User
+    from .subjects import User
     if self.creator_id:
       if self.creator_id in user_cache:
         return user_cache[self.creator_id]
@@ -108,7 +110,7 @@ class Entity(AbstractConcreteBase, db.Model):
 
   @property
   def owner(self):
-    from ..entities import User
+    from .subjects import User
     if self.owner_id:
       if self.owner_id in user_cache:
         return user_cache[self.owner_id]
@@ -153,6 +155,22 @@ class Entity(AbstractConcreteBase, db.Model):
       if type(v) == type(""):
         v = unicode(v)
       setattr(self, k, v)
+
+  def to_dict(self):
+    if hasattr(self, "__exportable__"):
+      exported = self.__exportable__ + ['uid']
+    else:
+      exported = self.column_names
+    d = {}
+    for k in exported:
+      v = getattr(self, k)
+      if type(v) == datetime:
+        v = v.isoformat()
+      d[k] = v
+    return d
+
+  def to_json(self):
+    return json.dumps(self.to_dict())
 
   # TODO: only one of these two
   @property

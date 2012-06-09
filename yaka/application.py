@@ -9,7 +9,7 @@ from .auth import init_auth
 from .services import indexing, audit, activity
 
 # Import entity classes. Don't remove
-from .entities import *
+from .apps.crm.entities import *
 from .apps.dm import File, Folder
 
 
@@ -31,7 +31,7 @@ class Application(Flask):
     init_filters(self)
     init_auth(self)
 
-    from .frontend import CRM
+    from .apps.crm.frontend import CRM
     crm = CRM(self)
 
     # Register additional blueprints
@@ -42,6 +42,7 @@ class Application(Flask):
     from .apps.users import users
     from .apps.search import search
     from .apps.social import social
+    from .apps.social.restapi import restapi
 
     self.register_blueprint(main)
     self.register_blueprint(admin)
@@ -50,6 +51,7 @@ class Application(Flask):
     self.register_blueprint(users)
     self.register_blueprint(search)
     self.register_blueprint(social)
+    self.register_blueprint(restapi)
 
     # Initiate services
     # Must come after all entity classes have been declared.

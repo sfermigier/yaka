@@ -2,9 +2,10 @@ from flask import render_template, request, Blueprint
 from jinja2._markupsafe import Markup
 from whoosh.query.terms import Term
 
-from ..entities import *
-from ..services import indexing
-from ..util import Pagination
+from yaka.services import indexing
+from yaka.core.util import Pagination
+
+from .crm.entities import *
 from .dm import File
 
 

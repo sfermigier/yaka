@@ -2,7 +2,7 @@ from unittest import TestCase
 from nose.tools import ok_
 
 from yaka.apps.dm import match
-from yaka.util import Pagination
+from yaka.core.util import Pagination
 
 
 class TestDMUtils(TestCase):
