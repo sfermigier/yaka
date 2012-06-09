@@ -9,7 +9,7 @@ from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
 
 from yaka.core.subjects import User
-from yaka.core.entities import Entity
+from yaka.core.entities import Entity, SEARCHABLE
 from yaka.extensions import db
 
 __all__ = ['Message', 'PrivateMessage']
@@ -39,10 +39,10 @@ class Message(Entity):
 
   See: http://activitystrea.ms/head/activity-schema.html#note
   """
-  __tablename__ = 'note'
+  __tablename__ = 'message'
   __editable__ = ['content']
 
-  content = Column(UnicodeText, info={'searchable': True})
+  content = Column(UnicodeText, info=SEARCHABLE)
 
   @classmethod
   def query_by_creator(cls, user):

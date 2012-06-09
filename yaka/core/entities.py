@@ -18,6 +18,32 @@ from util import memoized
 __all__ = ['Column', 'Entity', 'all_entity_classes']
 
 
+class Info(dict):
+
+  def __init__(self, **kw):
+    for k, v in kw.items():
+      self[k] = v
+
+  def __add__(self, other):
+    d = self.copy()
+    for k, v in other.items():
+      d[k] = v
+    return d
+
+
+EDITABLE = Info(editable=True)
+NOT_EDITABLE = Info(editable=False)
+AUDITABLE = Info(auditable=True)
+NOT_AUDITABLE = Info(auditable=False)
+SEARCHABLE = Info(searchable=True)
+NOT_SEARCHABLE = Info(searchable=False)
+EXPORTABLE = Info(exportable=True)
+NOT_EXPORTABLE = Info(exportable=False)
+
+# SYSTEM properties are defined by the system and not supposed to be changed manually.
+SYSTEM = Info(editable=False, auditable=False)
+
+
 # TODO: get rid of flask-sqlalchemy, replace db.Model by Base
 #Base = declarative_base()
 
@@ -47,7 +73,6 @@ class IdGenerator(object):
 
 # Singleton. Yuck :( !
 id_gen = IdGenerator()
-system = dict(editable=False, auditable=False)
 
 
 # Special case for "unowned" object? Maybe not. XXX.
@@ -68,18 +93,18 @@ class Entity(AbstractConcreteBase, db.Model):
 
   base_url = None
 
-  uid = Column(Integer, primary_key=True, info=system)
+  uid = Column(Integer, primary_key=True, info=SYSTEM)
 
-  created_at = Column(DateTime, default=datetime.utcnow, info=system)
+  created_at = Column(DateTime, default=datetime.utcnow, info=SYSTEM)
   updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow,
-                      info=system)
-  deleted_at = Column(DateTime, default=None, info=system)
+                      info=SYSTEM)
+  deleted_at = Column(DateTime, default=None, info=SYSTEM)
 
 
   @declared_attr
   def creator_id(self):
-    return Column(Integer, info=system)
-    #return Column(Integer, ForeignKey("UserBase.id"), info=system)
+    return Column(Integer, info=SYSTEM)
+    #return Column(Integer, ForeignKey("UserBase.id"), info=SYSTEM)
 
   @declared_attr
   def owner_id(self):

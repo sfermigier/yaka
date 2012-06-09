@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from ..core.frontend import BreadCrumbs
+from yaka.core.frontend import BreadCrumbs
 
 
 reports = Blueprint("reports", __name__, url_prefix="/reports")

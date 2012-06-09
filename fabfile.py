@@ -4,8 +4,8 @@ from fabric.context_managers import prefix
 APT_PREFIX = "DEBCONF_TERSE=yes DEBIAN_PRIORITY=critical DEBIAN_FRONTEND=noninteractive"
 
 
-STAGING_DIR = "yaka-crm/staging"
-PRODUCTION_DIR = "yaka-crm/production"
+STAGING_DIR = "yaka/staging"
+PRODUCTION_DIR = "yaka/production"
 NATIVE_PACKAGES = "python-pip poppler-utils imagemagick python-dev " \
     "libjpeg-dev libxslt1-dev make libzmq-dev"
 

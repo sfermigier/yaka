@@ -6,10 +6,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.schema import ForeignKey, Column
 from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Date, Text
 
-from yaka.core.entities import Entity
+from yaka.core.entities import Entity, SEARCHABLE
 
-
-SEARCHABLE = dict(searchable=True)
 
 #
 # Mixins
