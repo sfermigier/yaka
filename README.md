@@ -78,4 +78,4 @@ Build Status
 
 The project is under continuous integration with Travis:
 
-[![Build Status](https://secure.travis-ci.org/sfermigier/yaka-crm.png?branch=master)](https://secure.travis-ci.org/#!/sfermigier/yaka-crm)
+[![Build Status](https://secure.travis-ci.org/sfermigier/yaka.png?branch=master)](https://secure.travis-ci.org/#!/sfermigier/yaka)
