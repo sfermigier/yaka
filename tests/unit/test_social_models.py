@@ -62,6 +62,11 @@ class TestUsers(TestModels):
     self.assertEqual([user], group.members)
     self.assertEqual([group], user.groups)
 
+    user.leave(group)
+
+    self.assertEquals(0, len(group.members))
+    self.assertEquals(0, len(user.groups))
+
 
 class TestContent(TestModels):
 

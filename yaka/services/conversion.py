@@ -375,7 +375,6 @@ def make_temp_file(blob):
   return in_fn
 
 
-
 # Singleton, yuck!
 converter = Converter()
 converter.register_handler(PdfToTextHandler())

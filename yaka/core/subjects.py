@@ -34,7 +34,7 @@ class UserQuery(Query):
 class User(Entity):
   __tablename__ = 'user'
   __editable__ = ['first_name', 'last_name', 'job_title', 'department', 'company', 'email', 'password']
-  __exportable__ = __editable__ + ['created_at', 'updated_at']
+  __exportable__ = __editable__ + ['created_at', 'updated_at', 'uid']
 
   query = db.session.query_property(UserQuery)
 
@@ -49,24 +49,23 @@ class User(Entity):
 
   photo = Column(LargeBinary)
 
+  # TODO: add if needed:
   # location
   # manager
   # phone numbers (office, mobile)
   # email(s)
   # IM addresses
   # social networking addresses
-  # relationships
   # properties
   # profile / interests / job description
-
   # settings
 
   uid = Entity.uid
-  followees = []
   followers = relationship("User", secondary=following,
                            primaryjoin=(uid==following.c.follower_uid),
                            secondaryjoin=(uid==following.c.followee_uid),
                            backref='followees')
+  followees = []
 
   groups = relationship("Group", secondary=membership,
                         backref='members')
@@ -81,6 +80,10 @@ class User(Entity):
   def join(self, group):
     if not group in self.groups:
       self.groups.append(group)
+
+  def leave(self, group):
+    if group in self.groups:
+      del self.groups[self.groups.index(group)]
 
   @property
   def username(self):
@@ -102,7 +105,7 @@ class User(Entity):
 class Group(Entity):
   __tablename__ = 'group'
 
-  name = Column(UnicodeText, info=SEARCHABLE)
+  name = Column(UnicodeText, nullable=False, info=SEARCHABLE)
 
   members = []
 

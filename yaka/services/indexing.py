@@ -1,7 +1,5 @@
 """
-
-    WhooshAlchemy
-    ~~~~~~~~~~~~~
+    Indexing service for Yaka.
 
     Adds Whoosh indexing capabilities to SQLAlchemy models.
 
