@@ -45,6 +45,7 @@ class User(Entity):
   company = Column(UnicodeText, info=SEARCHABLE)
 
   email = Column(UnicodeText, nullable=False)
+  # TODO: encrypt
   password = Column(UnicodeText, nullable=False)
 
   photo = Column(LargeBinary)

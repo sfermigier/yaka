@@ -20,17 +20,17 @@ from flaskext.mail import Message
 
 from sqlalchemy.types import UnicodeText, LargeBinary, Integer, Text
 
-import whoosh
+import whoosh.fields
 
-from ..extensions import db, mail
+from yaka.extensions import db, mail
 
-from ..core.entities import Entity, Column
-from ..core.frontend import add_to_recent_items
-from ..core.signals import activity
+from yaka.core.entities import Entity, Column
+from yaka.core.frontend import add_to_recent_items
+from yaka.core.signals import activity
 
-from ..services.conversion import converter, ConversionError
-from ..services.audit import AuditEntry
-from ..services.image import resize
+from yaka.services.conversion import converter, ConversionError
+from yaka.services.audit import AuditEntry
+from yaka.services.image import resize
 
 
 ROOT = "/dm/"

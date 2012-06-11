@@ -5,7 +5,7 @@ from flask import request, Blueprint, g, make_response
 from yaka.core import signals
 from yaka.core.util import get_params
 from yaka.core.security import login_required
-from yaka.core.subjects import User
+from yaka.core.subjects import User, Group
 from yaka.extensions import db
 
 from .content import Message, PrivateMessage
@@ -43,7 +43,7 @@ def create_user():
   user = User(**d)
   db.session.add(user)
   db.session.commit()
-  signals.user_created.send(user)
+  signals.entity_created.send(user)
   return make_json_response(user, 201)
 
 
@@ -69,7 +69,7 @@ def get_user(user_id):
 @login_required
 def user_stream(user_id):
   user = User.query.get(user_id)
-  messages = Message.query_by_creator(user).all()
+  messages = Message.query.by_creator(user).all()
   #messages = list(user.messages)
   return make_json_response(messages)
 
@@ -83,8 +83,8 @@ def update_user(user_id):
   user.update(d)
   db.session.commit()
   # XXX: or user_updated?
-  signals.user_deleted.send(user)
-  signals.user_created.send(user)
+  signals.entity_deleted.send(user)
+  signals.entity_created.send(user)
   return make_json_response(user)
 
 
@@ -95,12 +95,12 @@ def delete_user(user_id):
   user = User.query.get(user_id)
   db.session.delete(user)
   db.session.commit()
-  signals.user_deleted.send(user)
+  signals.entity_deleted.send(user)
   return make_response("", 204)
 
 
 #
-# Social graph
+# Social graph: following
 #
 
 #[GET] /api/users/USER_ID/followers	View Followers of User
@@ -139,6 +139,55 @@ def unfollow(user_id, contact_user_id):
   g.user.unfollow(user)
   db.session.commit()
   return make_json_response("", 204)
+
+
+#
+# Social graph: groups
+#
+
+# [GET] /api/groups	Listing All Groups
+@restapi.route("/groups")
+@login_required
+def list_groups():
+  l = list(Group.query.all())
+  return make_json_response(l)
+
+
+# [GET] /api/groups/GROUP_ID	Show a Single Group
+@restapi.route("/groups/<int:group_id>")
+@login_required
+def get_group(group_id):
+  group = Group.query.get(group_id)
+  return make_json_response(group)
+
+
+# [GET] /api/groups/GROUP_ID/members	Listing Members of a Group
+@restapi.route("/groups/<int:group_id>/members")
+@login_required
+def get_group_members(group_id):
+  group = Group.query.get(group_id)
+  return make_json_response(group.members)
+
+# [GET] /api/group_memberships	Listing Group Memberships
+
+
+# [POST] /api/groups	Create a Group
+@restapi.route("/groups", methods=['POST'])
+@login_required
+def create_group():
+  d = get_params(Group.__editable__)
+  group = Group(**d)
+  db.session.add(group)
+  db.session.commit()
+  signals.entity_created.send(group)
+  return make_json_response(group, 201)
+
+
+# [PUT] /api/groups/GROUP_ID	Updating Existing Group
+
+# [DELETE] /api/groups/GROUP_ID/archive	Archiving a Group
+
+# [DELETE] /api/groups/GROUP_ID	Destroy an Archived Message
 
 
 #
@@ -182,8 +231,7 @@ def update_message(message_id):
   message.update(d)
   db.session.commit()
   # XXX: or add new signal, 'message_updated'?
-  signals.entity_deleted.send(message)
-  signals.entity_created.send(message)
+  signals.entity_updated.send(message)
   return make_json_response(message)
 
 

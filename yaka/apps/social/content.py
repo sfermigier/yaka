@@ -4,6 +4,7 @@ Social content items: messages aka status updates, private messages, etc.
 
 from datetime import datetime
 import json
+from sqlalchemy.orm.query import Query
 
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
@@ -34,6 +35,12 @@ __all__ = ['Message', 'PrivateMessage']
 #      setattr(self, k, v)
 
 
+class MessageQuery(Query):
+
+  def by_creator(self, user):
+    return self.filter(Message.creator_id==user.uid)
+
+
 class Message(Entity):
   """Message aka Status update aka Note.
 
@@ -45,6 +52,9 @@ class Message(Entity):
 
   content = Column(UnicodeText, info=SEARCHABLE)
   #group_id = Column(Integer, ForeignKey(Group.uid), nullable=False)
+
+  query = db.session.query_property(MessageQuery)
+
 
   @classmethod
   def query_by_creator(cls, user):
