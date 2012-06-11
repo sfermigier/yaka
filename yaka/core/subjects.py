@@ -11,17 +11,18 @@ from sqlalchemy.types import Integer, UnicodeText, LargeBinary
 from yaka.core.entities import Entity, SEARCHABLE
 from yaka.extensions import db
 
+
 # Tables for many-to-many relationships
 following = Table(
   'following', db.Model.metadata,
   Column('follower_uid', Integer, ForeignKey('user.uid')),
   Column('followee_uid', Integer, ForeignKey('user.uid'))
 )
-#following = Table(
-#  'following', db.Model.metadata,
-#  Column('follower_uid', Integer, ForeignKey('user.uid')),
-#  Column('followee_uid', Integer, ForeignKey('user.uid'))
-#)
+membership = Table(
+  'membership', db.Model.metadata,
+  Column('user_uid', Integer, ForeignKey('user.uid')),
+  Column('group_uid', Integer, ForeignKey('group.uid'))
+)
 
 
 class UserQuery(Query):
@@ -32,13 +33,10 @@ class UserQuery(Query):
 
 class User(Entity):
   __tablename__ = 'user'
-  __searchable__ = ['first_name', 'last_name', 'job_title', 'department', 'company']
   __editable__ = ['first_name', 'last_name', 'job_title', 'department', 'company', 'email', 'password']
   __exportable__ = __editable__ + ['created_at', 'updated_at']
 
   query = db.session.query_property(UserQuery)
-
-  uid = Column(Integer, primary_key=True)
 
   first_name = Column(UnicodeText, info=SEARCHABLE)
   last_name = Column(UnicodeText, info=SEARCHABLE)
@@ -63,11 +61,15 @@ class User(Entity):
 
   # settings
 
+  uid = Entity.uid
   followees = []
   followers = relationship("User", secondary=following,
-                           primaryjoin=uid==following.c.follower_uid,
-                           secondaryjoin=uid==following.c.followee_uid,
+                           primaryjoin=(uid==following.c.follower_uid),
+                           secondaryjoin=(uid==following.c.followee_uid),
                            backref='followees')
+
+  groups = relationship("Group", secondary=membership,
+                        backref='members')
 
   def follow(self, followee):
     self.followees.append(followee)
@@ -75,6 +77,10 @@ class User(Entity):
   def unfollow(self, followee):
     i = self.followees.index(followee)
     del self.followees[i]
+
+  def join(self, group):
+    if not group in self.groups:
+      self.groups.append(group)
 
   @property
   def username(self):
@@ -93,5 +99,11 @@ class User(Entity):
     return "/users/%d" % self.uid
 
 
-#class Group(Entity):
-#  pass
+class Group(Entity):
+  __tablename__ = 'group'
+
+  name = Column(UnicodeText, info=SEARCHABLE)
+
+  members = []
+
+

@@ -3,7 +3,7 @@ from unittest import TestCase
 from nose.tools import ok_
 
 from yaka.core.entities import all_entity_classes
-from yaka.core.subjects import User
+from yaka.core.subjects import User, Group
 
 from yaka.apps.social.content import Message, PrivateMessage
 
@@ -50,6 +50,17 @@ class TestUsers(TestModels):
     self.assertEquals(0, len(user2.followers))
     self.assertEquals(0, len(user2.followees))
     self.assert_(user2 not in user1.followers)
+
+  def test_group(self):
+    user = User(first_name="John", last_name="Test User", email="test@example.com", password="toto")
+    group = Group(name="Group 1")
+
+    user.join(group)
+
+    self.assertEquals(1, len(group.members))
+    self.assertEquals(1, len(user.groups))
+    self.assertEqual([user], group.members)
+    self.assertEqual([group], user.groups)
 
 
 class TestContent(TestModels):

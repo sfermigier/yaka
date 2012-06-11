@@ -11,7 +11,7 @@ TODO: In the future, we may decide to:
 
 from datetime import datetime
 import json
-from flask.globals import g
+from flask import g
 
 from sqlalchemy import event
 from sqlalchemy.orm import relationship
@@ -66,7 +66,8 @@ class AuditEntry(db.Model):
 
   def __repr__(self):
     return "<AuditEntry uid=%s type=%s user=%s>" % (
-      self.uid, {CREATION: "CREATION", DELETION: "DELETION", UPDATE: "UPDATE"}[self.type],
+      self.uid,
+      {CREATION: "CREATION", DELETION: "DELETION", UPDATE: "UPDATE"}[self.type],
       self.user)
 
   #noinspection PyTypeChecker
