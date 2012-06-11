@@ -1,5 +1,5 @@
 PYTHON=python
-TARGET=yaka@oss4cloud.org:yaka-crm/production/
+TARGET=yaka@oss4cloud.org:yaka/production/
 
 
 #

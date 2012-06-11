@@ -21,11 +21,15 @@ class TestUsers(TestModels):
   def test_user(self):
     user = User(first_name="John", last_name="Test User", email="test@example.com", password="toto")
     self.check_editable(user)
+
+    self.assertEquals(u"John Test User", user.name)
+    self.assertEquals(u"John Test User", unicode(user))
     #self.assertEquals(len(user.messages), 0)
 
   def test_user_follow(self):
     user1 = User(first_name="John", last_name="Test User 1", email="test1@example.com", password="toto")
     user2 = User(first_name="Joe", last_name="Test User 2", email="test2@example.com", password="toto")
+
     self.assertEquals(0, len(user1.followers))
     self.assertEquals(0, len(user1.followees))
     self.assertEquals(0, len(user2.followers))

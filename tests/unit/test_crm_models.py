@@ -18,9 +18,16 @@ class TestCRMEntities(TestCase):
     lead = Lead(first_name="John", last_name="Test User", email="test@example.com")
     self.check_editable(lead)
 
+    d = lead.to_dict()
+    j = lead.to_json()
+
+
   def test_account(self):
     account = Account(name="John SARL")
     self.check_editable(account)
+
+    d = account.to_dict()
+    j = account.to_json()
 
   def test_contact(self):
     account = Account(name="John SARL")
@@ -32,11 +39,17 @@ class TestCRMEntities(TestCase):
 
     eq_([contact], account.contacts)
 
+    d = contact.to_dict()
+    j = contact.to_json()
+
   def test_opportunity(self):
     account = Account(name="John SARL")
     opty = Opportunity(name="1000 widgets")
     opty.account = account
     self.check_editable(opty)
+
+    d = opty.to_dict()
+    j = opty.to_json()
 
   def test_get_all_entity_classes(self):
     classes = all_entity_classes()

@@ -41,8 +41,10 @@ class Message(Entity):
   """
   __tablename__ = 'message'
   __editable__ = ['content']
+  __exportable__ = __editable__ + ['uid', 'created_at', 'updated_at', 'creator_id', 'owner_id']
 
   content = Column(UnicodeText, info=SEARCHABLE)
+  #group_id = Column(Integer, ForeignKey(Group.uid), nullable=False)
 
   @classmethod
   def query_by_creator(cls, user):
@@ -50,14 +52,14 @@ class Message(Entity):
 
 
 class PrivateMessage(Entity):
-  """Private message"""
+  """Private messages are like messages, except they are private."""
 
   __tablename__ = 'private_message'
   __editable__ = ['content']
-  __exportable__ = __editable__ + ['created', 'updated', 'uid']
+  __exportable__ = __editable__ + ['uid', 'created_at', 'updated_at', 'creator_id', 'owner_id']
 
-  recipient_id = Column(Integer, ForeignKey(User.uid), nullable=False)
   content = Column(UnicodeText, info={'searchable': True})
+  recipient_id = Column(Integer, ForeignKey(User.uid), nullable=False)
 
 
 class Attachment(Entity):

@@ -3,22 +3,25 @@
 See ICOM-ics-v1.0 "Subject Branch".
 """
 
-from datetime import datetime
-
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.query import Query
 from sqlalchemy.schema import Column, Table, ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, DateTime, LargeBinary
+from sqlalchemy.types import Integer, UnicodeText, LargeBinary
 
-from yaka.core.entities import Entity
+from yaka.core.entities import Entity, SEARCHABLE
 from yaka.extensions import db
 
-
+# Tables for many-to-many relationships
 following = Table(
   'following', db.Model.metadata,
   Column('follower_uid', Integer, ForeignKey('user.uid')),
   Column('followee_uid', Integer, ForeignKey('user.uid'))
 )
+#following = Table(
+#  'following', db.Model.metadata,
+#  Column('follower_uid', Integer, ForeignKey('user.uid')),
+#  Column('followee_uid', Integer, ForeignKey('user.uid'))
+#)
 
 
 class UserQuery(Query):
@@ -37,11 +40,11 @@ class User(Entity):
 
   uid = Column(Integer, primary_key=True)
 
-  first_name = Column(UnicodeText)
-  last_name = Column(UnicodeText)
-  job_title = Column(UnicodeText)
-  department = Column(UnicodeText)
-  company = Column(UnicodeText)
+  first_name = Column(UnicodeText, info=SEARCHABLE)
+  last_name = Column(UnicodeText, info=SEARCHABLE)
+  job_title = Column(UnicodeText, info=SEARCHABLE)
+  department = Column(UnicodeText, info=SEARCHABLE)
+  company = Column(UnicodeText, info=SEARCHABLE)
 
   email = Column(UnicodeText, nullable=False)
   password = Column(UnicodeText, nullable=False)
@@ -59,10 +62,6 @@ class User(Entity):
   # profile / interests / job description
 
   # settings
-
-  # created / member since
-  created = Column(DateTime, default=datetime.utcnow)
-  updated = Column(DateTime, default=datetime.utcnow)
 
   followees = []
   followers = relationship("User", secondary=following,
@@ -93,3 +92,6 @@ class User(Entity):
   def _url(self):
     return "/users/%d" % self.uid
 
+
+#class Group(Entity):
+#  pass
