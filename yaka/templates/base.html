@@ -8,7 +8,7 @@
   <meta name="author" content="">
 
   <!-- Le styles -->
-  <link href="/static/css/bootstrap.css" rel="stylesheet">
+  <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
   <!--link href="css/bootstrap-responsive.css" rel="stylesheet"-->
   <link href="/static/css/override.css" rel="stylesheet">
 
@@ -18,10 +18,12 @@
   <![endif]-->
 
   <!-- Le fav and touch icons -->
-  <link rel="shortcut icon" href="/static/images/favicon.ico">
+  <link rel="shortcut icon" href="/static/images/favicon.png">
+  <!-- TODO: Later
   <link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png">
   <link rel="apple-touch-icon" sizes="72x72" href="/static/images/apple-touch-icon-72x72.png">
   <link rel="apple-touch-icon" sizes="114x114" href="/static/images/apple-touch-icon-114x114.png">
+  -->
 
   <!-- CSS for various jQuery plugins -->
   <link rel="stylesheet" href="/static/jquery/css/ui-lightness/jquery-ui-1.8.19.custom.css"/>
@@ -36,9 +38,6 @@
 
   <!-- DEBUG -->
   <link type="text/css" href="/static/css/holmes.css" rel="stylesheet"/>
-
-  <!-- FIXME -->
-  <link type="text/css" href="/static/misc/search.css" rel="stylesheet"/>
 
   <script src="/static/jquery/js/jquery-1.7.2.min.js"></script>
 </head>
@@ -76,8 +75,8 @@
             {{ g.user.name }}<b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a href="/users/{{g.user.uid}}">My profile</a></li>
-            <li><a href="/users/{{g.user.uid}}/edit">Edit profile</a></li>
-            <li><a href="/help">Help</a></li>
+            <li><a href="/users/{{g.user.uid}}">Edit profile</a></li> <!-- TODO -->
+            <li><a href="/help/">Help</a></li>
             <li class="divider"></li>
             <li><a href="/logout">Log out</a></li>
           </ul>
@@ -113,7 +112,7 @@
 <script src="/static/jquery/plugins/jquery.dataTables.js"></script>
 <script src="/static/jquery/plugins/chosen.jquery.min.js"></script>
 
-<script src="/static/bootstrap/bootstrap.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
 
 <script src="/static/jquery/plugins/jquery.autoGrowInput.js"></script>
 <script src="/static/jquery/plugins/jquery.tagBox.js"></script>
