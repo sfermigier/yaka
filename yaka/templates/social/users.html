@@ -6,8 +6,10 @@
 
     <h2>{{ _("Users Directory") }}</h2>
 
-    <form class="form-search">
-      <input type="text" class="input-medium search-query">
+    <form class="form-search" action="." style="margin-top: 10px;">
+      <input type="text" name="query" class="input-medium search-query span4"
+              placeholder="{{ _("Search users directory") }}"
+              value="{{ request.args.query }}">
       <button type="submit" class="btn">{{ _("Search") }}</button>
     </form>
 

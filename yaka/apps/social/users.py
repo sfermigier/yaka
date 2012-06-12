@@ -1,5 +1,5 @@
 from flask import render_template, request, make_response
-from sqlalchemy.sql.expression import not_
+from sqlalchemy.sql.expression import not_, or_
 
 from yaka.core.subjects import User
 from yaka.core.frontend import BreadCrumbs
@@ -31,9 +31,16 @@ def make_tabs(user):
 
 @social.route("/users/")
 def users_home():
+  query = request.args.get("query")
   e = Env()
   e.bread_crumbs = make_bread_crumbs()
-  e.users = User.query.all()
+
+  if query:
+    query = query.replace("%", " ")
+    q = or_(User.first_name.like("%"+query+"%"), User.last_name.like("%"+query+"%"))
+    e.users = User.query.filter(q).all()
+  else:
+    e.users = User.query.all()
   return render_template("social/users.html", **e)
 
 
