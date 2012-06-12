@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+  <div class="row">
+    <div class="span2">
+
+      <div class="well" style="padding: 8px 0;">
+        <ul class="nav nav-list">
+          <li class="nav-header">Main</li>
+          <li><a href="/social/">My feed</a></li>
+          <li><a href="/social/private/">Private messages</a></li>
+          <li><a href="/social/private/">My profile</a></li>
+
+          <li class="nav-header">Groups</li>
+          <li><a href="/social/groups/">All groups</a></li>
+          <li><a href="/social/groups/">Group 1</a></li>
+          <li><a href="/social/groups/">Group 2</a></li>
+          <li><a href="/social/groups/">Group 3</a></li>
+          <li><a href="/social/groups/">Group 4</a></li>
+
+          <li class="nav-header">People</li>
+          <li><a href="/social/users/">Everyone</a></li>
+          <li><a href="/social/users/">Followees</a></li>
+          <li><a href="/social/users/">Followers</a></li>
+
+          <li class="nav-header">Apps</li>
+          <li><a href="/social/">Files</a></li>
+          <li><a href="/social/">Other</a></li>
+        </ul>
+      </div>
+
+      <img src="/static/placeholders/social-left.png">
+    </div>
+
+
+    <div class="span7">
+
+      <h2>Share an update</h2>
+
+      <form action="" method="POST">
+        <textarea class="span7" name="content" id="share-textarea" rows="3" style="resize: none;"></textarea>
+        <br>
+        <button type="submit" class="btn btn-primary">Share</button>
+      </form>
+
+      <h2>Your feed</h2>
+
+      <ul style="list-style: none; margin: 0px;">
+
+        {% for message in messages %}
+        <li id="elgg-object-44" class="elgg-item">
+          <div class="elgg-image-block clearfix">
+            <div style="float: left; margin-right: 5px;">
+              <div class="elgg-avatar elgg-avatar-tiny">
+                <a href="http://95.142.173.170/elgg/profile/sfermigier" class=""><img
+                      src="http://95.142.173.170/elgg/_graphics/spacer.gif" alt="Stefane Fermigier"
+                      title="Stefane Fermigier" class=""
+                      style="background: url(http://95.142.173.170/elgg/_graphics/icons/user/defaulttiny.gif) no-repeat;"></a>
+              </div>
+            </div>
+
+            <div class="elgg-body">
+              <ul class="elgg-menu elgg-menu-entity elgg-menu-hz elgg-menu-entity-default">
+                <li class="elgg-menu-item-reply"><a href="http://95.142.173.170/elgg/thewire/reply/44">Reply</a></li>
+                <li class="elgg-menu-item-previous"><a href="http://95.142.173.170/elgg/thewire/previous/44"
+                        title="View previous post" class="thewire-previous">Previous</a></li>
+                <li class="elgg-menu-item-thread"><a href="http://95.142.173.170/elgg/thewire/thread/43">Thread</a></li>
+                <li class="elgg-menu-item-delete"><a
+                        href="http://95.142.173.170/elgg/action/thewire/delete?guid=44&amp;__elgg_ts=1339417305&amp;__elgg_token=6468816e424d61d573ac8780f2dfde25"
+                        title="Delete this" rel="Are you sure you want to delete this item?"
+                        class="elgg-requires-confirmation"><span class="elgg-icon elgg-icon-delete "></span></a></li>
+                <li class="elgg-menu-item-likes"><a
+                        href="http://95.142.173.170/elgg/action/likes/add?guid=44&amp;__elgg_ts=1339417305&amp;__elgg_token=6468816e424d61d573ac8780f2dfde25"
+                        title="Like this"><span class="elgg-icon elgg-icon-thumbs-up "></span></a></li>
+              </ul>
+              <h3><a href="http://95.142.173.170/elgg/thewire/view/44"></a></h3>
+
+              <div class="elgg-subtext">By <a href="http://95.142.173.170/elgg/thewire/owner/sfermigier">{{ message.creator }}</a> <acronym title="11 June 2012 @ 11:53am">9 minutes ago</acronym></div>
+              <div class="elgg-content">{{ message.content }}</div>
+            </div>
+          </div>
+          <div class="thewire-parent hidden" id="thewire-previous-44"></div>
+        </li>
+        {% endfor %}
+
+      </ul>
+
+    </div>
+
+    <div class="span3">
+      <img src="/static/placeholders/social-right.png">
+    </div>
+  </div>
+
+{% endblock %}

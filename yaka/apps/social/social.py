@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, g
 
 from yaka.core import signals
 from yaka.core.frontend import BreadCrumbs
@@ -24,7 +24,26 @@ def make_bread_crumbs(path="", label=None):
 @social.route("/")
 def home():
   bread_crumbs = make_bread_crumbs()
-  return render_template("social/home.html", bread_crumbs=bread_crumbs)
+
+  #group_ids = [None] + [ group.uid for group in g.user.groups ]
+
+  messages = Message.query.filter(Message.group_id==None).all()
+  for group in g.user.groups:
+    messages += Message.query.filter(Message.group_id==group.uid).all()
+  messages.sort(lambda x, y: -cmp(x.uid, y.uid))
+
+#  group_ids = [ group.uid for group in g.user.groups ]
+#  messages = Message.query.filter(Message.group_id.in_(group_ids)) \
+#      .order_by(Message.created_at) \
+#      .limit(20).all()
+
+
+  return render_template("social/home.html", messages=messages, bread_crumbs=bread_crumbs)
+
+
+@social.route("/stream/<stream_name>")
+def stream():
+  pass
 
 
 @social.route("/", methods=['POST'])
@@ -49,9 +68,3 @@ def private_post():
   """Post a private message."""
   bread_crumbs = make_bread_crumbs()
   return render_template("social/home.html", bread_crumbs=bread_crumbs)
-
-
-@social.route("/users/")
-def users():
-  pass
-

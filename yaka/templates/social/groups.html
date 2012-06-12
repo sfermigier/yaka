@@ -1,0 +1,71 @@
+{% extends "users/base.html" %}
+
+{% block main %}
+
+    <h2>Groups</h2>
+
+    <table class="grid" cellspacing="0" cellpadding="0">
+      <thead>
+      <tr>
+        <th class="first " colspan="2">
+          <a href="?sort_by=name">Groups</a>
+        </th>
+
+        <th class="">
+          <a href="?sort_by=date_created">Created On</a>
+        </th>
+
+        <th class="">
+          <a href="?sort_by=last_active">Members</a>
+        </th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+
+      <tr>
+        <td class="picture">
+          <a href="/users/groups/1"><img src="/static/img/tux45.png"></a>
+        </td>
+
+        <td class="identity">
+          <div class="info">
+            <a href="/users/groups/1">Logiciel Libre</a>
+            <p>...</p>
+          </div>
+        </td>
+
+        <td>
+          Jan 11, 2012
+        </td>
+
+        <td>
+          238
+        </td>
+      </tr>
+
+      <tr>
+        <td class="picture">
+          <a href="/users/2"><img src="/static/img/ocds45.png"></a>
+        </td>
+
+        <td class="identity">
+          <div class="info">
+            <a href="/users/2">OCDS</a>
+            <p>...</p>
+          </div>
+        </td>
+
+        <td>
+          Jan 11, 2012
+        </td>
+
+        <td>
+          546
+        </td>
+      </tr>
+
+      </tbody>
+    </table>
+{% endblock %}

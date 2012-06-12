@@ -7,9 +7,6 @@ class TestViews(IntegrationTestCase):
   init_data = True
   no_login = True
 
-  def assert_302(self, response):
-    self.assertStatus(response, 302)
-
   # Tests start here
   def test_home(self):
     response = self.client.get("/crm/")

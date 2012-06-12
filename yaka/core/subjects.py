@@ -6,7 +6,7 @@ See ICOM-ics-v1.0 "Subject Branch".
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.query import Query
 from sqlalchemy.schema import Column, Table, ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, LargeBinary
+from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Boolean
 
 from yaka.core.entities import Entity, SEARCHABLE
 from yaka.extensions import db
@@ -49,6 +49,9 @@ class User(Entity):
   password = Column(UnicodeText, nullable=False)
 
   photo = Column(LargeBinary)
+
+  # TODO: move to a roles or permission table
+  is_admin = Column(Boolean, nullable=False, default=False)
 
   # TODO: add if needed:
   # location

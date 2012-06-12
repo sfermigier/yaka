@@ -1,6 +1,8 @@
 """Activity Service.
 
-See http://activitystrea.ms/specs/json/1.0/
+See: http://activitystrea.ms/specs/json/1.0/
+See: http://activitystrea.ms/specs/atom/1.0/#activity
+See: http://stackoverflow.com/questions/1443960/how-to-implement-the-activity-stream-in-a-social-network
 """
 
 from datetime import datetime

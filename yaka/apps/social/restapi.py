@@ -313,3 +313,12 @@ def search_users():
 def create_attachment():
   attachment = request.files['attachment']
   return make_json_response({}, 201)
+
+
+#
+# Activity Streams
+#
+@restapi.route("/feed")
+@login_required
+def get_feed():
+  pass
