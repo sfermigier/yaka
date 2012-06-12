@@ -21,3 +21,4 @@ yaka/static/misc*
 *.swp
 *.prof
 *.stats
+*.mo

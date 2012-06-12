@@ -1,7 +1,6 @@
 PYTHON=python
 TARGET=yaka@oss4cloud.org:yaka/production/
 
-
 #
 # testing
 #
@@ -64,3 +63,8 @@ push:
 
 push-code:
 	rsync -e ssh -avz ./yaka $(TARGET)/
+
+update-pot:
+	pybabel extract -F babel.cfg -o messages.pot .
+	pybabel update -i messages.pot -d yaka/translations
+	pybabel compile -d yaka/translations

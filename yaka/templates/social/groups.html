@@ -1,8 +1,10 @@
-{% extends "users/base.html" %}
+{% extends "social/base.html" %}
 
 {% block main %}
 
-    <h2>Groups</h2>
+  <div class="span7">
+
+    <h2>{{ _("Groups Directory") }}</h2>
 
     <table class="grid" cellspacing="0" cellpadding="0">
       <thead>
@@ -32,6 +34,7 @@
         <td class="identity">
           <div class="info">
             <a href="/users/groups/1">Logiciel Libre</a>
+
             <p>...</p>
           </div>
         </td>
@@ -53,6 +56,7 @@
         <td class="identity">
           <div class="info">
             <a href="/users/2">OCDS</a>
+
             <p>...</p>
           </div>
         </td>
@@ -68,4 +72,9 @@
 
       </tbody>
     </table>
+  </div>
+  <div class="span3">
+    <img src="/static/placeholders/social-right.png">
+  </div>
+
 {% endblock %}

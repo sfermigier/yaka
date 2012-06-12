@@ -3,7 +3,7 @@
 
 from flask import Flask
 
-from .extensions import mail, db
+from .extensions import mail, db, babel
 from .filters import init_filters
 from .auth import init_auth
 from .services import indexing, audit, activity
@@ -26,6 +26,7 @@ class Application(Flask):
     # Initialise helpers and services
     db.init_app(self)
     mail.init_app(self)
+    babel.init_app(self)
 
     # Initialise filters
     init_filters(self)

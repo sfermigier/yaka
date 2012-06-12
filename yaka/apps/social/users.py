@@ -30,7 +30,7 @@ def make_tabs(user):
 
 
 @social.route("/users/")
-def home():
+def users_home():
   e = Env()
   e.bread_crumbs = make_bread_crumbs()
   e.users = User.query.all()

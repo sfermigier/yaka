@@ -1,3 +1,4 @@
+#noinspection PyMissingConstructor
 class Env(dict):
 
   def __init__(self, label=None, **kw):

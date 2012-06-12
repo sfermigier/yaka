@@ -37,12 +37,11 @@ def home():
 #      .order_by(Message.created_at) \
 #      .limit(20).all()
 
-
   return render_template("social/home.html", messages=messages, bread_crumbs=bread_crumbs)
 
 
 @social.route("/stream/<stream_name>")
-def stream():
+def stream(stream_name):
   pass
 
 

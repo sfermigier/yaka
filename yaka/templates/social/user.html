@@ -1,54 +1,55 @@
-{% extends "users/base.html" %}
+{% extends "social/base.html" %}
 
 <!-- A few macro first -->
 
 {% from "macros.html" import m_breadcrumbs, m_files_table %}
 
 {% macro m_profile(user) %}
-<div class="row">
-  <div class="span8">
-    My profile.
-  </div>
+  <div class="row">
+    <div class="span8">
+      My profile.
+    </div>
 
-  <div class="span4">
-    <div class="well property-box" style="padding: 8px 0; background-color: white;">
-      <h4 style="padding: 3px 15px;">Groups</h4>
+    <div class="span4">
+      <div class="well property-box" style="padding: 8px 0; background-color: white;">
+        <h4 style="padding: 3px 15px;">{{ _("Groups") }}</h4>
 
-      <ul class="property-list">
-        <li>
+        <ul class="property-list">
+          <li>
             <a href=""> <img src="/static/img/tux45.png" class="">
               GTLL</a> (90 members)
-        </li>
-        <li>
-          <a href=""> <img src="/static/img/ocds45.png" class="">
-            OCDS</a> (254 members)
-        </li>
-      </ul>
+          </li>
+          <li>
+            <a href=""> <img src="/static/img/ocds45.png" class="">
+              OCDS</a> (254 members)
+          </li>
+        </ul>
+      </div>
+
     </div>
 
   </div>
-
-</div>
 {% endmacro %}
 
 {% macro m_activity(entries) %}
-{% for e in entries %}
-<p>{{ e.post }} on {{ e.object_id }}</p>
-{% endfor %}
+  {% for e in entries %}
+    <p>{{ e.post }} on {{ e.object_id }}</p>
+  {% endfor %}
 {% endmacro %}
 
 {% macro m_images(images) %}
   <ul class="image-gallery">
     {% for image in images %}
-      <li id="image-{{ image.uid }}"><a title="test" href="{{ image._url }}"><img src="{{ image._url }}/preview?size=100"></a></li>
+      <li id="image-{{ image.uid }}"><a title="test" href="{{ image._url }}"><img
+              src="{{ image._url }}/preview?size=100"></a></li>
       <script>
         $(document).ready(function() {
           var id = "#image-{{ image.uid }}";
           $(id).popover({
             placement: "top",
-            html: true,
-            title: "{{ image.name }}",
-            content: function() {
+            html:      true,
+            title:     "{{ image.name }}",
+            content:   function() {
               return 'Uploaded on {{ image.created_at.strftime("%Y-%m-%d") }}';
             }
           });
@@ -60,7 +61,7 @@
 {% endmacro %}
 
 {% macro m_audit(entries) %}
-  <h3 class="main">Audit Log</h3>
+  <h3 class="main">{{ _("Audit Log") }}</h3>
 
   <div style="margin-bottom: 25px;">
     {% for entry in entries %}
@@ -114,9 +115,9 @@
   <ul class="nav nav-pills profile-nav">
     {% for tab in tabs %}
       {% if tab.id == active_tab_id %}
-        <li class="active"><a href="{{ tab.link }}">{{ tab.label }}</a></li>
+        <li class="active"><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
       {% else %}
-        <li><a href="{{ tab.link }}">{{ tab.label }}</a></li>
+        <li><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
       {% endif %}
     {% endfor %}
   </ul>

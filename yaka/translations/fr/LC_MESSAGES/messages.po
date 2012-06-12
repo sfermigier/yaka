@@ -1,0 +1,83 @@
+# French translations for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-06-12 18:05+0200\n"
+"PO-Revision-Date: 2012-06-12 17:18+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: yaka/core/forms.py:92
+msgid "Invalid email address."
+msgstr "Adresse email invalide."
+
+#: yaka/templates/social/base.html:11
+msgid "My feed"
+msgstr "Mon fil d'actu"
+
+#: yaka/templates/social/base.html:12
+msgid "Private messages"
+msgstr "Messages privés"
+
+#: yaka/templates/social/base.html:13
+msgid "My profile"
+msgstr "Mon profil"
+
+#: yaka/templates/social/base.html:16
+msgid "All groups"
+msgstr "Tous les groupes"
+
+#: yaka/templates/social/base.html:22
+msgid "People"
+msgstr "Annuaire"
+
+#: yaka/templates/social/base.html:23
+msgid "Everyone"
+msgstr "Tout le monde"
+
+#: yaka/templates/social/base.html:24
+msgid "Followees"
+msgstr "Je les suis"
+
+#: yaka/templates/social/base.html:25
+msgid "Followers"
+msgstr "Ils me suivent"
+
+#: yaka/templates/social/groups.html:7
+msgid "Groups Directory"
+msgstr "Répertoire des groupes"
+
+#: yaka/templates/social/home.html:8
+msgid "Share an update"
+msgstr "Partager un message"
+
+#: yaka/templates/social/home.html:13
+msgid "Share"
+msgstr "Partager"
+
+#: yaka/templates/social/home.html:16
+msgid "Your feed"
+msgstr "Votre fil d'actualité"
+
+#: yaka/templates/social/user.html:15
+msgid "Groups"
+msgstr "Groupes"
+
+#: yaka/templates/social/user.html:64
+msgid "Audit Log"
+msgstr "Journal des actions"
+
+#: yaka/templates/social/users.html:7
+msgid "Users Directory"
+msgstr "Répertoire des utilisateurs"
+

@@ -1,44 +1,32 @@
-{% extends "base.html" %}
+{% extends "social/base.html" %}
 
-{% block container %}
+{% from "social/macros.html" import render_message %}
 
-  <div class="row">
-    <div class="span2">
+{% block main %}
+  <div class="span7">
 
-      <div class="well" style="padding: 8px 0;">
-        <ul class="nav nav-list">
-          <li class="nav-header">Main</li>
-          <li><a href="/social/">My feed</a></li>
-          <li><a href="/social/private/">Private messages</a></li>
-          <li><a href="/social/private/">My profile</a></li>
+    <h2>{{ _("Share an update") }}</h2>
 
-          <li class="nav-header">Groups</li>
-          <li><a href="/social/">All groups</a></li>
-          <li><a href="/social/private/">Group 1</a></li>
-          <li><a href="/social/private/">Group 2</a></li>
-          <li><a href="/social/private/">Group 3</a></li>
-          <li><a href="/social/private/">Group 4</a></li>
+    <form action="" method="POST">
+      <textarea class="span7" name="content" id="share-textarea" rows="3" style="resize: none;"></textarea>
+      <br>
+      <button type="submit" class="btn btn-primary">{{ _("Share") }}</button>
+    </form>
 
-          <li class="nav-header">People</li>
-          <li><a href="/social/">Everyone</a></li>
-          <li><a href="/social/">Followees</a></li>
-          <li><a href="/social/">Followers</a></li>
+    <h2>{{ _("Your feed") }}</h2>
 
-          <li class="nav-header">Apps</li>
-          <li><a href="/social/">My feed</a></li>
-          <li><a href="/social/private/">Private messages</a></li>
-        </ul>
-      </div>
+    <ul style="list-style: none; margin: 0px;">
 
-      <img src="/static/placeholders/social-left.png">
-    </div>
-    <div class="span7">
-      <img src="/static/placeholders/social-center-top.png">
-      <img src="/static/placeholders/social-center.png">
-    </div>
-    <div class="span3">
-      <img src="/static/placeholders/social-right.png">
-    </div>
+      {% for message in messages %}
+        {{ render_message(message) }}
+      {% endfor %}
+
+    </ul>
+
+  </div>
+
+  <div class="span3">
+    <img src="/static/placeholders/social-right.png">
   </div>
 
 {% endblock %}

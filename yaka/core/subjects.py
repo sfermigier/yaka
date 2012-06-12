@@ -103,7 +103,7 @@ class User(Entity):
   # Should entities know about their own URL? I guess yes.
   @property
   def _url(self):
-    return "/users/%d" % self.uid
+    return "/social/users/%d" % self.uid
 
 
 class Group(Entity):

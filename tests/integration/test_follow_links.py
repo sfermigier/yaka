@@ -18,14 +18,12 @@ class HrefExtractor(HTMLParser):
     self.links = set()
 
   def handle_starttag(self, tag, attrs):
-    if tag != 'a':
-      return
     for attr_name, attr_value in attrs:
-      if attr_name == 'href':
-        href = attr_value.split("#")[0]
-        if href.startswith("http://"):
+      if (tag, attr_name) in [('a', 'href'), ('link', 'href'), ('script', 'src'), ('img', 'src')]:
+        link = attr_value.split("#")[0]
+        if link.startswith("http://"):
           continue
-        self.links.add(href)
+        self.links.add(link)
 
 
 class Crawler(object):
@@ -47,9 +45,11 @@ class Crawler(object):
       link = self.to_visit.pop()
       if not link or link in self.visited:
         continue
-      print "visiting", link, len(self.to_visit)
       response = self.client.get(link)
       eq_(200, response.status_code)
+
+      if not response.content_type.startswith('text/html'):
+        continue
 
       self.visited.add(link)
       parser = HrefExtractor()
