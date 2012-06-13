@@ -64,7 +64,7 @@
 {% endmacro %}
 
 {% macro m_audit(entries) %}
-  <h3 class="main">{{ _("Audit Log") }}</h3>
+  <h3 class="main">{{ _("Audit log") }}</h3>
 
   <div style="margin-bottom: 25px;">
     {% for entry in entries %}
@@ -108,7 +108,7 @@
   <div class="span7">
 
     <div class="header">
-      <img class="avatar" src="{{ user._url }}/mugshot?s=140">
+      <img class="avatar avatar-large" src="{{ user._url }}/mugshot?s=140">
 
       <div class="info">
         <h2 class="title">{{ user.name }}
@@ -158,14 +158,14 @@
     <h3>{{ _("Followers") }} ({{ user.followers|count }})</h3>
 
     {% for u in user.followers %}
-      <a href="{{ u.url }}"><img src="{{ u.url }}/mugshot?s=40" alt="{{ u.name }}" title="{{ u.name }}"
+      <a href="{{ u.url }}"><img class="avatar-medium" src="{{ u.url }}/mugshot?s=40" alt="{{ u.name }}" title="{{ u.name }}"
               style="margin-bottom: 4px;"></a>
     {% endfor %}
 
     <h3>{{ _("Groups") }} ({{ user.groups|count }})</h3>
 
     {% for g in user.groups %}
-      <a href="{{ g.url }}"><img src="{{ g.url }}/mugshot?s=40" alt="{{ g.name }}" title="{{ g.name }}"
+      <a href="{{ g.url }}"><img class="avatar-medium" src="{{ g.url }}/mugshot?s=40" alt="{{ g.name }}" title="{{ g.name }}"
               style="margin-bottom: 4px;"></a>
     {% endfor %}
 

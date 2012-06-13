@@ -315,11 +315,24 @@ table.table {
 }
 
 /* user single view */
-.avatar {
+.avatar-large {
     position: relative;
     z-index: 1;
     margin-right: 30px;
     margin: 0 18px 9px 0;
+
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+}
+
+.avatar-medium {
+    width: 45px;
+    height: 45px;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .avatar, .avatar a {
