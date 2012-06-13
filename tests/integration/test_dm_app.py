@@ -7,7 +7,7 @@ from base import IntegrationTestCase
 from nose.tools import eq_, ok_
 from util import DataLoader
 
-from yaka import db
+from yaka.extensions import db
 from yaka.apps.dm import create_file
 
 
