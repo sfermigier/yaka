@@ -8,8 +8,7 @@
 
     <form class="form-search" action="." style="margin-top: 10px;">
       <input type="text" name="query" class="input-medium search-query span4"
-              placeholder="{{ _("Search users directory") }}"
-              value="{{ request.args.query }}">
+              placeholder="{{ _("Search users directory") }}" value="{{ request.args.query }}">
       <button type="submit" class="btn">{{ _("Search") }}</button>
     </form>
 
@@ -41,17 +40,16 @@
           <td class="identity">
             <div class="info">
               <a href="{{ user._url }}">{{ user.name }}</a>
-
               <p>{{ user.job_title }}</p>
             </div>
           </td>
 
           <td>
-            Jan 11, 2012
+            {{ user.created_at|date }}
           </td>
 
           <td>
-            Jan 11, 2012
+            {{ user.last_active|age }}
           </td>
         </tr>
       {% endfor %}
@@ -60,8 +58,9 @@
     </table>
 
   </div>
+
   <div class="span3">
-    <img src="/static/placeholders/social-right.png">
+    ...
   </div>
 
 {% endblock %}

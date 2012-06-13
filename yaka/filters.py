@@ -1,4 +1,5 @@
 from datetime import datetime
+from flaskext import babel
 
 def labelize(s):
   return " ".join([ w.capitalize() for w in s.split("_") ])
@@ -61,6 +62,10 @@ def date_age(dt, now=None):
   age_str = age(dt, now)
   return "%s (%s)" % (dt.strftime("%Y-%m-%d %H:%M"), age_str)
 
+def date(value):
+  format="EEEE, d. MMMM y"
+  return babel.format_datetime(value, format)
+
 def abbrev(s, max_size):
   if len(s) <= max_size:
     return s
@@ -69,8 +74,11 @@ def abbrev(s, max_size):
     return s[0:h] + "..." + s[-h:]
 
 def init_filters(app):
-  app.jinja_env.filters['abbrev'] = abbrev
   app.jinja_env.filters['date_age'] = date_age
   app.jinja_env.filters['age'] = age
+  app.jinja_env.filters['date'] = date
+
+  app.jinja_env.filters['abbrev'] = abbrev
   app.jinja_env.filters['filesize'] = filesize
   app.jinja_env.filters['labelize'] = labelize
+
