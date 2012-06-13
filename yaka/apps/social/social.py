@@ -27,6 +27,12 @@ def make_bread_crumbs(path="", label=None):
     return bread_crumbs
 
 
+@social.before_request
+def before_request():
+  g.groups = g.user.groups
+  g.groups.sort(lambda x, y: cmp(x.name, y.name))
+
+
 @social.route("/")
 def home():
   e = Env()

@@ -1,3 +1,32 @@
+/* overriding Bootstrap w/ personal tastes */
+.nav-pills > li > a {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.nav-tabs > li > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+h2 {
+    font-size: 18px;
+    margin: 5px 0 5px 0;
+}
+
+h3 {
+    font-size: 15px;
+    margin: 5px 0 5px 0;
+}
+
+.table th, .table td {
+    padding: 6px;
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 5px;
+}
+
 /* help / tips */
 div.tip {
     border-top-color: #E5E5E5;
@@ -7,23 +36,26 @@ div.tip {
     border-bottom-style: solid;
     border-bottom-width: 1px;
 }
+
 .tip h4 {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
 /* Stream */
-
 .stream .stream-subtext {
     margin-bottom: 5px;
 }
+
 .stream .stream-content {
     margin: 10px 5px;
 }
+
 .stream-avatar {
     position: relative;
     display: inline-block;
 }
+
 .stream-avatar > a > img {
     display: block;
     width: 45px;
@@ -36,6 +68,7 @@ div.tip {
     -moz-background-clip: border;
     background-clip: border;
 }
+
 .stream-image-block {
     padding: 3px 0;
 }
@@ -46,6 +79,10 @@ div.tip {
     height: 0;
     clear: both;
     visibility: hidden;
+}
+
+.clear {
+    clear: both;
 }
 
 /* faceted search */
@@ -83,7 +120,6 @@ li.facet-item img {
 }
 
 /* image-gallery in user.html */
-
 ul.image-gallery {
     list-style: none;
 }
@@ -95,7 +131,6 @@ ul.image-gallery li {
 }
 
 /* jQuery-collapse */
-
 h3.main {
     padding: 5px 0px 5px 5px;
     text-decoration: none;
@@ -212,28 +247,7 @@ label.error {
     margin-top: 2px;
 }
 
-/* Personal tastes */
-
-h2 {
-    font-size: 18px;
-    margin: 5px 0 5px 0;
-}
-
-h3 {
-    font-size: 15px;
-    margin: 5px 0 5px 0;
-}
-
-.table th, .table td {
-    padding: 6px;
-}
-
-.form-horizontal .control-group {
-    margin-bottom: 5px;
-}
-
 /* Grid table (TODO: replace with Bootstrap tables) */
-
 table.grid, table.grid tbody {
     width: 100%;
     margin-bottom: 1.5em;
@@ -250,7 +264,6 @@ table.grid, table.grid tbody {
     text-align: left;
     vertical-align: top;
     line-height: 16px;
-    font-weight: bold;
     font-size: 12px;
     padding: 6px 10px 6px 0;
 }

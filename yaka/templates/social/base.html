@@ -14,10 +14,9 @@
 
           <li class="nav-header">{{ _("Groups") }}</li>
           <li><a href="/social/groups/">{{ _("All groups") }}</a></li>
-          <li><a href="/social/groups/">Group 1</a></li>
-          <li><a href="/social/groups/">Group 2</a></li>
-          <li><a href="/social/groups/">Group 3</a></li>
-          <li><a href="/social/groups/">Group 4</a></li>
+          {% for group in g.groups %}
+            <li><a href="{{ group.url }}">{{ group.name }}</a></li>
+          {% endfor %}
 
           <li class="nav-header">{{ _("People") }}</li>
           <li><a href="/social/users/">{{ _("Everyone") }}</a></li>

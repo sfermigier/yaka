@@ -63,7 +63,7 @@ def date_age(dt, now=None):
   return "%s (%s)" % (dt.strftime("%Y-%m-%d %H:%M"), age_str)
 
 def date(value):
-  format="EEEE, d. MMMM y"
+  format="EE, d MMMM y"
   return babel.format_datetime(value, format)
 
 def abbrev(s, max_size):

@@ -2,7 +2,26 @@
 
 {% block main %}
   <div class="span7">
+
     <h2>{{ _("Group") }}</h2>
+
+    <div class="header">
+      <img class="avatar avatar-large" src="{{ group.url }}/mugshot?s=140">
+
+      <div class="info">
+        <h2 class="title">{{ group.name }}</h2>
+
+        <div class="job-title">...</div>
+
+        <form action="" method="post" style="margin-top: 10px;">
+          {% if g.user.is_member_of(group) %}
+            <button class="btn" name="action" value="leave">{{ _("Leave") }}</button>
+          {% else %}
+            <button class="btn" name="action" value="join">{{ _("Join") }}</button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
 
     <p>
     Name: {{ group.name }}
@@ -21,15 +40,15 @@
 
     <h3>{{ _("Group admins") }}</h3>
 
-    {% for user in group.members %}
-      <a href="{{ user.url }}"><img src="{{ user.url }}/mugshot?s=40"
+    {% for user in group.admins %}
+      <a href="{{ user.url }}"><img class="avatar-medium" src="{{ user.url }}/mugshot?s=40"
               alt="{{ user.name }}" title="{{ user.name }}" style="margin-bottom: 4px;"></a>
     {% endfor %}
 
     <h3>{{ _("Group members") }}</h3>
 
-    {% for user in group.admins %}
-      <a href="{{ user.url }}"><img src="{{ user.url }}/mugshot?s=40"
+    {% for user in group.members %}
+      <a href="{{ user.url }}"><img class="avatar-medium" src="{{ user.url }}/mugshot?s=40"
               alt="{{ user.name }}" title="{{ user.name }}" style="margin-bottom: 4px;"></a>
     {% endfor %}
 

@@ -6,73 +6,74 @@
     <h2>{{ _("Groups Directory") }}</h2>
 
     <div class="row">
+      <p class="span7">
 
-      <div class="span7">
-
-        <table class="grid" cellspacing="0" cellpadding="0">
-          <thead>
-          <tr>
-            <th class="first " colspan="2">
-              <a href="?sort_by=name">Groups</a>
-            </th>
-
-            <th class="">
-              <a href="?sort_by=date_created">Created On</a>
-            </th>
-
-            <th class="">
-              <a href="?sort_by=last_active">Members</a>
-            </th>
-          </tr>
-          </thead>
-
-          <tbody>
-
-          {% for group in groups %}
-            <tr>
-              <td class="picture">
-                <a href="{{ group.url }}"><img src="{{ group.url }}/mugshot?s=45"></a>
-              </td>
-
-              <td class="identity">
-                <div class="info">
-                  <a href="{{ group.url }}">{{ group.name }}</a>
-
-                  <p>{{ group.description }}</p>
-                </div>
-              </td>
-
-              <td>
-                {{ group.created_at | date }}
-              </td>
-
-              <td>
-                {{ group.members | count }}
-              </td>
-            </tr>
-          {% endfor %}
-
-          </tbody>
-        </table>
-      </div>
-
-      <div class="span3">
-        <a class="btn btl-large btn-primary span2" href="/social/groups/new">{{ _("Create new group") }}</a>
-
-        <div style="clear: both; margin-top: 40px;"></div>
-
-        <div class="tip">
-          <h4>What are Groups? </h4>
-
-          <p>
-            Create and join groups to discuss projects or to meet colleagues with similar skills, interests and hobbies.
-            Public groups are open to anyone and appear in the groups directory. Private groups are invitation-only
-            spaces for confidential discussions, and do not appear in the groups directory. </p>
-        </div>
-      </div>
-
+        Create and join groups to discuss projects or to meet colleagues with similar skills, interests and hobbies.
+        Public groups are open to anyone and appear in the groups directory. Private groups are invitation-only
+        spaces for confidential discussions, and do not appear in the groups directory. </p>
+      <a class="btn btl-large btn-primary span2" style="width: 170px;"
+              href="/social/groups/new">{{ _("Create new group") }}</a>
     </div>
 
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="?tab=all_groups">{{ _("All groups") }}</a></li>
+      <li><a href="?tab=my_groups">{{ _("My groups") }}</a></li>
+    </ul>
+
+    <table class="grid" cellspacing="0" cellpadding="0">
+      <thead>
+      <tr>
+        <th class="first " colspan="2">
+          <a href="?sort_by=name">Groups</a>
+        </th>
+
+        <th class="">
+          <a href="?sort_by=date_created">Created On</a>
+        </th>
+
+        <th class="">
+          <a href="?sort_by=last_active">Members</a>
+        </th>
+        <th></th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      {% for group in groups %}
+        <tr>
+          <td class="picture">
+            <a href="{{ group.url }}"><img class="avatar-medium" src="{{ group.url }}/mugshot?s=45"></a>
+          </td>
+
+          <td class="identity">
+            <div class="info">
+              <a href="{{ group.url }}"><b>{{ group.name }}</b></a>
+
+              <p>{{ group.description }}</p>
+            </div>
+          </td>
+
+          <td>
+            {{ group.created_at | date }}
+          </td>
+
+          <td>
+            {{ group.members | count }}
+          </td>
+
+          <td>
+            {% if not g.user.is_member_of(group) %}
+              <form action="{{ group.url }}" method="post">
+                <button class="btn" name="action" value="join">{{ _("join") }}</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
   </div>
 
 {% endblock %}

@@ -26,7 +26,7 @@
   <ul class="property-list" style="padding-left: 0;">
     {% for group in user.groups %}
       <li>
-        <a href="{{ group.url }}"> <img src="{{ group.url }}/mugshot?s=45" class="">
+        <a href="{{ group.url }}"> <img class="avatar-medium" src="{{ group.url }}/mugshot?s=45" class="">
           {{ group.name }}</a> ({{ group.members|count }} members)
       </li>
     {% endfor %}
@@ -128,7 +128,7 @@
       </div>
     </div>
 
-    <ul class="nav nav-pills profile-nav">
+    <ul class="nav nav-tabs clear">
       {% for tab in tabs %}
         {% if tab.id == active_tab_id %}
           <li class="active"><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
