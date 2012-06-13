@@ -15,6 +15,10 @@
   </div>
 
   <div class="span3">
+    {% if g.user.is_admin_of(group) %}
+      admin...
+    {% endif %}
+
     <h3>{{ _("Group admins") }}</h3>
 
     {% for user in group.members %}
@@ -24,7 +28,7 @@
 
     <h3>{{ _("Group members") }}</h3>
 
-    {% for user in group.members %}
+    {% for user in group.admins %}
       <a href="{{ user.url }}"><img src="{{ user.url }}/mugshot?s=40"
               alt="{{ user.name }}" title="{{ user.name }}" style="margin-bottom: 4px;"></a>
     {% endfor %}

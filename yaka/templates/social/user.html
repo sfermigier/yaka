@@ -5,30 +5,33 @@
 {% from "macros.html" import m_breadcrumbs, m_files_table %}
 
 {% macro m_profile(user) %}
-  <div class="row">
-    <div class="span8">
-      My profile.
-    </div>
 
-    <div class="span4">
-      <div class="well property-box" style="padding: 8px 0; background-color: white;">
-        <h4 style="padding: 3px 15px;">{{ _("Groups") }}</h4>
+  {% if user.email %}
+  <p><b>{{ _("Email") }}</b></p>
+  <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+  {% endif %}
 
-        <ul class="property-list">
-          <li>
-            <a href=""> <img src="/static/img/tux45.png" class="">
-              GTLL</a> (90 members)
-          </li>
-          <li>
-            <a href=""> <img src="/static/img/ocds45.png" class="">
-              OCDS</a> (254 members)
-          </li>
-        </ul>
-      </div>
+  {% if user.job_title %}
+    <p><b>{{ _("Job title") }}</b></p>
+    <p>{{ user.job_title }}</p>
+  {% endif %}
 
-    </div>
+  {% if user.location %}
+    <p><b>{{ _("Location") }}</b></p>
+    <p>{{ user.location }}</p>
+  {% endif %}
 
-  </div>
+  <p><b>{{ _("Groups") }}</b></p>
+
+  <ul class="property-list" style="padding-left: 0;">
+    {% for group in user.groups %}
+      <li>
+        <a href="{{ group.url }}"> <img src="{{ group.url }}/mugshot?s=45" class="">
+          {{ group.name }}</a> ({{ group.members|count }} members)
+      </li>
+    {% endfor %}
+  </ul>
+
 {% endmacro %}
 
 {% macro m_activity(entries) %}
@@ -102,43 +105,69 @@
 <!-- Main stuff -->
 
 {% block main %}
-  <div class="span10">
+  <div class="span7">
 
-  <div class="header">
-    <img class="avatar" src="{{ user._url }}/mugshot?s=140">
+    <div class="header">
+      <img class="avatar" src="{{ user._url }}/mugshot?s=140">
 
-    <div class="info">
-      <h2 class="title">{{ user.name }}</h2>
+      <div class="info">
+        <h2 class="title">{{ user.name }}
+        </h2>
 
-      <div class="job-title">{{ user.job_title }}</div>
+        <div class="job-title">{{ user.job_title }}</div>
+
+        <form action="" style="margin-top: 10px;">
+          <button class="btn">Follow</button>
+        </form>
+      </div>
     </div>
+
+    <ul class="nav nav-pills profile-nav">
+      {% for tab in tabs %}
+        {% if tab.id == active_tab_id %}
+          <li class="active"><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
+        {% else %}
+          <li><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    {% if active_tab_id == 'activity' %}
+      {{ m_activity(activity_entries) }}
+
+    {% elif active_tab_id == 'profile' %}
+      {{ m_profile(user) }}
+
+    {% elif active_tab_id == 'documents' %}
+      {{ m_files_table(documents) }}
+
+    {% elif active_tab_id == 'images' %}
+      {{ m_images(images) }}
+
+    {% elif active_tab_id == 'audit' %}
+      {{ m_audit(audit_entries) }}
+    {% endif %}
+
   </div>
 
-  <ul class="nav nav-pills profile-nav">
-    {% for tab in tabs %}
-      {% if tab.id == active_tab_id %}
-        <li class="active"><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
-      {% else %}
-        <li><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
-      {% endif %}
+  <div class="span3">
+    <h3>{{ _("Top tags") }}</h3>
+
+    <p>...</p>
+
+    <h3>{{ _("Followers") }} ({{ user.followers|count }})</h3>
+
+    {% for u in user.followers %}
+      <a href="{{ u.url }}"><img src="{{ u.url }}/mugshot?s=40" alt="{{ u.name }}" title="{{ u.name }}"
+              style="margin-bottom: 4px;"></a>
     {% endfor %}
-  </ul>
 
-  {% if active_tab_id == 'activity' %}
-    {{ m_activity(activity_entries) }}
+    <h3>{{ _("Groups") }} ({{ user.groups|count }})</h3>
 
-  {% elif active_tab_id == 'profile' %}
-    {{ m_profile(user) }}
-
-  {% elif active_tab_id == 'documents' %}
-    {{ m_files_table(documents) }}
-
-  {% elif active_tab_id == 'images' %}
-    {{ m_images(images) }}
-
-  {% elif active_tab_id == 'audit' %}
-    {{ m_audit(audit_entries) }}
-  {% endif %}
+    {% for g in user.groups %}
+      <a href="{{ g.url }}"><img src="{{ g.url }}/mugshot?s=40" alt="{{ g.name }}" title="{{ g.name }}"
+              style="margin-bottom: 4px;"></a>
+    {% endfor %}
 
   </div>
 

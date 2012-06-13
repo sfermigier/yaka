@@ -6,7 +6,7 @@ from yaka.apps.crm.frontend import CRM
 from yaka.extensions import db
 
 
-# TODO: split method
+# TODO: split method, it's doing too much.
 
 def init_auth(app):
 
@@ -31,7 +31,9 @@ def init_auth(app):
         return redirect("/login", code=401)
         #abort(401, "Must authenticate")
 
-    if datetime.utcnow() - g.user.last_active > timedelta(0, 60):
+    # Update last_active every 60 seconds only.
+    if g.user and (datetime.utcnow() - g.user.last_active > timedelta(0, 60)):
+      g.user.last_active = datetime.utcnow()
       db.session.add(g.user)
       db.session.commit()
 

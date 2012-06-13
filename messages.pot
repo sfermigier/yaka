@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-06-13 15:28+0200\n"
+"POT-Creation-Date: 2012-06-13 16:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,11 +73,11 @@ msgstr ""
 msgid "Group"
 msgstr ""
 
-#: yaka/templates/social/group.html:18
+#: yaka/templates/social/group.html:22
 msgid "Group admins"
 msgstr ""
 
-#: yaka/templates/social/group.html:25
+#: yaka/templates/social/group.html:29
 msgid "Group members"
 msgstr ""
 
@@ -113,12 +113,32 @@ msgstr ""
 msgid "Trending topics"
 msgstr ""
 
+#: yaka/templates/social/user.html:10
+msgid "Email"
+msgstr ""
+
 #: yaka/templates/social/user.html:15
+msgid "Job title"
+msgstr ""
+
+#: yaka/templates/social/user.html:20
+msgid "Location"
+msgstr ""
+
+#: yaka/templates/social/user.html:24 yaka/templates/social/user.html:165
 msgid "Groups"
 msgstr ""
 
-#: yaka/templates/social/user.html:64
+#: yaka/templates/social/user.html:67
 msgid "Audit Log"
+msgstr ""
+
+#: yaka/templates/social/user.html:154
+msgid "Top tags"
+msgstr ""
+
+#: yaka/templates/social/user.html:158
+msgid "Followers"
 msgstr ""
 
 #: yaka/templates/social/users.html:7

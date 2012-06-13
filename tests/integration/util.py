@@ -77,6 +77,11 @@ class DataLoader(object):
       for col in ['name', 'description']:
         d[col] = line[col]
       group = Group(**d)
+
+      photo_path = join(dirname(__file__),
+                        "..", "group_photos", line['pic'])
+      group.photo = open(photo_path).read()
+
       for user in self.users:
         group.members.append(user)
       self.db.session.add(group)

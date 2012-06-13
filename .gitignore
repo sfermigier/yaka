@@ -13,10 +13,13 @@ tests/cache
 tests/tmp
 tests/extra_files
 maxid.data
+sandbox
+results
 
 yaka/static/misc*
 yaka/static/.webassets-cache
 yaka/static/gen
+yaka/static/placeholders
 
 *.pyc
 *.egg-info

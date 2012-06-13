@@ -1,14 +1,17 @@
 from flask import Blueprint, render_template, redirect, g
+from flask.globals import request
+from flask.helpers import make_response
 from flaskext.babel import lazy_gettext as _
 
 from yaka.core import signals
 from yaka.core.frontend import BreadCrumbs
-from yaka.core.subjects import User
+from yaka.core.subjects import User, Group
 from yaka.core.util import get_params
 from yaka.extensions import db
 
 from .content import Message, PrivateMessage
 from .util import Env
+from yaka.services.image import crop_and_resize
 
 __all__ = ['social']
 
@@ -43,7 +46,7 @@ def home():
   #      .order_by(Message.created_at) \
   #      .limit(20).all()
 
-  e.latest_visitors = User.query.order_by(User.last_active).limit(15).all()
+  e.latest_visitors = User.query.order_by(User.last_active.desc()).limit(15).all()
 
   return render_template("social/home.html", **e)
 
@@ -75,3 +78,23 @@ def private_post():
   """Post a private message."""
   bread_crumbs = make_bread_crumbs()
   return render_template("social/home.html", bread_crumbs=bread_crumbs)
+
+
+@social.route("/<users_or_groups>/<int:uid>/mugshot")
+def mugshot(users_or_groups, uid):
+  size = int(request.args.get('s', 0))
+  if size > 500:
+    raise Exception("Error, size = %d" % size)
+
+  if users_or_groups == "users":
+    subject = User.query.get(uid)
+  else:
+    subject = Group.query.get(uid)
+
+  data = subject.photo
+  if size:
+    data = crop_and_resize(data, size)
+
+  response = make_response(data)
+  response.headers['content-type'] = 'image/jpeg'
+  return response

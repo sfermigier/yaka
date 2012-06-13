@@ -21,7 +21,7 @@ class HrefExtractor(HTMLParser):
     for attr_name, attr_value in attrs:
       if (tag, attr_name) in [('a', 'href'), ('link', 'href'), ('script', 'src'), ('img', 'src')]:
         link = attr_value.split("#")[0]
-        if link.startswith("http://"):
+        if link.startswith("http:") or link.startswith("https:") or link.startswith("mailto:"):
           continue
         self.links.add(link)
 

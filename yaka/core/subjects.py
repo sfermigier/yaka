@@ -43,11 +43,19 @@ class User(Entity):
 
   query = db.session.query_property(UserQuery)
 
+  # Basic information
   first_name = Column(UnicodeText, info=SEARCHABLE)
   last_name = Column(UnicodeText, info=SEARCHABLE)
+  # Should we add gender, salutation ?
+
+  # Additional information (should be customisable)
   job_title = Column(UnicodeText, info=SEARCHABLE)
   department = Column(UnicodeText, info=SEARCHABLE)
   company = Column(UnicodeText, info=SEARCHABLE)
+  location = Column(UnicodeText)
+  expertise = Column(UnicodeText)
+  interests = Column(UnicodeText)
+  # More: education, work experience, etc.
 
   email = Column(UnicodeText, nullable=False)
   # TODO: encrypt
@@ -128,7 +136,9 @@ class Group(Entity):
                          backref='groups')
   admins = relationship("User", secondary=administratorship)
 
-  # Should entities know about their own URL? I guess yes.
+  photo = Column(LargeBinary)
+
+# Should entities know about their own URL? I guess yes.
   @property
   def url(self):
     return "/social/groups/%d" % self.uid

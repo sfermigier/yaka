@@ -76,19 +76,3 @@ def user_view(user_id):
       e.images = files.all()
 
   return render_template("social/user.html", **e)
-
-
-@social.route("/users/<int:user_id>/mugshot")
-def mugshot(user_id):
-  size = int(request.args.get('s', 0))
-  if size > 500:
-    raise Exception("Error, size = %d" % size)
-  user = User.query.get(user_id)
-
-  data = user.photo
-  if size:
-    data = crop_and_resize(data, size)
-
-  response = make_response(data)
-  response.headers['content-type'] = 'image/jpeg'
-  return response
