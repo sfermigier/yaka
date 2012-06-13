@@ -37,6 +37,7 @@ class TestUsers(TestModels):
 
     user1.follow(user2)
 
+    self.assert_(user1.is_following(user2))
     self.assertEquals(1, len(user2.followers))
     self.assertEquals(1, len(user1.followees))
     self.assertEquals(0, len(user2.followees))
@@ -45,6 +46,7 @@ class TestUsers(TestModels):
 
     user1.unfollow(user2)
 
+    self.assert_(not user1.is_following(user2))
     self.assertEquals(0, len(user1.followers))
     self.assertEquals(0, len(user1.followees))
     self.assertEquals(0, len(user2.followers))
@@ -57,6 +59,7 @@ class TestUsers(TestModels):
 
     user.join(group)
 
+    self.assert_(user.is_member_of(group))
     self.assertEquals(1, len(group.members))
     self.assertEquals(1, len(user.groups))
     self.assertEqual([user], group.members)
@@ -64,6 +67,7 @@ class TestUsers(TestModels):
 
     user.leave(group)
 
+    self.assert_(not user.is_member_of(group))
     self.assertEquals(0, len(group.members))
     self.assertEquals(0, len(user.groups))
 

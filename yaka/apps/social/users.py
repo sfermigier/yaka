@@ -1,11 +1,11 @@
-from flask import render_template, request, make_response
+from flask import render_template, request, redirect, g, url_for
 from flaskext.babel import lazy_gettext as _
 
 from sqlalchemy.sql.expression import not_, or_
 
 from yaka.core.subjects import User
 from yaka.core.frontend import BreadCrumbs
-from yaka.services.image import crop_and_resize
+from yaka.extensions import db
 from yaka.services.activity import ActivityEntry
 from yaka.services.audit import AuditEntry
 
@@ -76,3 +76,17 @@ def user_view(user_id):
       e.images = files.all()
 
   return render_template("social/user.html", **e)
+
+@social.route("/users/<int:user_id>", methods=['POST'])
+def user_post(user_id):
+  user = User.query.get(user_id)
+  action = request.form.get('action')
+  if action == 'follow':
+    g.user.follow(user)
+  elif action == 'unfollow':
+    g.user.unfollow(user)
+  else:
+    raise Exception("Should not happen")
+  db.session.commit()
+
+  return redirect(url_for(".user_view", user_id=user_id))

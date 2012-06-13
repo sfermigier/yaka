@@ -116,9 +116,15 @@
 
         <div class="job-title">{{ user.job_title }}</div>
 
-        <form action="" style="margin-top: 10px;">
-          <button class="btn">Follow</button>
+        {% if g.user != user %}
+        <form action="" method="post" style="margin-top: 10px;">
+          {% if g.user.is_following(user) %}
+          <button class="btn" name="action" value="unfollow">{{ _("Unfollow") }}</button>
+          {% else %}
+          <button class="btn" name="action" value="follow">{{ _("Follow") }}</button>
+          {% endif %}
         </form>
+        {% endif %}
       </div>
     </div>
 

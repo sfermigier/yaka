@@ -92,9 +92,13 @@ class User(Entity):
   groups = []
 
   def follow(self, followee):
+    if followee == self:
+      raise Exception("User can't follow self")
     self.followees.append(followee)
 
   def unfollow(self, followee):
+    if followee == self:
+      raise Exception("User can't follow self")
     i = self.followees.index(followee)
     del self.followees[i]
 
@@ -106,9 +110,21 @@ class User(Entity):
     if group in self.groups:
       del self.groups[self.groups.index(group)]
 
+  #
+  # Boolean properties
+  #
+  def is_following(self, other):
+    return other in self.followees
+
+  def is_member_of(self, group):
+    return self in group.members
+
   def is_admin_of(self, group):
     return self in group.admins
 
+  #
+  # Other properties
+  #
   @property
   def username(self):
     return (self.first_name or "") + (self.last_name or "")
@@ -120,7 +136,7 @@ class User(Entity):
   def __unicode__(self):
     return self.name
 
-  # Should entities know about their own URL? I guess yes.
+  # XXX: Should entities know about their own URL? I guess yes.
   @property
   def url(self):
     return "/social/users/%d" % self.uid
