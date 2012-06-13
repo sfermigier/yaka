@@ -1,0 +1,111 @@
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-06-12 22:36+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: yaka/apps/social/forms.py:9
+msgid "Name"
+msgstr ""
+
+#: yaka/apps/social/forms.py:10 yaka/apps/social/forms.py:13
+msgid "Name is required."
+msgstr ""
+
+#: yaka/apps/social/forms.py:12
+msgid "Description"
+msgstr ""
+
+#: yaka/apps/social/forms.py:15 yaka/templates/social/users.html:13
+msgid "Search"
+msgstr ""
+
+#: yaka/core/forms.py:92
+msgid "Invalid email address."
+msgstr ""
+
+#: yaka/templates/social/base.html:11
+msgid "My feed"
+msgstr ""
+
+#: yaka/templates/social/base.html:12
+msgid "Private messages"
+msgstr ""
+
+#: yaka/templates/social/base.html:13
+msgid "My profile"
+msgstr ""
+
+#: yaka/templates/social/base.html:16
+msgid "All groups"
+msgstr ""
+
+#: yaka/templates/social/base.html:22
+msgid "People"
+msgstr ""
+
+#: yaka/templates/social/base.html:23
+msgid "Everyone"
+msgstr ""
+
+#: yaka/templates/social/base.html:24
+msgid "Followees"
+msgstr ""
+
+#: yaka/templates/social/base.html:25
+msgid "Followers"
+msgstr ""
+
+#: yaka/templates/social/groups-new.html:6
+msgid "Create a new group"
+msgstr ""
+
+#: yaka/templates/social/groups.html:6
+msgid "Groups Directory"
+msgstr ""
+
+#: yaka/templates/social/groups.html:81
+msgid "Create new group"
+msgstr ""
+
+#: yaka/templates/social/home.html:8
+msgid "Share an update"
+msgstr ""
+
+#: yaka/templates/social/home.html:13
+msgid "Share"
+msgstr ""
+
+#: yaka/templates/social/home.html:16
+msgid "Your feed"
+msgstr ""
+
+#: yaka/templates/social/user.html:15
+msgid "Groups"
+msgstr ""
+
+#: yaka/templates/social/user.html:64
+msgid "Audit Log"
+msgstr ""
+
+#: yaka/templates/social/users.html:7
+msgid "Users Directory"
+msgstr ""
+
+#: yaka/templates/social/users.html:11
+msgid "Search users directory"
+msgstr ""
+
