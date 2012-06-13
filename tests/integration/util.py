@@ -7,7 +7,7 @@ from os.path import join, dirname, isdir
 from posix import listdir
 
 from yaka.apps.crm.entities import Contact, Account, Opportunity, Lead
-from yaka.core.subjects import User
+from yaka.core.subjects import User, Group
 from yaka.apps.dm import File
 
 
@@ -44,16 +44,15 @@ class DataLoader(object):
 
   def load_data(self):
     self.load_users()
+    self.load_groups()
     self.db.session.commit()
 
     self.load_accounts()
     self.load_contacts()
     self.load_opportunities()
     self.load_leads()
-
     self.load_files("dummy_files")
     self.load_files("extra_files")
-
     self.db.session.commit()
 
   def load_users(self):
@@ -70,6 +69,17 @@ class DataLoader(object):
       user.photo = open(photo_path).read()
       self.db.session.add(user)
       self.users.append(user)
+
+  def load_groups(self):
+    reader = self.get_reader("Groups.csv")
+    for line in reader:
+      d = {}
+      for col in ['name', 'description']:
+        d[col] = line[col]
+      group = Group(**d)
+      for user in self.users:
+        group.members.append(user)
+      self.db.session.add(group)
 
   def load_accounts(self):
     reader = self.get_reader("Accounts.csv")

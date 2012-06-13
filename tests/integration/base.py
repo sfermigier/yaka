@@ -7,7 +7,7 @@ from tests.integration import util
 from yaka.application import Application
 from yaka.extensions import db
 
-from config import TestConfig
+from .config import TestConfig
 
 import os
 import uuid

@@ -2,13 +2,14 @@
 
 See ICOM-ics-v1.0 "Subject Branch".
 """
+from datetime import datetime
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.query import Query
 from sqlalchemy.schema import Column, Table, ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Boolean
+from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Boolean, DateTime
 
-from yaka.core.entities import Entity, SEARCHABLE
+from yaka.core.entities import Entity, SEARCHABLE, SYSTEM
 from yaka.extensions import db
 
 
@@ -23,10 +24,14 @@ membership = Table(
   Column('user_uid', Integer, ForeignKey('user.uid')),
   Column('group_uid', Integer, ForeignKey('group.uid'))
 )
+administratorship = Table(
+  'administratorship', db.Model.metadata,
+  Column('user_uid', Integer, ForeignKey('user.uid')),
+  Column('group_uid', Integer, ForeignKey('group.uid'))
+)
 
 
 class UserQuery(Query):
-
   def get_by_email(self, email):
     return self.filter_by(email=email).all()[0]
 
@@ -53,6 +58,8 @@ class User(Entity):
   # TODO: move to a roles or permission table
   is_admin = Column(Boolean, nullable=False, default=False)
 
+  last_active = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, info=SYSTEM)
+
   # TODO: add if needed:
   # location
   # manager
@@ -66,13 +73,12 @@ class User(Entity):
 
   uid = Entity.uid
   followers = relationship("User", secondary=following,
-                           primaryjoin=(uid==following.c.follower_uid),
-                           secondaryjoin=(uid==following.c.followee_uid),
+                           primaryjoin=(uid == following.c.follower_uid),
+                           secondaryjoin=(uid == following.c.followee_uid),
                            backref='followees')
   followees = []
 
-  groups = relationship("Group", secondary=membership,
-                        backref='members')
+  groups = []
 
   def follow(self, followee):
     self.followees.append(followee)
@@ -88,6 +94,9 @@ class User(Entity):
   def leave(self, group):
     if group in self.groups:
       del self.groups[self.groups.index(group)]
+
+  def is_admin_of(self, group):
+    return self in group.admins
 
   @property
   def username(self):
@@ -115,7 +124,9 @@ class Group(Entity):
   name = Column(UnicodeText, nullable=False, info=SEARCHABLE)
   description = Column(UnicodeText, info=SEARCHABLE)
 
-  members = []
+  members = relationship("User", secondary=membership,
+                         backref='groups')
+  admins = relationship("User", secondary=administratorship)
 
   # Should entities know about their own URL? I guess yes.
   @property

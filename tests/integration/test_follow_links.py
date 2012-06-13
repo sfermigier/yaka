@@ -46,7 +46,7 @@ class Crawler(object):
       if not link or link in self.visited:
         continue
       response = self.client.get(link)
-      eq_(200, response.status_code)
+      eq_(200, response.status_code, "Response from URL %s was %s" % (link, response.status_code))
 
       if not response.content_type.startswith('text/html'):
         continue

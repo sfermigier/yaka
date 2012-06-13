@@ -72,7 +72,8 @@
           made changes on {{ entry.happened_at.strftime('%Y-%m-%d %H:%M') }}
           to entity {{ entry.entity }}
           <ul>
-            {% for key, (old_value, new_value) in entry.changes.items() %}
+            {% for key in entry.changes %}
+              {% set old_value, new_value = entry.changes[key] %}
               <li>
                 {% if old_value %}
                   Field <b>{{ key }}</b> changed from <em>{{ old_value }}</em> to <em>{{ new_value }}</em>
@@ -101,6 +102,7 @@
 <!-- Main stuff -->
 
 {% block main %}
+  <div class="span10">
 
   <div class="header">
     <img class="avatar" src="{{ user._url }}/mugshot?s=140">
@@ -137,5 +139,7 @@
   {% elif active_tab_id == 'audit' %}
     {{ m_audit(audit_entries) }}
   {% endif %}
+
+  </div>
 
 {% endblock %}

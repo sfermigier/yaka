@@ -3,10 +3,12 @@ from flaskext.babel import lazy_gettext as _
 
 from yaka.core import signals
 from yaka.core.frontend import BreadCrumbs
+from yaka.core.subjects import User
 from yaka.core.util import get_params
 from yaka.extensions import db
 
 from .content import Message, PrivateMessage
+from .util import Env
 
 __all__ = ['social']
 
@@ -24,7 +26,8 @@ def make_bread_crumbs(path="", label=None):
 
 @social.route("/")
 def home():
-  bread_crumbs = make_bread_crumbs()
+  e = Env()
+  e.bread_crumbs = make_bread_crumbs()
 
   #group_ids = [None] + [ group.uid for group in g.user.groups ]
 
@@ -32,13 +35,17 @@ def home():
   for group in g.user.groups:
     messages += Message.query.filter(Message.group_id==group.uid).all()
   messages.sort(lambda x, y: -cmp(x.uid, y.uid))
+  e.messages = messages
 
-#  group_ids = [ group.uid for group in g.user.groups ]
-#  messages = Message.query.filter(Message.group_id.in_(group_ids)) \
-#      .order_by(Message.created_at) \
-#      .limit(20).all()
+  # Alternate technique
+  #  group_ids = [ group.uid for group in g.user.groups ]
+  #  messages = Message.query.filter(Message.group_id.in_(group_ids)) \
+  #      .order_by(Message.created_at) \
+  #      .limit(20).all()
 
-  return render_template("social/home.html", messages=messages, bread_crumbs=bread_crumbs)
+  e.latest_visitors = User.query.order_by(User.last_active).limit(15).all()
+
+  return render_template("social/home.html", **e)
 
 
 @social.route("/stream/<stream_name>")

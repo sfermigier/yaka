@@ -1,8 +1,7 @@
 {% extends "social/base.html" %}
 
 {% block main %}
-
-  <div class="span10">
+  <div class="span7">
     <h2>{{ _("Group") }}</h2>
 
     <p>
@@ -12,6 +11,23 @@
     <p>
       Description: {{ group.description }}
     </p>
+
+  </div>
+
+  <div class="span3">
+    <h3>{{ _("Group admins") }}</h3>
+
+    {% for user in group.members %}
+      <a href="{{ user.url }}"><img src="{{ user.url }}/mugshot?s=40"
+              alt="{{ user.name }}" title="{{ user.name }}" style="margin-bottom: 4px;"></a>
+    {% endfor %}
+
+    <h3>{{ _("Group members") }}</h3>
+
+    {% for user in group.members %}
+      <a href="{{ user.url }}"><img src="{{ user.url }}/mugshot?s=40"
+              alt="{{ user.name }}" title="{{ user.name }}" style="margin-bottom: 4px;"></a>
+    {% endfor %}
 
   </div>
 

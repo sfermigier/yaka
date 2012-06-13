@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-06-13 13:35+0200\n"
+"POT-Creation-Date: 2012-06-13 15:28+0200\n"
 "PO-Revision-Date: 2012-06-12 17:18+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -69,9 +69,17 @@ msgstr "Je les suis"
 msgid "My followers"
 msgstr "Ils me suivent"
 
-#: yaka/templates/social/group.html:6
+#: yaka/templates/social/group.html:5
 msgid "Group"
 msgstr "Groupe"
+
+#: yaka/templates/social/group.html:18
+msgid "Group admins"
+msgstr "Administrateurs du groupe"
+
+#: yaka/templates/social/group.html:25
+msgid "Group members"
+msgstr "Membres du groupe"
 
 #: yaka/templates/social/groups-new.html:8
 msgid "Create a new group"
@@ -81,7 +89,7 @@ msgstr "Créer un nouveau groupe"
 msgid "Groups Directory"
 msgstr "Répertoire des groupes"
 
-#: yaka/templates/social/groups.html:61
+#: yaka/templates/social/groups.html:60
 msgid "Create new group"
 msgstr "Créer un nouveau groupe"
 
@@ -96,6 +104,14 @@ msgstr "Partager"
 #: yaka/templates/social/home.html:16
 msgid "Your feed"
 msgstr "Votre fil d'actualité"
+
+#: yaka/templates/social/home.html:29
+msgid "Latest visitors"
+msgstr "Derniers visiteurs"
+
+#: yaka/templates/social/home.html:38
+msgid "Trending topics"
+msgstr "Sujets en vogue"
 
 #: yaka/templates/social/user.html:15
 msgid "Groups"

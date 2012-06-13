@@ -26,7 +26,19 @@
   </div>
 
   <div class="span3">
-    <img src="/static/placeholders/social-right.png">
+    <h3>{{ _("Latest visitors") }}</h3>
+
+    <ul style="margin: 0;">
+      {% for user in latest_visitors %}
+      <li style="list-style: none;"><a href="{{ user.url }}"><img
+              src="{{ user.url }}/mugshot?s=20" style="margin: 2px;"> {{ user.name }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <h3>{{ _("Trending topics") }}</h3>
+
+    <p>...</p>
+
   </div>
 
 {% endblock %}

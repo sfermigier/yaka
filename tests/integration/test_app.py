@@ -1,5 +1,6 @@
 from nose.tools import eq_
-from base import IntegrationTestCase
+
+from .base import IntegrationTestCase
 
 
 class TestViews(IntegrationTestCase):

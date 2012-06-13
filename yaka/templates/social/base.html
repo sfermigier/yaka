@@ -10,7 +10,7 @@
           <li class="nav-header">Main</li>
           <li><a href="/social/">{{ _("My feed") }}</a></li>
           <li><a href="/social/private/">{{ _("Private messages") }}</a></li>
-          <li><a href="/social/private/">{{ _("My profile") }}</a></li>
+          <li><a href="{{ g.user.url }}">{{ _("My profile") }}</a></li>
 
           <li class="nav-header">Groups</li>
           <li><a href="/social/groups/">{{ _("All groups") }}</a></li>

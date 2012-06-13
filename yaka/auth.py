@@ -1,10 +1,13 @@
+from datetime import datetime, timedelta
 from flask import g, session, redirect, request
 
 from yaka.core.subjects import User
 from yaka.apps.crm.frontend import CRM
+from yaka.extensions import db
 
 
 # TODO: split method
+
 def init_auth(app):
 
   @app.before_request
@@ -27,6 +30,10 @@ def init_auth(app):
       else:
         return redirect("/login", code=401)
         #abort(401, "Must authenticate")
+
+    if datetime.utcnow() - g.user.last_active > timedelta(0, 60):
+      db.session.add(g.user)
+      db.session.commit()
 
     g.modules = CRM.modules
     g.recent_items = session.get('recent_items', [])
