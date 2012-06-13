@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-06-12 22:36+0200\n"
+"POT-Creation-Date: 2012-06-13 13:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: yaka/apps/social/forms.py:10 yaka/apps/social/forms.py:13
+#: yaka/apps/social/forms.py:10
 msgid "Name is required."
 msgstr ""
 
@@ -29,8 +29,8 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: yaka/apps/social/forms.py:15 yaka/templates/social/users.html:13
-msgid "Search"
+#: yaka/apps/social/groups.py:54
+msgid "Your new group has been created"
 msgstr ""
 
 #: yaka/core/forms.py:92
@@ -62,14 +62,18 @@ msgid "Everyone"
 msgstr ""
 
 #: yaka/templates/social/base.html:24
-msgid "Followees"
+msgid "My followees"
 msgstr ""
 
 #: yaka/templates/social/base.html:25
-msgid "Followers"
+msgid "My followers"
 msgstr ""
 
-#: yaka/templates/social/groups-new.html:6
+#: yaka/templates/social/group.html:6
+msgid "Group"
+msgstr ""
+
+#: yaka/templates/social/groups-new.html:8
 msgid "Create a new group"
 msgstr ""
 
@@ -77,7 +81,7 @@ msgstr ""
 msgid "Groups Directory"
 msgstr ""
 
-#: yaka/templates/social/groups.html:81
+#: yaka/templates/social/groups.html:61
 msgid "Create new group"
 msgstr ""
 
@@ -107,5 +111,9 @@ msgstr ""
 
 #: yaka/templates/social/users.html:11
 msgid "Search users directory"
+msgstr ""
+
+#: yaka/templates/social/users.html:13
+msgid "Search"
 msgstr ""
 
