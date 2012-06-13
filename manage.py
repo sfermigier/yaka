@@ -4,7 +4,8 @@ from flaskext.script import Manager
 from flask.ext.sqlalchemy import get_debug_queries, SQLAlchemy
 import sys
 
-from yaka import create_app, db
+from yaka import create_app
+from yaka.extensions import db
 from config import DebugConfig
 
 

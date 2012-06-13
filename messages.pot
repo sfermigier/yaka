@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-06-13 16:51+0200\n"
+"POT-Creation-Date: 2012-06-13 17:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,6 +37,10 @@ msgstr ""
 msgid "Invalid email address."
 msgstr ""
 
+#: yaka/templates/social/base.html:10
+msgid "Main"
+msgstr ""
+
 #: yaka/templates/social/base.html:11
 msgid "My feed"
 msgstr ""
@@ -47,6 +51,11 @@ msgstr ""
 
 #: yaka/templates/social/base.html:13
 msgid "My profile"
+msgstr ""
+
+#: yaka/templates/social/base.html:15 yaka/templates/social/user.html:24
+#: yaka/templates/social/user.html:165
+msgid "Groups"
 msgstr ""
 
 #: yaka/templates/social/base.html:16
@@ -125,12 +134,8 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: yaka/templates/social/user.html:24 yaka/templates/social/user.html:165
-msgid "Groups"
-msgstr ""
-
-#: yaka/templates/social/user.html:67
-msgid "Audit Log"
+#: yaka/templates/social/user.html:67 yaka/templates/users/user.html:63
+msgid "Audit log"
 msgstr ""
 
 #: yaka/templates/social/user.html:154
@@ -142,14 +147,14 @@ msgid "Followers"
 msgstr ""
 
 #: yaka/templates/social/users.html:7
-msgid "Users Directory"
+msgid "Users directory"
 msgstr ""
 
 #: yaka/templates/social/users.html:11
 msgid "Search users directory"
 msgstr ""
 
-#: yaka/templates/social/users.html:13
+#: yaka/templates/social/users.html:12
 msgid "Search"
 msgstr ""
 

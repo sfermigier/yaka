@@ -7,7 +7,7 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.query import Query
 from sqlalchemy.schema import Column, Table, ForeignKey
-from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Boolean, DateTime
+from sqlalchemy.types import Integer, UnicodeText, LargeBinary, Boolean, DateTime, Text
 
 from yaka.core.entities import Entity, SEARCHABLE, SYSTEM
 from yaka.extensions import db
@@ -47,6 +47,9 @@ class User(Entity):
   first_name = Column(UnicodeText, info=SEARCHABLE)
   last_name = Column(UnicodeText, info=SEARCHABLE)
   # Should we add gender, salutation ?
+
+  # System information
+  locale = Column(Text)
 
   # Additional information (should be customisable)
   job_title = Column(UnicodeText, info=SEARCHABLE)
