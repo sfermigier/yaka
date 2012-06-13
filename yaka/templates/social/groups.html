@@ -2,79 +2,78 @@
 
 {% block main %}
 
-  <div class="span7">
-
+  <div class="span10">
     <h2>{{ _("Groups Directory") }}</h2>
 
-    <table class="grid" cellspacing="0" cellpadding="0">
-      <thead>
-      <tr>
-        <th class="first " colspan="2">
-          <a href="?sort_by=name">Groups</a>
-        </th>
+    <div class="row">
 
-        <th class="">
-          <a href="?sort_by=date_created">Created On</a>
-        </th>
+      <div class="span7">
 
-        <th class="">
-          <a href="?sort_by=last_active">Members</a>
-        </th>
-      </tr>
-      </thead>
+        <table class="grid" cellspacing="0" cellpadding="0">
+          <thead>
+          <tr>
+            <th class="first " colspan="2">
+              <a href="?sort_by=name">Groups</a>
+            </th>
 
-      <tbody>
+            <th class="">
+              <a href="?sort_by=date_created">Created On</a>
+            </th>
+
+            <th class="">
+              <a href="?sort_by=last_active">Members</a>
+            </th>
+          </tr>
+          </thead>
+
+          <tbody>
+
+          {% for group in groups %}
+            <tr>
+              <td class="picture">
+                <a href="{{ group.url }}"><img src="/static/img/tux45.png"></a>
+              </td>
+
+              <td class="identity">
+                <div class="info">
+                  <a href="{{ group.url }}">{{ group.name }}</a>
+
+                  <p>{{ group.description }}</p>
+                </div>
+              </td>
+
+              <td>
+                Jan 11, 2012
+              </td>
+
+              <td>
+                238
+              </td>
+            </tr>
+          {% endfor %}
 
 
-      <tr>
-        <td class="picture">
-          <a href="/users/groups/1"><img src="/static/img/tux45.png"></a>
-        </td>
+          </tbody>
+        </table>
+      </div>
 
-        <td class="identity">
-          <div class="info">
-            <a href="/users/groups/1">Logiciel Libre</a>
+      <div class="span3">
+        <a class="btn btl-large btn-primary span2" href="/social/groups/new">{{ _("Create new group") }}</a>
 
-            <p>...</p>
-          </div>
-        </td>
+        <div style="clear: both; margin-top: 40px;"></div>
 
-        <td>
-          Jan 11, 2012
-        </td>
+        <div class="tip">
+          <h4>What are Groups? </h4>
 
-        <td>
-          238
-        </td>
-      </tr>
+          <p>
+            Create and join groups to discuss projects or to meet colleagues with similar skills, interests and hobbies.
+            Public groups are open to anyone and appear in the groups directory. Private groups are invitation-only
+            spaces for confidential discussions, and do not appear in the groups directory. </p>
+        </div>
+      </div>
 
-      <tr>
-        <td class="picture">
-          <a href="/users/2"><img src="/static/img/ocds45.png"></a>
-        </td>
+    </div>
 
-        <td class="identity">
-          <div class="info">
-            <a href="/users/2">OCDS</a>
-
-            <p>...</p>
-          </div>
-        </td>
-
-        <td>
-          Jan 11, 2012
-        </td>
-
-        <td>
-          546
-        </td>
-      </tr>
-
-      </tbody>
-    </table>
-  </div>
-  <div class="span3">
-    <img src="/static/placeholders/social-right.png">
   </div>
 
 {% endblock %}

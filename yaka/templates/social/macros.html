@@ -1,0 +1,47 @@
+{% macro render_message(message) %}
+
+  <li class="stream-item">
+    <div class="stream-image-block clearfix">
+      <div style="float: left; margin-right: 5px;">
+        <div class="stream-avatar">
+          <a href="{{ message.creator.url }}" class=""><img
+                  src="{{ message.creator.url }}/mugshot?s=45" alt="{{ message.creator.name }}"
+                  title="{{ message.creator.name }}"></a>
+        </div>
+      </div>
+
+      <div class="stream-body">
+        <h3><a href="{{ message.url }}"></a></h3>
+
+        <div class="stream-subtext">By <a
+                href="{{ message.creator.url }}">{{ message.creator }}</a> <acronym
+                title="11 June 2012 @ 11:53am">9 minutes ago</acronym></div>
+        <div class="stream-content">{{ message.content }}</div>
+      </div>
+    </div>
+  </li>
+
+{% endmacro %}
+
+{% macro render_field(field) %}
+  {% if field.widget.input_type == 'hidden' %}
+    <!-- pass -->
+  {% elif field.errors %}
+    <div class="control-group error">
+      {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
+      <label class="control-label" for="input-{{ field.name }}">{{ field.label }}</label>
+      <div class="controls">
+        {{ field(class=css_class, **kwargs) }}
+        <span class="help-inline">{% for error in field.errors %}{{ error|e }}. {% endfor %}</span>
+      </div>
+    </div>
+  {% else %}
+    <div class="control-group">
+      <label class="control-label" for="input-{{ field.name }}">{{ field.label }}</label>
+      <div class="controls">
+        {{ field(**kwargs) }}
+      </div>
+    </div>
+  {% endif %}
+{% endmacro %}
+

@@ -1,4 +1,6 @@
 from flask import render_template, request, make_response
+from flaskext.babel import lazy_gettext as _
+
 from sqlalchemy.sql.expression import not_, or_
 
 from yaka.core.subjects import User

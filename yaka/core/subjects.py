@@ -102,15 +102,25 @@ class User(Entity):
 
   # Should entities know about their own URL? I guess yes.
   @property
-  def _url(self):
+  def url(self):
     return "/social/users/%d" % self.uid
+
+  # FIXME: choose canonical name
+  _url = url
 
 
 class Group(Entity):
   __tablename__ = 'group'
 
   name = Column(UnicodeText, nullable=False, info=SEARCHABLE)
+  description = Column(UnicodeText, info=SEARCHABLE)
 
   members = []
 
+  # Should entities know about their own URL? I guess yes.
+  @property
+  def url(self):
+    return "/social/groups/%d" % self.uid
 
+  # FIXME: choose canonical name
+  _url = url

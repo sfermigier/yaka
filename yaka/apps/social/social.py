@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, g
+from flaskext.babel import lazy_gettext as _
 
 from yaka.core import signals
 from yaka.core.frontend import BreadCrumbs
