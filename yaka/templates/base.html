@@ -7,10 +7,15 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <!-- Le styles -->
-  <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
-  <!--link href="css/bootstrap-responsive.css" rel="stylesheet"-->
-  <link href="/static/css/override.css" rel="stylesheet">
+  {% assets filters="cssmin", output="gen/packed.css",
+      "bootstrap/css/bootstrap.css",
+      "css/override.css",
+      "jquery/css/ui-lightness/jquery-ui-1.8.19.custom.css",
+      "jquery/plugins/chosen.css",
+      "jquery/plugins/jquery.tagbox.css",
+      "css/holmes.css" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
 
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
@@ -24,20 +29,6 @@
   <link rel="apple-touch-icon" sizes="72x72" href="/static/images/apple-touch-icon-72x72.png">
   <link rel="apple-touch-icon" sizes="114x114" href="/static/images/apple-touch-icon-114x114.png">
   -->
-
-  <!-- CSS for various jQuery plugins -->
-  <link rel="stylesheet" href="/static/jquery/css/ui-lightness/jquery-ui-1.8.19.custom.css"/>
-  <!-- for datatables.net -->
-  <!--style type="text/css" title="currentStyle">
-    @import "/static/css/demo_page.css";
-    @import "/static/css/header.css";
-    @import "/static/css/demo_table.css";
-  </style-->
-  <link rel="stylesheet" href="/static/jquery/plugins/chosen.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/jquery/plugins/jquery.tagbox.css"/>
-
-  <!-- DEBUG -->
-  <link type="text/css" href="/static/css/holmes.css" rel="stylesheet"/>
 
   <script src="/static/jquery/js/jquery-1.7.2.min.js"></script>
 </head>
@@ -106,21 +97,18 @@
 </div>
 <!--/.fluid-container-->
 
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="/static/jquery/js/jquery-ui-1.8.19.custom.min.js"></script>
-
-<script src="/static/jquery/plugins/jquery.dataTables.js"></script>
-<script src="/static/jquery/plugins/chosen.jquery.min.js"></script>
-
-<script src="/static/bootstrap/js/bootstrap.js"></script>
-
-<script src="/static/jquery/plugins/jquery.autoGrowInput.js"></script>
-<script src="/static/jquery/plugins/jquery.tagBox.js"></script>
-<script src="/static/jquery/plugins/jquery.collapse.js"></script>
-<script src="/static/jquery/plugins/jquery.validate.min.js"></script>
-
-<!-- our app -->
-<script type="text/javascript" language="javascript" src="/static/yaka/app.js"></script>
+{% assets filters="closure_js", output="gen/packed.js",
+    "bootstrap/js/bootstrap.js",
+    "jquery/js/jquery-ui-1.8.19.custom.min.js",
+    "jquery/plugins/jquery.dataTables.js",
+    "jquery/plugins/chosen.jquery.min.js",
+    "jquery/plugins/jquery.autoGrowInput.js",
+    "jquery/plugins/jquery.tagBox.js",
+    "jquery/plugins/jquery.collapse.js",
+    "jquery/plugins/jquery.validate.min.js",
+    "yaka/app.js" %}
+  <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
 
 </body>
 </html>

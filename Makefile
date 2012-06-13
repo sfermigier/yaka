@@ -50,6 +50,7 @@ clean:
 	rm -rf *.egg-info *.egg .coverage
 	rm -rf whoosh tests/whoosh tests/integration/whoosh
 	rm -rf doc/_build
+	rm -rf yaka/static/gen
 
 tidy: clean
 	rm -rf .tox

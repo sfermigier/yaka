@@ -2,6 +2,8 @@
 """
 
 from flask import Flask
+from flask_assets import Environment
+from webassets.bundle import Bundle
 
 from .extensions import mail, db, babel
 from .filters import init_filters
@@ -28,6 +30,9 @@ class Application(Flask):
     mail.init_app(self)
     babel.init_app(self)
 
+    # Assets (bundles are defines in the templates)
+    assets = Environment(self)
+
     # Initialise filters
     init_filters(self)
     init_auth(self)
@@ -35,6 +40,12 @@ class Application(Flask):
     from .apps.crm.frontend import CRM
     crm = CRM(self)
 
+    self.register_blueprints()
+
+    # Must come after all entity classes have been declared.
+    self.register_services()
+
+  def register_blueprints(self):
     # Register additional blueprints
     from .apps.main import main
     from .apps.admin import admin
@@ -54,8 +65,8 @@ class Application(Flask):
     self.register_blueprint(social)
     self.register_blueprint(restapi)
 
+  def register_services(self):
     # Initiate services
-    # Must come after all entity classes have been declared.
     self.extensions['indexing'] = indexing.get_service(self)
     self.extensions['audit'] = audit.get_service(self)
     self.extensions['activity'] = activity.get_service(self)
@@ -69,7 +80,7 @@ class Application(Flask):
     for service in self.extensions.values():
       if hasattr(service, 'stop'):
         service.stop()
-  
+
 
 def create_app(config):
   return Application(config)

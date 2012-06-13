@@ -2,7 +2,9 @@
 
 from setuptools import setup
 
-deps = [ line.strip() for line in open("deps.txt") if line ]
+deps = [ line.strip()
+         for line in open("deps.txt")
+         if line and not line.startswith("#") ]
 
 setup(
     name='Yaka',
@@ -11,7 +13,7 @@ setup(
     license='LGPL',
     author='Stefane Fermigier',
     author_email='sf@fermigier.com',
-    description='<enter short description here>',
+    description='Enterprise social networking meets CRM',
     long_description=__doc__,
     packages=['yaka'],
     zip_safe=False,
