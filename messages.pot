@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-06-13 17:52+0200\n"
+"POT-Creation-Date: 2012-06-14 17:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: yaka/apps/social/groups.py:54
+#: yaka/apps/social/groups.py:75
 msgid "Your new group has been created"
 msgstr ""
 
@@ -54,39 +54,47 @@ msgid "My profile"
 msgstr ""
 
 #: yaka/templates/social/base.html:15 yaka/templates/social/user.html:24
-#: yaka/templates/social/user.html:165
+#: yaka/templates/social/user.html:171
 msgid "Groups"
 msgstr ""
 
-#: yaka/templates/social/base.html:16
+#: yaka/templates/social/base.html:16 yaka/templates/social/groups.html:19
 msgid "All groups"
 msgstr ""
 
-#: yaka/templates/social/base.html:22
+#: yaka/templates/social/base.html:21
 msgid "People"
 msgstr ""
 
-#: yaka/templates/social/base.html:23
+#: yaka/templates/social/base.html:22
 msgid "Everyone"
 msgstr ""
 
-#: yaka/templates/social/base.html:24
+#: yaka/templates/social/base.html:23
 msgid "My followees"
 msgstr ""
 
-#: yaka/templates/social/base.html:25
+#: yaka/templates/social/base.html:24
 msgid "My followers"
 msgstr ""
 
-#: yaka/templates/social/group.html:5
+#: yaka/templates/social/group.html:6
 msgid "Group"
 msgstr ""
 
-#: yaka/templates/social/group.html:22
+#: yaka/templates/social/group.html:18
+msgid "Leave"
+msgstr ""
+
+#: yaka/templates/social/group.html:20
+msgid "Join"
+msgstr ""
+
+#: yaka/templates/social/group.html:41
 msgid "Group admins"
 msgstr ""
 
-#: yaka/templates/social/group.html:29
+#: yaka/templates/social/group.html:48
 msgid "Group members"
 msgstr ""
 
@@ -98,8 +106,16 @@ msgstr ""
 msgid "Groups Directory"
 msgstr ""
 
-#: yaka/templates/social/groups.html:60
+#: yaka/templates/social/groups.html:15
 msgid "Create new group"
+msgstr ""
+
+#: yaka/templates/social/groups.html:20
+msgid "My groups"
+msgstr ""
+
+#: yaka/templates/social/groups.html:68
+msgid "join"
 msgstr ""
 
 #: yaka/templates/social/home.html:8
@@ -138,11 +154,19 @@ msgstr ""
 msgid "Audit log"
 msgstr ""
 
-#: yaka/templates/social/user.html:154
+#: yaka/templates/social/user.html:122
+msgid "Unfollow"
+msgstr ""
+
+#: yaka/templates/social/user.html:124
+msgid "Follow"
+msgstr ""
+
+#: yaka/templates/social/user.html:160
 msgid "Top tags"
 msgstr ""
 
-#: yaka/templates/social/user.html:158
+#: yaka/templates/social/user.html:164
 msgid "Followers"
 msgstr ""
 

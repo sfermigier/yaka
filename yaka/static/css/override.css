@@ -333,7 +333,6 @@ table.table {
     z-index: 1;
     margin-right: 30px;
     margin: 0 18px 9px 0;
-
     -webkit-border-radius: 7px;
     -moz-border-radius: 7px;
     border-radius: 7px;
@@ -342,10 +341,17 @@ table.table {
 .avatar-medium {
     width: 45px;
     height: 45px;
-
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+}
+
+.avatar-small {
+    width: 25px;
+    height: 25px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 
 .avatar, .avatar a {

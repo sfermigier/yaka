@@ -1,3 +1,5 @@
+from os.path import join, dirname
+
 from flask import Blueprint, render_template, redirect, g
 from flask.globals import request
 from flask.helpers import make_response
@@ -94,13 +96,29 @@ def mugshot(users_or_groups, uid):
 
   if users_or_groups == "users":
     subject = User.query.get(uid)
+    photo = subject.photo
+    if not photo:
+      photo = open(join(dirname(__file__), "..", "..", "static", "images", "user-icon.png")).read()
   else:
     subject = Group.query.get(uid)
+    photo = subject.photo
+    if not photo:
+      photo = open(join(dirname(__file__), "..", "..", "static", "images", "group-icon.png")).read()
 
-  data = subject.photo
   if size:
-    data = crop_and_resize(data, size)
+    photo = crop_and_resize(photo, size)
 
-  response = make_response(data)
+  response = make_response(photo)
   response.headers['content-type'] = 'image/jpeg'
   return response
+
+
+@social.route("/invite")
+def invite():
+  return render_template("social/invite.html")
+
+
+@social.route("/invite", methods=['POST'])
+def invite_post():
+  return render_template("social/invite.html")
+
