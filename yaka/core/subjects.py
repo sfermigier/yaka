@@ -147,6 +147,9 @@ class User(Entity):
 
 class Group(Entity):
   __tablename__ = 'group'
+  __editable__ = ['name', 'description']
+  __exportable__ = __editable__ + ['created_at', 'updated_at', 'uid']
+
 
   name = Column(UnicodeText, nullable=False, info=SEARCHABLE)
   description = Column(UnicodeText, info=SEARCHABLE)
@@ -157,7 +160,7 @@ class Group(Entity):
 
   photo = Column(LargeBinary)
 
-# Should entities know about their own URL? I guess yes.
+  # Should entities know about their own URL? I guess yes.
   @property
   def url(self):
     return "/social/groups/%d" % self.uid
