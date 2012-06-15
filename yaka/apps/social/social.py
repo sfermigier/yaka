@@ -2,18 +2,19 @@ from os.path import join, dirname
 
 from flask import Blueprint, render_template, redirect, g
 from flask.globals import request
-from flask.helpers import make_response
+from flask.helpers import make_response, url_for, flash
 from flaskext.babel import lazy_gettext as _
+from flaskext.mail import Message as Email
 
 from yaka.core import signals
 from yaka.core.frontend import BreadCrumbs
 from yaka.core.subjects import User, Group
 from yaka.core.util import get_params
-from yaka.extensions import db
+from yaka.extensions import db, mail
+from yaka.services.image import crop_and_resize
 
 from .content import Message, PrivateMessage
 from .util import Env
-from yaka.services.image import crop_and_resize
 
 __all__ = ['social']
 
@@ -112,13 +113,4 @@ def mugshot(users_or_groups, uid):
   response.headers['content-type'] = 'image/jpeg'
   return response
 
-
-@social.route("/invite")
-def invite():
-  return render_template("social/invite.html")
-
-
-@social.route("/invite", methods=['POST'])
-def invite_post():
-  return render_template("social/invite.html")
 

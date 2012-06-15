@@ -23,12 +23,12 @@ def make_bread_crumbs(path="", label=None):
 
 def make_tabs(user):
   return [
-    dict(id='activity', label='Activity', link=user._url, is_active=True),
-    dict(id='profile', label='Profile', link=user._url + '?tab=profile'),
-    dict(id='documents', label='Documents', link=user._url + '?tab=documents'),
-    dict(id='images', label='Images', link=user._url + '?tab=images'),
-    dict(id='audit', label='Audit', link=user._url + '?tab=audit'),
-    ]
+    dict(id='conversations', label=_('Conversations'), link=user._url, is_active=True),
+    dict(id='profile', label=_('Profile'), link=user._url + '?tab=profile'),
+    dict(id='documents', label=_('Documents'), link=user._url + '?tab=documents'),
+    dict(id='images', label=_('Images'), link=user._url + '?tab=images'),
+    dict(id='audit', label=_('Audit'), link=user._url + '?tab=audit'),
+  ]
 
 
 @social.route("/users/")
@@ -56,15 +56,18 @@ def user_view(user_id):
   e.active_tab_id = tab
   e.tabs = make_tabs(user)
 
-  if tab == "activity":
+  if tab == "conversations":
+    pass
+
+  elif tab == "activity":
     # XXX quick & dirty
     e.activity_entries =\
-    ActivityEntry.query.filter(ActivityEntry.actor_id == user.uid).limit(30).all()
+      ActivityEntry.query.filter(ActivityEntry.actor_id == user.uid).limit(30).all()
 
   elif tab == "audit":
     # XXX quick & dirty
     e.audit_entries =\
-    AuditEntry.query.filter(AuditEntry.user_id == user.uid).limit(30).all()
+      AuditEntry.query.filter(AuditEntry.user_id == user.uid).limit(30).all()
 
   elif tab in ("documents", "images"):
     files = File.query.filter(File.owner_id == user_id)
@@ -76,6 +79,7 @@ def user_view(user_id):
       e.images = files.all()
 
   return render_template("social/user.html", **e)
+
 
 @social.route("/users/<int:user_id>", methods=['POST'])
 def user_post(user_id):

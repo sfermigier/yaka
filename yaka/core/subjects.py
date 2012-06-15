@@ -167,3 +167,5 @@ class Group(Entity):
 
   # FIXME: choose canonical name
   _url = url
+
+

@@ -1,5 +1,7 @@
 from datetime import datetime
 from flaskext import babel
+from flaskext.babel import gettext as _
+
 
 def labelize(s):
   return " ".join([ w.capitalize() for w in s.split("_") ])
@@ -34,24 +36,26 @@ def age(dt, now=None):
   age = now - dt
   if age.days == 0:
     if age.seconds < 120:
-      age_str = "a minute ago"
+      age_str = _("a minute ago")
     elif age.seconds < 3600:
-      age_str = "%d minutes ago" % (age.seconds / 60)
+      age_str = _("%(num)d minutes ago", num=age.seconds / 60)
     elif age.seconds < 7200:
-      age_str = "an hour ago"
+      age_str = _("an hour ago")
     else:
-      age_str = "%d hours ago" % (age.seconds / 3600)
+      age_str = _("%(num)d hours ago", num=age.seconds / 3600)
   else:
     if age.days == 1:
-      age_str = "yesterday"
+      age_str = _("yesterday")
     elif age.days <= 31:
-      age_str = "%d days ago" % age.days
+      age_str = _("%(num)d days ago", num=age.days)
     elif age.days <= 72:
-      age_str = "a month ago"
+      age_str = _("a month ago")
     elif age.days <= 365:
-      age_str = "%d months ago" % (age.days / 30)
+      age_str = _("%(num)d months ago", num=age.days / 30)
+    elif age.days <= 2*365:
+      age_str = _("last year")
     else:
-      age_str = "%d years ago" % (age.days / 365)
+      age_str = _("%(num)d years ago", num=age.days / 365)
 
   return age_str
 

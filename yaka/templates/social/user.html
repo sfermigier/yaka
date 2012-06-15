@@ -6,23 +6,32 @@
 
 {% macro m_profile(user) %}
 
+  <h3>{{ _("Personal details") }}</h3>
+
   {% if user.email %}
-  <p><b>{{ _("Email") }}</b></p>
-  <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+    <p>
+      <b>{{ _("Email:") }}</b>
+      <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+    </p>
   {% endif %}
 
   {% if user.job_title %}
-    <p><b>{{ _("Job title") }}</b></p>
-    <p>{{ user.job_title }}</p>
+    <p>
+      <b>{{ _("Job title:") }}</b>
+      {{ user.job_title }}
+    </p>
   {% endif %}
 
   {% if user.location %}
-    <p><b>{{ _("Location") }}</b></p>
-    <p>{{ user.location }}</p>
+    <p>
+      <b>{{ _("Location:") }}</b>
+      {{ user.location }}
+    </p>
   {% endif %}
 
-  <p><b>{{ _("Groups") }}</b></p>
+  <h3>{{ _("Groups") }}</h3>
 
+  <p>{{ user.name }} {{ _("is member of the following groups:") }}</p>
   <ul class="property-list" style="padding-left: 0;">
     {% for group in user.groups %}
       <li>
@@ -31,6 +40,18 @@
       </li>
     {% endfor %}
   </ul>
+
+  <h3>{{ _("Stats") }}</h3>
+
+  <p>
+    <b>{{ _("Joined on:") }}</b>
+    {{ user.created_at|date_age }}
+  </p>
+
+  <p>
+    <b>{{ _("Latest connection:") }}</b>
+    {{ user.last_active|date_age }}
+  </p>
 
 {% endmacro %}
 
@@ -117,13 +138,13 @@
         <div class="job-title">{{ user.job_title }}</div>
 
         {% if g.user != user %}
-        <form action="" method="post" style="margin-top: 10px;">
-          {% if g.user.is_following(user) %}
-          <button class="btn" name="action" value="unfollow">{{ _("Unfollow") }}</button>
-          {% else %}
-          <button class="btn" name="action" value="follow">{{ _("Follow") }}</button>
-          {% endif %}
-        </form>
+          <form action="" method="post" style="margin-top: 10px;">
+            {% if g.user.is_following(user) %}
+              <button class="btn" name="action" value="unfollow">{{ _("Unfollow") }}</button>
+            {% else %}
+              <button class="btn" name="action" value="follow">{{ _("Follow") }}</button>
+            {% endif %}
+          </form>
         {% endif %}
       </div>
     </div>
@@ -164,15 +185,15 @@
     <h3>{{ _("Followers") }} ({{ user.followers|count }})</h3>
 
     {% for u in user.followers %}
-      <a href="{{ u.url }}"><img class="avatar-medium" src="{{ u.url }}/mugshot?s=40" alt="{{ u.name }}" title="{{ u.name }}"
-              style="margin-bottom: 4px;"></a>
+      <a href="{{ u.url }}"><img class="avatar-medium" src="{{ u.url }}/mugshot?s=40" alt="{{ u.name }}"
+              title="{{ u.name }}" style="margin-bottom: 4px;"></a>
     {% endfor %}
 
     <h3>{{ _("Groups") }} ({{ user.groups|count }})</h3>
 
     {% for g in user.groups %}
-      <a href="{{ g.url }}"><img class="avatar-medium" src="{{ g.url }}/mugshot?s=40" alt="{{ g.name }}" title="{{ g.name }}"
-              style="margin-bottom: 4px;"></a>
+      <a href="{{ g.url }}"><img class="avatar-medium" src="{{ g.url }}/mugshot?s=40" alt="{{ g.name }}"
+              title="{{ g.name }}" style="margin-bottom: 4px;"></a>
     {% endfor %}
 
   </div>

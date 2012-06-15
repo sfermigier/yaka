@@ -65,7 +65,7 @@
           <td>
             {% if not g.user.is_member_of(group) %}
               <form action="{{ group.url }}" method="post">
-                <button class="btn" name="action" value="join">{{ _("join") }}</button>
+                <button class="btn" name="action" value="join">{{ _("Join") }}</button>
               </form>
             {% endif %}
           </td>
