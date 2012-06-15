@@ -30,7 +30,7 @@ class MessagesApiTest(BaseApiTest):
     now = datetime.utcnow().replace(tzinfo=UTC)
     created = iso8601.parse_date(m['created_at'])
     self.assert_(now > created)
-    self.assert_(now - created < timedelta(1))
+    self.assert_(now - created < timedelta(0, 10))
 
     content = m['content']
     self.assertEquals(content, "First post!")
@@ -151,7 +151,7 @@ class UserApiTest(BaseApiTest):
     now = datetime.utcnow().replace(tzinfo=UTC)
     created = iso8601.parse_date(u['created_at'])
     self.assert_(now > created)
-    self.assert_(now - created < timedelta(1))
+    self.assert_(now - created < timedelta(0, 10))
 
     self.assertEquals(u['first_name'], "John")
     self.assertEquals(u['last_name'], "Test User")
@@ -316,7 +316,7 @@ class GroupApiTest(BaseApiTest):
     now = datetime.utcnow().replace(tzinfo=UTC)
     created = iso8601.parse_date(group['created_at'])
     self.assert_(now > created)
-    self.assert_(now - created < timedelta(1))
+    self.assert_(now - created < timedelta(0, 10))
 
     self.assertEquals(group['name'], "Group1")
 

@@ -26,12 +26,14 @@
   </div>
 
   <div class="span3">
-    <h3>{{ _("Latest visitors") }}</h3>
+    <h3>{{ _("Latest visitors") }} ({{ active_visitors_count }} {{ _("active") }})</h3>
 
     <ul style="margin: 0;">
       {% for user in latest_visitors %}
       <li style="list-style: none;"><a href="{{ user.url }}"><img
-              src="{{ user.url }}/mugshot?s=20" style="margin: 2px;"> {{ user.name }}</a></li>
+              src="{{ user.url }}/mugshot?s=20" style="margin: 2px;"> {{ user.name }}</a>
+      {% if user.is_active %}<img src="/static/img/greendot.png">{% endif %}
+      </li>
       {% endfor %}
     </ul>
 

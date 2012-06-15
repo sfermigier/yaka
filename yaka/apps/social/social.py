@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from os.path import join, dirname
 
 from flask import Blueprint, render_template, redirect, g
@@ -56,6 +57,8 @@ def home():
   #      .limit(20).all()
 
   e.latest_visitors = User.query.order_by(User.last_active.desc()).limit(15).all()
+  one_minute_ago = (datetime.utcnow()-timedelta(0, 60))
+  e.active_visitors_count = User.query.filter(User.last_active > one_minute_ago).count()
 
   return render_template("social/home.html", **e)
 

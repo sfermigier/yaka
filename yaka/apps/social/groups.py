@@ -54,7 +54,6 @@ def group_post(group_id):
   return redirect(url_for(".group_home", group_id=group_id))
 
 
-
 @social.route("/groups/new")
 def groups_new():
   e = Env()

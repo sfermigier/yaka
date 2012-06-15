@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-06-15 11:08+0200\n"
+"POT-Creation-Date: 2012-06-15 12:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: yaka/apps/social/groups.py:75
+#: yaka/apps/social/groups.py:74
 msgid "Your new group has been created"
 msgstr ""
 
@@ -131,7 +131,7 @@ msgstr ""
 msgid "Groups"
 msgstr ""
 
-#: yaka/templates/social/base.html:16 yaka/templates/social/groups.html:19
+#: yaka/templates/social/base.html:16 yaka/templates/social/groups.html:18
 msgid "All groups"
 msgstr ""
 
@@ -151,15 +151,11 @@ msgstr ""
 msgid "My followers"
 msgstr ""
 
-#: yaka/templates/social/group.html:6
-msgid "Group"
-msgstr ""
-
-#: yaka/templates/social/group.html:18
+#: yaka/templates/social/group.html:16 yaka/templates/social/groups.html:69
 msgid "Leave"
 msgstr ""
 
-#: yaka/templates/social/group.html:20 yaka/templates/social/groups.html:68
+#: yaka/templates/social/group.html:18 yaka/templates/social/groups.html:67
 msgid "Join"
 msgstr ""
 
@@ -179,11 +175,20 @@ msgstr ""
 msgid "Groups Directory"
 msgstr ""
 
-#: yaka/templates/social/groups.html:15
+#: yaka/templates/social/groups.html:10
+msgid ""
+"Create and join groups to discuss projects or to meet colleagues with "
+"similar skills, interests and hobbies. Public groups are open to anyone "
+"and appear in the groups directory. Private groups are invitation-only "
+"spaces for confidential activities, and do not appear in the groups "
+"directory."
+msgstr ""
+
+#: yaka/templates/social/groups.html:13
 msgid "Create new group"
 msgstr ""
 
-#: yaka/templates/social/groups.html:20
+#: yaka/templates/social/groups.html:19
 msgid "My groups"
 msgstr ""
 
@@ -203,7 +208,11 @@ msgstr ""
 msgid "Latest visitors"
 msgstr ""
 
-#: yaka/templates/social/home.html:38
+#: yaka/templates/social/home.html:29
+msgid "active"
+msgstr ""
+
+#: yaka/templates/social/home.html:40
 msgid "Trending topics"
 msgstr ""
 

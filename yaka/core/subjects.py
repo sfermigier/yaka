@@ -2,7 +2,7 @@
 
 See ICOM-ics-v1.0 "Subject Branch".
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.query import Query
@@ -121,6 +121,10 @@ class User(Entity):
 
   def is_admin_of(self, group):
     return self in group.admins
+
+  @property
+  def is_active(self):
+    return datetime.utcnow() - self.last_active <= timedelta(0, 60)
 
   #
   # Other properties

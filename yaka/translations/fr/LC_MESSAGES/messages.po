@@ -1,15 +1,15 @@
-# French translations for PROJECT.
+# French translations for Yaka.
 # Copyright (C) 2012 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# This file is distributed under the same license as the Yaka project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-06-15 11:08+0200\n"
+"Project-Id-Version: Yaka 0.1\n"
+"Report-Msgid-Bugs-To: sf@fermigier.com\n"
+"POT-Creation-Date: 2012-06-15 12:16+0200\n"
 "PO-Revision-Date: 2012-06-12 17:18+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Stefane Fermigier <sf@fermigier.com>\n"
 "Language-Team: fr <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
@@ -74,21 +74,21 @@ msgstr "Vous devez saisir un nom."
 msgid "Description"
 msgstr "Description"
 
-#: yaka/apps/social/groups.py:75
+#: yaka/apps/social/groups.py:74
 msgid "Your new group has been created"
 msgstr "Votre nouveau groupe a été créé"
 
 #: yaka/apps/social/invites.py:32
 msgid "Action aborted"
-msgstr ""
+msgstr "Action annulée"
 
 #: yaka/apps/social/invites.py:50
 msgid "Invitation sent"
-msgstr ""
+msgstr "Invitation envoyée"
 
 #: yaka/apps/social/users.py:26
 msgid "Conversations"
-msgstr ""
+msgstr "Conversations"
 
 #: yaka/apps/social/users.py:27
 msgid "Profile"
@@ -131,7 +131,7 @@ msgstr "Mon profil"
 msgid "Groups"
 msgstr "Groupes"
 
-#: yaka/templates/social/base.html:16 yaka/templates/social/groups.html:19
+#: yaka/templates/social/base.html:16 yaka/templates/social/groups.html:18
 msgid "All groups"
 msgstr "Tous les groupes"
 
@@ -151,15 +151,11 @@ msgstr "Je les suis"
 msgid "My followers"
 msgstr "Ils me suivent"
 
-#: yaka/templates/social/group.html:6
-msgid "Group"
-msgstr "Groupe"
-
-#: yaka/templates/social/group.html:18
+#: yaka/templates/social/group.html:16 yaka/templates/social/groups.html:69
 msgid "Leave"
 msgstr "Rejoindre"
 
-#: yaka/templates/social/group.html:20 yaka/templates/social/groups.html:68
+#: yaka/templates/social/group.html:18 yaka/templates/social/groups.html:67
 msgid "Join"
 msgstr "Quitter"
 
@@ -179,11 +175,20 @@ msgstr "Créer un nouveau groupe"
 msgid "Groups Directory"
 msgstr "Répertoire des groupes"
 
-#: yaka/templates/social/groups.html:15
+#: yaka/templates/social/groups.html:10
+msgid ""
+"Create and join groups to discuss projects or to meet colleagues with "
+"similar skills, interests and hobbies. Public groups are open to anyone "
+"and appear in the groups directory. Private groups are invitation-only "
+"spaces for confidential activities, and do not appear in the groups "
+"directory."
+msgstr ""
+
+#: yaka/templates/social/groups.html:13
 msgid "Create new group"
 msgstr "Créer un nouveau groupe"
 
-#: yaka/templates/social/groups.html:20
+#: yaka/templates/social/groups.html:19
 msgid "My groups"
 msgstr "Mes groupes"
 
@@ -203,13 +208,17 @@ msgstr "Votre fil d'actualité"
 msgid "Latest visitors"
 msgstr "Derniers visiteurs"
 
-#: yaka/templates/social/home.html:38
+#: yaka/templates/social/home.html:29
+msgid "active"
+msgstr "actif(s)"
+
+#: yaka/templates/social/home.html:40
 msgid "Trending topics"
 msgstr "Sujets en vogue"
 
 #: yaka/templates/social/invite.html:6
 msgid "Invite colleagues to join this community"
-msgstr ""
+msgstr "Invitez des collègues à rejoindre cette communauté"
 
 #: yaka/templates/social/invite.html:9
 msgid ""

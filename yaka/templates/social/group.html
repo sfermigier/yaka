@@ -3,15 +3,13 @@
 {% block main %}
   <div class="span7">
 
-    <h2>{{ _("Group") }}</h2>
-
     <div class="header">
       <img class="avatar avatar-large" src="{{ group.url }}/mugshot?s=140">
 
       <div class="info">
         <h2 class="title">{{ group.name }}</h2>
 
-        <div class="job-title">...</div>
+        <div class="job-title">{{ group.description }}</div>
 
         <form action="" method="post" style="margin-top: 10px;">
           {% if g.user.is_member_of(group) %}
@@ -23,13 +21,15 @@
       </div>
     </div>
 
-    <p>
-    Name: {{ group.name }}
-    </p>
-
-    <p>
-      Description: {{ group.description }}
-    </p>
+    <ul class="nav nav-tabs clear">
+      {% for tab in tabs %}
+        {% if tab.id == active_tab_id %}
+          <li class="active"><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
+        {% else %}
+          <li><a href="{{ tab.link }}">{{ _(tab.label) }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
 
   </div>
 

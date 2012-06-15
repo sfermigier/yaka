@@ -7,14 +7,13 @@
 
     <div class="row">
       <p class="span7">
-
-        Create and join groups to discuss projects or to meet colleagues with similar skills, interests and hobbies.
-        Public groups are open to anyone and appear in the groups directory. Private groups are invitation-only
-        spaces for confidential discussions, and do not appear in the groups directory. </p>
+        {{ _("Create and join groups to discuss projects or to meet colleagues with similar skills, interests and hobbies. Public groups are open to anyone and appear in the groups directory. Private groups are invitation-only spaces for confidential activities, and do not appear in the groups directory.") }}
+      </p>
       <a class="btn btl-large btn-primary span2" style="width: 170px;"
               href="/social/groups/new">{{ _("Create new group") }}</a>
     </div>
 
+    <!-- TODO -->
     <ul class="nav nav-tabs">
       <li class="active"><a href="?tab=all_groups">{{ _("All groups") }}</a></li>
       <li><a href="?tab=my_groups">{{ _("My groups") }}</a></li>
@@ -63,11 +62,13 @@
           </td>
 
           <td>
+            <form action="{{ group.url }}" method="post">
             {% if not g.user.is_member_of(group) %}
-              <form action="{{ group.url }}" method="post">
-                <button class="btn" name="action" value="join">{{ _("Join") }}</button>
-              </form>
+              <button class="btn btn-primary" name="action" value="join">{{ _("Join") }}</button>
+            {% else %}
+              <button class="btn btn-danger" name="action" value="join">{{ _("Leave") }}</button>
             {% endif %}
+            </form>
           </td>
         </tr>
       {% endfor %}
