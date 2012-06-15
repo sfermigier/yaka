@@ -5,7 +5,6 @@ from flask import Blueprint, render_template, redirect, g
 from flask.globals import request
 from flask.helpers import make_response, url_for, flash
 from flaskext.babel import lazy_gettext as _
-from flaskext.mail import Message as Email
 
 from yaka.core import signals
 from yaka.core.frontend import BreadCrumbs
@@ -14,7 +13,7 @@ from yaka.core.util import get_params
 from yaka.extensions import db, mail
 from yaka.services.image import crop_and_resize
 
-from .content import Message, PrivateMessage
+from .content import Message
 from .util import Env
 
 __all__ = ['social']
@@ -56,6 +55,8 @@ def home():
   #      .order_by(Message.created_at) \
   #      .limit(20).all()
 
+  e.groups = Group.query.order_by(Group.name).all()
+
   e.latest_visitors = User.query.order_by(User.last_active.desc()).limit(15).all()
   one_minute_ago = (datetime.utcnow()-timedelta(0, 60))
   e.active_visitors_count = User.query.filter(User.last_active > one_minute_ago).count()
@@ -70,6 +71,10 @@ def stream(stream_name):
 
 @social.route("/", methods=['POST'])
 def share():
+  content = request.form.get("content", "")
+  group_id = request.form.get('group_id')
+  print group_id
+  print content
   d = get_params(Message.__editable__)
   message = Message(**d)
   db.session.add(message)
@@ -81,15 +86,13 @@ def share():
 
 @social.route("/private/")
 def private():
-  bread_crumbs = make_bread_crumbs()
-  return render_template("social/home.html", bread_crumbs=bread_crumbs)
+  return "Not done yet."
 
 
 @social.route("/private/", methods=['POST'])
 def private_post():
   """Post a private message."""
-  bread_crumbs = make_bread_crumbs()
-  return render_template("social/home.html", bread_crumbs=bread_crumbs)
+  return "Not done yet."
 
 
 @social.route("/<users_or_groups>/<int:uid>/mugshot")
@@ -102,12 +105,12 @@ def mugshot(users_or_groups, uid):
     subject = User.query.get(uid)
     photo = subject.photo
     if not photo:
-      photo = open(join(dirname(__file__), "..", "..", "static", "images", "user-icon.png")).read()
+      photo = get_default_picture("user")
   else:
     subject = Group.query.get(uid)
     photo = subject.photo
     if not photo:
-      photo = open(join(dirname(__file__), "..", "..", "static", "images", "group-icon.png")).read()
+      photo = get_default_picture("group")
 
   if size:
     photo = crop_and_resize(photo, size)
@@ -117,3 +120,7 @@ def mugshot(users_or_groups, uid):
   return response
 
 
+def get_default_picture(type):
+  path = join(dirname(__file__), "..", "..", "static", "images", "user-%s.png" % type)
+  photo = open(path).read()
+  return photo

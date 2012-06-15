@@ -1,11 +1,14 @@
 PYTHON=python
 TARGET=yaka@oss4cloud.org:yaka/production/
 
+.PHONY: test unit full-test pep8 clean
+
 #
 # testing
 #
 test:
-	$(PYTHON) -m nose.core -v tests
+	$(PYTHON) -m nose.core -v tests/unit
+	$(PYTHON) -m nose.core -v tests/integration
 
 unit:
 	$(PYTHON) -m nose.core -v tests/unit

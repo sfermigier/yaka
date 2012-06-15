@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, make_response
+from flask import Blueprint, render_template, request, make_response,\
+  redirect, url_for
+
 from sqlalchemy.sql.expression import not_
 
 from yaka.core.subjects import User
@@ -20,6 +22,7 @@ def make_bread_crumbs(path="", label=None):
   else:
     return bread_crumbs
 
+
 def make_tabs(user):
   return [
     dict(id='activity', label='Activity', link=user._url, is_active=True),
@@ -27,7 +30,7 @@ def make_tabs(user):
     dict(id='documents', label='Documents', link=user._url + '?tab=documents'),
     dict(id='images', label='Images', link=user._url + '?tab=images'),
     dict(id='audit', label='Audit', link=user._url + '?tab=audit'),
-  ]
+    ]
 
 # Not a great idea (can't be used as a ** argument).
 class Env(object):
@@ -70,12 +73,12 @@ def user_view(user_id):
   if tab == "activity":
     # XXX quick & dirty
     e.activity_entries =\
-        ActivityEntry.query.filter(ActivityEntry.actor_id == user.uid).limit(30).all()
+    ActivityEntry.query.filter(ActivityEntry.actor_id == user.uid).limit(30).all()
 
   elif tab == "audit":
     # XXX quick & dirty
     e.audit_entries =\
-        AuditEntry.query.filter(AuditEntry.user_id == user.uid).limit(30).all()
+    AuditEntry.query.filter(AuditEntry.user_id == user.uid).limit(30).all()
 
   elif tab in ("documents", "images"):
     files = File.query.filter(File.owner_id == user_id)

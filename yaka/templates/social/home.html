@@ -9,9 +9,49 @@
 
     <form action="" method="POST">
       <textarea class="span7" name="content" id="share-textarea" rows="3" style="resize: none;"></textarea>
-      <br>
-      <button type="submit" class="btn btn-primary">{{ _("Share") }}</button>
+
+      <button type="submit" name="action" value="share" class="btn btn-primary">{{ _("Share") }}</button>
+
+      {{ _("with group:") }}
+      <select name="group_id" id="group_id" style="display: none;">
+        <option value="" selected>{{ _("Everyone") }}</option>
+        {% for group in groups %}
+          <option value="{{ group.uid }}">{{ group.name }}</option>
+        {% endfor %}
+      </select>
+
+      <span class="dropdown" id="menu1">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#menu1">
+          <b id="group_target"></b> <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu" id="group_dropdown_menu">
+        </ul>
+      </span>
     </form>
+
+    <script>
+      $(document).ready(function() {
+        var source = $("#group_id");
+        var target = $("#group_target");
+        var selected = source.find("option[selected]");  // get selected <option>
+        target.html(selected.text());
+
+        var options = $("option", source);
+        options.each(function() {
+          var a = $('<a/>', {href: '#', text: $(this).text()});
+          a.data("group_id", $(this).val());
+          var li = $('<li/>');
+          li.append(a);
+          $("#group_dropdown_menu").append(li);
+        });
+        $("#group_dropdown_menu li a").each(function() {
+          $(this).click(function() {
+            target.html($(this).text());
+            source.val($(this).data('group_id'));
+          })
+        });
+      });
+    </script>
 
     <h2>{{ _("Your feed") }}</h2>
 
@@ -30,10 +70,10 @@
 
     <ul style="margin: 0;">
       {% for user in latest_visitors %}
-      <li style="list-style: none;"><a href="{{ user.url }}"><img
-              src="{{ user.url }}/mugshot?s=20" style="margin: 2px;"> {{ user.name }}</a>
-      {% if user.is_active %}<img src="/static/img/greendot.png">{% endif %}
-      </li>
+        <li style="list-style: none;"><a href="{{ user.url }}"><img src="{{ user.url }}/mugshot?s=20"
+                style="margin: 2px;"> {{ user.name }}</a>
+          {% if user.is_active %}<img src="/static/img/greendot.png">{% endif %}
+        </li>
       {% endfor %}
     </ul>
 

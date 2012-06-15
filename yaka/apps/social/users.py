@@ -85,6 +85,8 @@ def user_view(user_id):
 def user_post(user_id):
   user = User.query.get(user_id)
   action = request.form.get('action')
+  return_url = request.form.get('return_url')
+
   if action == 'follow':
     g.user.follow(user)
   elif action == 'unfollow':
@@ -93,4 +95,8 @@ def user_post(user_id):
     raise Exception("Should not happen")
   db.session.commit()
 
-  return redirect(url_for(".user_view", user_id=user_id))
+  if return_url:
+    # TODO: security check
+    return redirect(return_url)
+  else:
+    return redirect(url_for(".user_view", user_id=user_id))

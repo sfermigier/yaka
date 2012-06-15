@@ -63,10 +63,11 @@
 
           <td>
             <form action="{{ group.url }}" method="post">
-            {% if not g.user.is_member_of(group) %}
+              <input type="hidden" name="return_url" value="{{ request.url }}">
+              {% if not g.user.is_member_of(group) %}
               <button class="btn btn-primary" name="action" value="join">{{ _("Join") }}</button>
             {% else %}
-              <button class="btn btn-danger" name="action" value="join">{{ _("Leave") }}</button>
+              <button class="btn btn-danger" name="action" value="leave">{{ _("Leave") }}</button>
             {% endif %}
             </form>
           </td>

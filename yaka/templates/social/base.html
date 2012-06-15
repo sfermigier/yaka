@@ -9,7 +9,9 @@
         <ul class="nav nav-list">
           <li class="nav-header">{{ _("Main") }}</li>
           <li><a href="/social/">{{ _("My feed") }}</a></li>
+          <!--
           <li><a href="/social/private/">{{ _("Private messages") }}</a></li>
+          -->
           <li><a href="{{ g.user.url }}">{{ _("My profile") }}</a></li>
 
           <li class="nav-header">{{ _("Groups") }}</li>
@@ -23,9 +25,9 @@
           <li><a href="/social/users/">{{ _("My followees") }}</a></li>
           <li><a href="/social/users/">{{ _("My followers") }}</a></li>
 
-          <li class="nav-header">Apps</li>
-          <li><a href="/social/">Files</a></li>
-          <li><a href="/social/">Other</a></li>
+          <li class="nav-header">{{ _("Apps") }}</li>
+          <li><a href="/social/">{{ _("Files") }}</a></li>
+          <li><a href="/social/">...</a></li>
         </ul>
       </div>
 

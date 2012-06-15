@@ -43,6 +43,7 @@ def group_home(group_id):
 def group_post(group_id):
   group = Group.query.get(group_id)
   action = request.form.get('action')
+  return_url = request.form.get('return_url')
   if action == 'join':
     g.user.join(group)
   elif action == 'leave':
@@ -51,7 +52,11 @@ def group_post(group_id):
     raise Exception("Should not happen")
   db.session.commit()
 
-  return redirect(url_for(".group_home", group_id=group_id))
+  if return_url:
+    # TODO: security check
+    return redirect(return_url)
+  else:
+    return redirect(url_for(".group_home", group_id=group_id))
 
 
 @social.route("/groups/new")
